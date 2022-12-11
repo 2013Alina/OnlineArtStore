@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Data
 public class PaintingDTO {
 
-    private String tittle;
+    private String title;
     private LocalDate published;
     private String imagePath;
     private String size;
@@ -24,7 +24,7 @@ public class PaintingDTO {
     private Integer authorId;
 
     public Painting toEntity(Category category, Author author) {
-        Painting painting = new Painting(tittle, published, imagePath, size, material, description, price);
+        Painting painting = new Painting(title, published, imagePath, size, material, description, price);
         painting.setCategory(category);
         painting.setAuthor(author);
         return painting;

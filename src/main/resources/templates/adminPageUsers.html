@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Art Store</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+        }
+
+        td, th {
+            margin: 8px;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <menu>
+        <ul>
+            <li><a th:href="@{/}">General page</a></li>
+            <li><a th:href="@{/privatePage}">Private page</a></li>
+            <li sec:authorize="hasRole('USER')">
+                <a th:href="@{/userPage}">User page</a></li>
+            <li sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
+                <ol type="1">
+                    <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR</a></li>
+                    <li><a th:href="@{/adminPageAuction}">Create or view an AUCTION</a></li>
+                    <li><a th:href="@{/adminPageUsers}">All users</a></li>
+                </ol>
+            </li>
+            <li sec:authorize="isAnonymous()">
+                <a th:href="@{/singup}">Sing Up</a></li>
+            <li sec:authorize="isAnonymous()">
+                <a th:href="@{/login}">Login</a></li>
+            <li sec:authorize="isAuthenticated()">
+                Welcome <span sec:authentication="name"></span>!
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <a th:href="@{/logout}">Logout</a></li>
+        </ul>
+    </menu>
+</nav>
+<h1 style="color: green">Create NEW USER or view ALL USERS:</h1>
+<h1>Create new user:</h1>
+<div>
+    <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username">
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="text" id="password" name="password">
+    </div>
+    <div>
+        <label for="enabled">Enabled</label>
+        <input type="checkbox" id="enabled" name="enabled">
+    </div>
+    <div>
+        <input type="submit" id="save"/>
+    </div>
+</div>
+<h2>Users table:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Enabled</th>
+    </tr>
+    </thead>
+    <tbody id="Users-table"></tbody>
+</table>
+
+<script>
+    const baseURI = 'http://localhost:8080/adminPageUsers/api/v3';
+    const usersTable = document.getElementById('Users-table');
+    const saveUserButton = document.getElementById('save');
+
+    function addUser(user) {
+        const tr = document.createElement('tr');
+        for (const prop in user) {
+            const td = document.createElement('td');
+            td.append(document.createTextNode(user[prop]));
+            tr.append(td);
+        }
+        usersTable.append(tr);
+    }
+
+    function fillTableUsers(users) {
+        usersTable.innerHTML = '';
+        users.forEach(user => {
+            addUser(user);
+        });
+    }
+
+    async function loadUsers() {
+        const response = await fetch(`${baseURI}/users`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        const users = await response.json();
+        console.log(users);
+        fillTableUsers(users);
+    }
+
+    window.addEventListener('load', loadUsers);
+
+    async function saveUser() {
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const enabledInput = document.getElementById('enabled');
+
+        const user = {
+            username: usernameInput.value,
+            password: passwordInput.value,
+            enabled: enabledInput.value
+        };
+        const csrfToken = document.getElementById('_csrf').content;
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(user)
+        });
+        console.log(response.status);
+        if (response.status === 201) {
+            const loc = response.headers.get('location');
+            const resp = await fetch(`http://localhost:8080${loc}`)
+            addUser(await resp.json())
+        } else {
+            alert('Error: ' + response.status);
+        }
+    }
+    saveUserButton.addEventListener('click', saveUser);
+</script>
+
+</body>
+</html>

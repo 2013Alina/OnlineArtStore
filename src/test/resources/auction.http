@@ -1,0 +1,37 @@
+GET http://localhost:8080/adminPageAuction/api/v2/auctions
+Accept: application/json
+
+###
+GET http://localhost:8080/adminPageAuction/api/v2/auctions/1
+Accept: application/json
+
+###
+POST http://localhost:8080/adminPageAuction/api/v2/auctions
+Content-Type: application/json
+
+{
+  "title":"New Auction",
+  "published": "2022-12-28",
+  "startingPrice": "2000",
+  "currentPrice": "2000",
+  "deadline": "2022-12-29",
+  "winner": ""
+
+}
+
+###
+PUT http://localhost:8080/adminPageAuction/api/v2/auctions/3
+Content-Type: application/json
+
+{
+  "title":"New Auction",
+  "published": "2022-12-28",
+  "startingPrice": "2000",
+  "currentPrice": "2000",
+  "deadline": "2022-12-29",
+  "winner": ""
+
+}
+
+###
+DELETE http://localhost:8080/adminPageAuction/api/v2/auctions/3

@@ -30,13 +30,12 @@ public class User {
     @Column(name = "enabled")
     private Boolean enabled;// это не поле а связь с таблицей авторизация
 
-
-
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}) //cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
+    //cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     private List<Comment> comments = new ArrayList<>();
 
-    public void addComment(Comment comment){
+    public void addComment(Comment comment) {
         comment.setUser(this);
         comments.add(comment);
     }

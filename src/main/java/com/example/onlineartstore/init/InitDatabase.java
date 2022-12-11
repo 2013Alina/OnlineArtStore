@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -16,7 +15,7 @@ import java.time.Month;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class initDatabase implements CommandLineRunner {
+public class InitDatabase implements CommandLineRunner {
 
     private final PaintingRepository paintingRepository;
     private final UserRepository userRepository;
@@ -31,10 +30,10 @@ public class initDatabase implements CommandLineRunner {
         Author author1 = new Author("artLana", "Svetlana", "Vovk", LocalDate.of(1957, Month.OCTOBER,18), "Many awards", "Food_C245-128.png");
         authorRepository.save(author1);
 
-        User Star = new User("Star","$2a$10$OEKBPlQJhYFgSQ7PqKXfKulkZnj/FnozqYP8E7T2ro.3YPi8fxlGa", true); // 12345
-        User NiceCat = new User("NiceCat", "$2a$10$Y9HP/PX0shaO51dWyHunM.MxUkGvNLyLn0zn/uIYLu7eXNnZqCSZ6", true); //2222
-        userRepository.save(Star);
-        userRepository.save(NiceCat);
+        User star = new User("Star","$2a$10$OEKBPlQJhYFgSQ7PqKXfKulkZnj/FnozqYP8E7T2ro.3YPi8fxlGa", true); // 12345
+        User niceCat = new User("NiceCat", "$2a$10$Y9HP/PX0shaO51dWyHunM.MxUkGvNLyLn0zn/uIYLu7eXNnZqCSZ6", true); //2222
+        userRepository.save(star);
+        userRepository.save(niceCat);
 
         Comment comment1 = new Comment("This is a beautiful picture");
 

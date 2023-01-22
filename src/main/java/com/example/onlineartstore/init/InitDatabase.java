@@ -49,11 +49,16 @@ public class InitDatabase implements CommandLineRunner {
         Auction auction1 = new Auction("New Year Auction!", LocalDateTime.of(2023,Month.JANUARY,1,14,15),LocalDateTime.of(2023,Month.JANUARY,11,14,15), BigDecimal.valueOf(3000),true);
         auction1.addAuctionParticipants(star);
         auctionRepository.save(auction1);
+        userRepository.save(star);
+
         Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 1, 11, 10), LocalDateTime.of(2023, Month.FEBRUARY, 10,11,10), BigDecimal.valueOf(4000), true);
         auction2.addAuctionParticipants(niceCat);
         auctionRepository.save(auction2);
+        userRepository.save(niceCat);
+
         Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023,Month.MARCH,1,12,00),LocalDateTime.of(2023,Month.MARCH,3,14,00), BigDecimal.valueOf(5000),false);
         auctionRepository.save(auction3);
+
         Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023,Month.JULY,1,12,00),LocalDateTime.of(2023,Month.JULY,3,14,00), BigDecimal.valueOf(2000),false);
         auctionRepository.save(auction4);
 

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -61,7 +62,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder(); // кодирует пароль, есть защита!
     }
 
-//    Наш фильтр с доступами к страницам
+    //    Наш фильтр с доступами к страницам
     @Bean
     public SecurityFilterChain getSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
 //        return httpSecurity
@@ -84,7 +85,7 @@ public class WebSecurityConfig {
                         .mvcMatchers("/adminPage/**").hasRole("ADMIN")
                         .mvcMatchers("/adminPageAuction/**").hasRole("ADMIN")
                         .mvcMatchers("/adminPageUsers/**").hasRole("ADMIN")
-                        .mvcMatchers("/userPage/**").hasRole("USER") //только для роли USER, но ADMIN тоже зайдет так как  UserDetails admin = User.builder()..roles("ADMIN", "USER")
+                        .mvcMatchers("/userPage/**", "/infoPage/**").hasRole("USER") //только для роли USER, но ADMIN тоже зайдет так как  UserDetails admin = User.builder()..roles("ADMIN", "USER")
                         .anyRequest().denyAll()) //все остальные запросы запрещены!!!
                 .formLogin()
                 .and()
@@ -92,6 +93,8 @@ public class WebSecurityConfig {
                 .build(); //mvcMatchers("/privatePage") здесь обязательная авторизация
 
     }
-//    matcher - сопоставитель, соответствие правилам, путям, паттернам
+
+    //    matcher - сопоставитель, соответствие правилам, путям, паттернам
+
 
 }

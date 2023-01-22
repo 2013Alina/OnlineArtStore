@@ -1,6 +1,7 @@
 package com.example.onlineartstore.api.restController.dto;
 
 import com.example.onlineartstore.entity.Category;
+import com.example.onlineartstore.error.ErrorResponse;
 import com.example.onlineartstore.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -56,13 +57,24 @@ public class CategoriesRestController {
         return ResponseEntity.notFound().build();
     }
 
+//    @DeleteMapping("/{id}")
+//    ResponseEntity<?> delete(@PathVariable Integer id) {
+//        if (categoryRepository.existsById(id)) {
+//            categoryRepository.deleteById(id);
+//            return ResponseEntity.ok().build();
+//        }
+//        return ResponseEntity.notFound().build();
+//    }
+
     @DeleteMapping("/{id}")
-    ResponseEntity<?> delete(@PathVariable Integer id) {
-        if (categoryRepository.existsById(id)) {
-            categoryRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isPresent()) {
+            categoryRepository.delete(optionalCategory.get());
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse("This category not found!"));
     }
 
 

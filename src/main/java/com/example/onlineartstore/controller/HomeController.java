@@ -2,6 +2,7 @@ package com.example.onlineartstore.controller;
 
 import com.example.onlineartstore.repository.AuctionRepository;
 import com.example.onlineartstore.repository.PaintingRepository;
+import com.example.onlineartstore.repository.UserDetailRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     private final PaintingRepository paintingRepository;
+    private final AuctionRepository auctionRepository;
+    private final UserDetailRepository userDetailRepository;
 
     @GetMapping
     String generalPage(Model model) {
@@ -23,8 +26,15 @@ public class HomeController {
 
 
     @GetMapping("/privatePage")
-    String privatePage() {
+    String privatePage(Model model) {
+        model.addAttribute("auctions", auctionRepository.findAll());
         return "privatePage";
+    }
+
+    @GetMapping("/infoPage")
+    String infoPage(Model model) {
+        model.addAttribute("userDetail", userDetailRepository.findAll());
+        return "infoPage";
     }
 
 

@@ -12,8 +12,7 @@ Content-Type: application/json
 {
   "username":"Alina",
   "password": "1111",
-  "enabled": "true",
-  "email": "alina@gmail.com"
+  "enabled": "true"
 
 }
 
@@ -24,8 +23,7 @@ Content-Type: application/json
 {
   "username":"Alina",
   "password": "1111",
-  "enabled": "true",
-  "email": "alina@gmail.com"
+  "enabled": "true"
 
 }
 

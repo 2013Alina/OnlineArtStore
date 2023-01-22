@@ -1,0 +1,31 @@
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+
+td, th {
+    margin: 8px;
+}
+input {
+    margin-top: 0.5rem;
+}
+
+input::placeholder {
+    font-weight: bold;
+    opacity: 0.5;
+    color: red;
+}
+input:invalid {
+    border: 2px dashed red;
+}
+
+input:invalid:required {
+    background-image: linear-gradient(to right, pink, lightgreen);
+}
+
+input:valid {
+    border: 2px solid black;
+}

@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Data
 @Table(name = "Paintings")
-@ToString(exclude = "comments")
+@ToString(exclude = {"comments", "auctions"})
 @EqualsAndHashCode(exclude = "comments")
 public class Painting {
     @Id
@@ -35,12 +35,17 @@ public class Painting {
     private String description;
     @NonNull
     private BigDecimal price;
+    @NonNull
+    private Boolean sold;
 
     @ManyToOne
     private Author author;
 
     @ManyToOne
     private Category category;
+
+    @ManyToOne
+    private Auction auction;
 
     @JsonIgnore
     @OneToMany(mappedBy = "painting", cascade = {CascadeType.ALL}) // cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
@@ -52,6 +57,5 @@ public class Painting {
             this.comments.add(comment);
         }
     }
-
 
 }

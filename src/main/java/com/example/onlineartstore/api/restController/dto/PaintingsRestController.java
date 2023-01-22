@@ -1,9 +1,11 @@
 package com.example.onlineartstore.api.restController.dto;
 
 import com.example.onlineartstore.api.dto.PaintingDTO;
+import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.entity.Author;
 import com.example.onlineartstore.entity.Category;
 import com.example.onlineartstore.entity.Painting;
+import com.example.onlineartstore.repository.AuctionRepository;
 import com.example.onlineartstore.repository.AuthorRepository;
 import com.example.onlineartstore.repository.CategoryRepository;
 import com.example.onlineartstore.repository.PaintingRepository;
@@ -24,6 +26,7 @@ public class PaintingsRestController {
     private final PaintingRepository paintingRepository;
     private final CategoryRepository categoryRepository;
     private final AuthorRepository authorRepository;
+    private final AuctionRepository auctionRepository;
 
     // READ ALL Paintings
     @GetMapping
@@ -53,6 +56,7 @@ public class PaintingsRestController {
             s.setMaterial(painting.getMaterial());
             s.setDescription(painting.getDescription());
             s.setPrice(painting.getPrice());
+            s.setSold(painting.getSold());
             return ResponseEntity.of(Optional.of(paintingRepository.save(s)));
         }
         return ResponseEntity.notFound().build();
@@ -64,13 +68,17 @@ public class PaintingsRestController {
         try {
             Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
             Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
+            Optional<Auction> optionalAuction = auctionRepository.findById(paintingDTO.getAuctionId());
             if (optionalCategory.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             if (optionalAuthor.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(),optionalAuthor.get()));
+            if (optionalAuction.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(),optionalAuthor.get(),optionalAuction.get()));
             return ResponseEntity
                     .created(URI.create("/adminPage/api/v1/paintings/" + saved.getId()))
                     .build();

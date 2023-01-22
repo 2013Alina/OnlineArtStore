@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Online Art Store</title>
+    <title>Title</title>
     <style>
         table {
             border-collapse: collapse;
@@ -38,27 +39,24 @@
             <a th:href="@{/logout}">Logout</a></li>
     </menu>
 </nav>
-<h1>General page</h1>
-<h1>GALLERY</h1>
+<h1>Information about me:</h1>
 <table>
     <thead>
     <tr>
-        <th>Title</th>
-        <th>Published</th>
-        <th>ImagePath</th>
-        <th>Size</th>
-        <th>Material</th>
-        <th>Description</th>
+        <th>My first name:</th>
+        <th>My last name:</th>
+        <th>My birthday:</th>
+        <th>My email:</th>
+        <th>My telephone:</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="painting: ${paintings}">
-        <td th:text="${painting.title}"></td>
-        <td th:text="${painting.published}"></td>
-        <td th:text="${painting.imagePath}"></td>
-        <td th:text="${painting.size}"></td>
-        <td th:text="${painting.material}"></td>
-        <td th:text="${painting.description}"></td>
+    <tr th:each="userDetail:${userDetails}">
+        <td th:text="${userDetail.firstName}"></td>
+        <td th:text="${userDetail.lastName}"></td>
+        <td th:text="${userDetail.birthDate.toLocalDate()}"></td>
+        <td th:text="${userDetail.email}"></td>
+        <td th:text="${userDetail.telephone}"></td>
     </tbody>
 </table>
 </body>

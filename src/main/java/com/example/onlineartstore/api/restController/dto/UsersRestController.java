@@ -38,6 +38,7 @@ public class UsersRestController {
             User u = foundUser.get();
             u.setUsername(user.getUsername());
             u.setPassword(user.getPassword());
+            //u.setEnabled(user.getEnabled());
             return ResponseEntity.of(Optional.of(userRepository.save(u)));
         }
         return ResponseEntity.notFound().build();

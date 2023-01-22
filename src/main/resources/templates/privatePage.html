@@ -3,12 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+        }
+
+        td, th {
+            margin: 8px;
+        }
+    </style>
 </head>
 <body>
 <nav>
     <menu>
         <li><a th:href="@{/}">General page</a></li>
-        <li><a th:href="@{/privatePage}">Private page</a></li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/privatePage}">Private page</a></li>
         <li sec:authorize="hasRole('USER')">
             <a th:href="@{/userPage}">User page</a></li>
         <li sec:authorize="hasRole('ADMIN')">
@@ -25,6 +39,31 @@
     </menu>
 </nav>
 <h1 style="color: blue">Private page</h1>
+<h1>Auctions:</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Title Auction</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Starting Price</th>
+        <th>Active</th>
+        <th>Participate</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${auction.active == true}" th:each="auction:${auctions}">
+        <td th:text="${auction.titleAuction}"></td>
+        <td th:text="${auction.startDate}"></td>
+        <td th:text="${auction.endDate}"></td>
+        <td th:text="${auction.startingPrice}"></td>
+        <td th:text="${auction.active}"></td>
+        <td><button>Participate!</button></td>
+    </tbody>
+</table>
 
+<!--<script>-->
+<!--    const baseURI = 'http://localhost:8080/privatePage/api/v1';-->
+<!--</script>-->
 </body>
 </html>

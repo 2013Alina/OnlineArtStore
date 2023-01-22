@@ -1,12 +1,12 @@
 package com.example.onlineartstore.entity;
 
 import com.example.onlineartstore.api.classAnnotation.Phone;
-import com.sun.istack.NotNull;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
@@ -50,6 +50,7 @@ public class UserDetail {
     private String telephone;
 
     @OneToOne(mappedBy = "userDetail")
+    @NotNull
     User user;
 
 }

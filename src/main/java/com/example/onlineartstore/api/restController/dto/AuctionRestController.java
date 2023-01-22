@@ -24,7 +24,7 @@ public class AuctionRestController {
 
     @GetMapping
     List<Auction> list() {
-        return auctionRepository.findAll();
+        return auctionRepository.findAllWithParticipants();
     }
 
     @GetMapping("/{id}")

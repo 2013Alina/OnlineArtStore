@@ -18,7 +18,7 @@ import java.util.*;
 @AllArgsConstructor
 @Table(name = "Users")
 @ToString(exclude = {"betsUser","comments", "participationInAuctions", "userDetail"})
-@EqualsAndHashCode(exclude = {"participationInAuctions", "roles"})
+@EqualsAndHashCode(exclude = {"participationInAuctions", "roles", "userDetail"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,4 +79,7 @@ public class User {
         roles.add(role);
     }
 
+    public void addAuction(Auction auction) {
+        participationInAuctions.add(auction);
+    }
 }

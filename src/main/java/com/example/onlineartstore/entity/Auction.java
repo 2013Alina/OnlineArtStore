@@ -17,6 +17,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Data
 @Table(name = "Auctions")
+@EqualsAndHashCode(exclude = "auctionParticipants")
 public class Auction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +62,7 @@ public class Auction {
 
     public void addAuctionParticipants(User user) {
         auctionParticipants.add(user);
+        user.addAuction(this);
     }
 
     @JsonIgnore

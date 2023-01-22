@@ -108,8 +108,8 @@
     <thead>
     <tr>
         <th>Id</th>
-        <th>Username</th>
-        <th>Password</th>
+        <th>User`s login:</th>
+        <th>Password:</th>
         <th>Enabled</th>
     </tr>
     </thead>
@@ -121,12 +121,12 @@
     <thead>
     <tr>
         <th>Id</th>
-        <th>FirstName</th>
-        <th>LastName</th>
-        <th>BirthDate</th>
-        <th>Email</th>
+        <th>First name:</th>
+        <th>Last name:</th>
+        <th>Birthdate:</th>
+        <th>Email:</th>
         <th>Telephone:</th>
-        <th>User Id:</th>
+        <th>User`s login:</th>
     </tr>
     </thead>
     <tbody id="UserDetails-table"></tbody>
@@ -155,9 +155,10 @@
         for (const prop in userDetail) {
             const td = document.createElement('td');
             if (prop === 'user') {
-                td.append(document.createTextNode(userDetail[prop].id));
+                td.append(document.createTextNode(userDetail[prop].username)); // выводит логин User
+            }else {
+                td.append(document.createTextNode(userDetail[prop]));
             }
-            td.append(document.createTextNode(userDetail[prop]));
             tr.append(td);
         }
         userDetailsTable.append(tr);
@@ -174,16 +175,6 @@
         userDetailsTable.innerHTML = '';
         userDetails.forEach(userDetail => {
             addUserDetail(userDetail);
-        });
-    }
-
-    function fillUsers(users) {
-        const userElement = document.getElementById('users');
-        users.forEach(user => {
-            const inputElement = document.createElement('input');   // или на td ??
-            inputElement.value = user.id;
-            inputElement.append(document.createTextNode(user.id));
-            userElement.append(inputElement);
         });
     }
 

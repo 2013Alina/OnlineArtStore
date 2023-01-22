@@ -62,7 +62,7 @@ public class User {
         betsUser.add(bet);
     }
     @JsonIgnore
-    @OneToOne
+    @OneToOne   // не пишу аннотацию @NotNull так как User спокойно существует без UserDetail!
     UserDetail userDetail;
 
     @JsonIgnore

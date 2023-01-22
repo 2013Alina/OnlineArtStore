@@ -50,7 +50,7 @@ public class UserDetail {
     private String telephone;
 
     @OneToOne(mappedBy = "userDetail")
-    @NotNull
+    @NotNull // UserDetail не может существовать отдельно от User!!! Они жестко связаны!Важная аннотация!!!!
     User user;
 
 }

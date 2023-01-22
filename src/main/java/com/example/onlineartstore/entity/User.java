@@ -1,13 +1,13 @@
 package com.example.onlineartstore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 
@@ -17,7 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Table(name = "Users")
-@ToString(exclude = {"betsUser","comments", "participationInAuctions"})
+@ToString(exclude = {"betsUser","comments", "participationInAuctions", "userDetail"})
 @EqualsAndHashCode(exclude = {"participationInAuctions", "roles"})
 public class User {
     @Id

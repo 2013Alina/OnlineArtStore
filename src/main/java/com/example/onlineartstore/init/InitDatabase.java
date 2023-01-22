@@ -2,10 +2,12 @@ package com.example.onlineartstore.init;
 
 import com.example.onlineartstore.entity.*;
 import com.example.onlineartstore.repository.*;
+import com.example.onlineartstore.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,7 +25,7 @@ public class InitDatabase implements CommandLineRunner {
     private final CategoryRepository categoryRepository;
     private final AuthorRepository authorRepository;
     private final AuctionRepository auctionRepository;
-    private final UserDetailRepository userDetailRepository;
+    private final UserDetailService userDetailService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -69,7 +71,6 @@ public class InitDatabase implements CommandLineRunner {
         categoryRepository.save(category4);
         categoryRepository.save(category5);
 
-
         auction1.addPainting(painting1);
         paintingRepository.save(painting1);
         auction2.addPainting(painting2);
@@ -81,15 +82,13 @@ public class InitDatabase implements CommandLineRunner {
         auctionRepository.save(auction1);
         auctionRepository.save(auction2);
 
-
         UserDetail userDetail1 = new UserDetail("Alina", "Muntian", LocalDate.of(1986, Month.MARCH,5),"muntian@gmail.com", "095-797-51-67");
+        userDetailService.saveDetails(userDetail1, "user");
         UserDetail userDetail2 = new UserDetail("Alina", "Muntian", LocalDate.of(1986, Month.MARCH,5),"muntian@gmail.com", "095-797-51-67");
+        userDetailService.saveDetails(userDetail2, "admin");
         UserDetail userDetail3 = new UserDetail("Anna", "Petrova", LocalDate.of(2003, Month.DECEMBER,11),"petrova@gmail.com", "099-941-78-55");
+        userDetailService.saveDetails(userDetail3, "Star");
         UserDetail userDetail4 = new UserDetail("Victoria", "Omelchenko", LocalDate.of(2001, Month.APRIL,2),"omelchenko@gmail.com", "067-831-81-27");
-        userDetailRepository.save(userDetail1);
-        userDetailRepository.save(userDetail2);
-        userDetailRepository.save(userDetail3);
-        userDetailRepository.save(userDetail4);
-
+        userDetailService.saveDetails(userDetail4, "NiceCat");
     }
 }

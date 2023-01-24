@@ -52,7 +52,7 @@ public class UserDetailsRestController {
     }
 
     @PostMapping
-    ResponseEntity<?> create(@RequestBody @Validated UserDetailDTO userDetailDTO) {
+    ResponseEntity<?> create(@RequestBody @Validated UserDetailDTO userDetailDTO) { // UserDetailDTO для таблицы UserDetail
         try {
             Optional<User> optionalUser = userRepository.findById(userDetailDTO.getUserId()); //Integer
             if (optionalUser.isEmpty()) {

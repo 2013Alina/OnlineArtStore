@@ -20,7 +20,8 @@ public class UserDetailService {
         userDetail.setUser(user);
         userDetailRepository.save(userDetail);
         user.setUserDetail(userDetail);
-        userRepository.save(user);
+        userRepository.save(user); //здесь дебажить userRepository.findAll() чтоб увидеть связь @OneToOne User and UserDetail
         return userDetail;
     }
+    // UserDetailService для @OneToOne User and UserDetail!!!!
 }

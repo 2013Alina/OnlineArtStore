@@ -173,11 +173,6 @@
         <label for="active">Active</label>
         <input type="checkbox" id="active" name="active"/>
     </div>
-    <!--    <div>-->
-    <!--        <label for="auctionParticipants">Participants:</label>-->
-    <!--        <input type="text" id="auctionParticipants" name="auctionParticipants"/>-->
-    <!--      -->
-    <!--    </div>-->
     <div>
         <input type="submit" id="auctionSave"/>
     </div>
@@ -381,8 +376,17 @@
         const tdUpdate = document.createElement('td');
         tdUpdate.innerHTML = '<button>UPDATE</button>';
         for (const prop in auction) {
-            const td = document.createElement('td');
-            td.append(document.createTextNode(auction[prop]));
+            const td = document.createElement('td');  //@ManyToMany
+            if (prop === 'auctionParticipants') {
+                let usersNames = '';
+                if(auction['auctionParticipants'] && auction['auctionParticipants'].length !== 0){
+                    usersNames = auction['auctionParticipants'].map(user=>user['username']).join(',');
+                }
+                td.append(document.createTextNode(usersNames));
+            }
+            if(prop !== 'auctionParticipants'){
+                td.append(document.createTextNode(auction[prop]));
+            }
             tr.append(td);
             tr.append(tdDelete);
             tr.append(tdUpdate);
@@ -528,7 +532,7 @@
             material: materialInput.value,
             description: descriptionInput.value,
             price: priceInput.value,
-            sold: soldInput.value,
+            sold: soldInput.checked, // "on" - true, "off" - false
             authorId: authorsSelect.value,
             categoryId: categoriesSelect.value,
             auctionId: auctionsSelect.value
@@ -626,7 +630,7 @@
             startDate: startDateInput.value,
             endDate: endDateInput.value,
             startingPrice: startingPriceInput.value,
-            active: activeInput.value
+            active: activeInput.checked // "on" - true "off" - false
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;

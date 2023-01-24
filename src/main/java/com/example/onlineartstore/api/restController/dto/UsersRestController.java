@@ -38,14 +38,14 @@ public class UsersRestController {
             User u = foundUser.get();
             u.setUsername(user.getUsername());
             u.setPassword(user.getPassword());
-            //u.setEnabled(user.getEnabled());
+            u.setEnabled(user.getEnabled());
             return ResponseEntity.of(Optional.of(userRepository.save(u)));
         }
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    ResponseEntity<?> create(@RequestBody User user) {
+    ResponseEntity<?> create(@RequestBody User user) { //полный объект User для @OneToOne User and UserDetail
         try {
             User saved = userRepository.save(user);
             return ResponseEntity

@@ -4,11 +4,12 @@ import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.entity.Author;
 import com.example.onlineartstore.entity.Category;
 import com.example.onlineartstore.entity.Painting;
-import com.sun.istack.NotNull;
+
 import lombok.Data;
 
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull; // нужный пакет!
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -45,7 +46,7 @@ public class PaintingDTO {
     private Integer categoryId;
     @NotNull
     private Integer authorId;
-    @NotNull
+
     private Integer auctionId;
 
     public Painting toEntity(Category category, Author author, Auction auction) {

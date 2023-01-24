@@ -17,7 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Table(name = "Users")
-@ToString(exclude = {"betsUser","comments", "participationInAuctions", "userDetail"})
+@ToString(exclude = {"betsUser","comments", "participationInAuctions", "userDetail"})//была рекурсия из-за поля userDetail, так как User связан с UserDetail @OneToOne
 @EqualsAndHashCode(exclude = {"participationInAuctions", "roles", "userDetail"})
 public class User {
     @Id
@@ -62,7 +62,7 @@ public class User {
         betsUser.add(bet);
     }
     @JsonIgnore
-    @OneToOne   // не пишу аннотацию @NotNull так как User спокойно существует без UserDetail!
+    @OneToOne   // не пишу аннотацию @NotNull так как User спокойно существует без UserDetail!!!!!
     UserDetail userDetail;
 
     @JsonIgnore

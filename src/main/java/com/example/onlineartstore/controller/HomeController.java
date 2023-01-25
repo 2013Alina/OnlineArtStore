@@ -28,6 +28,7 @@ public class HomeController {
     @GetMapping("/privatePage")
     String privatePage(Model model) {
         model.addAttribute("auctions", auctionRepository.findAll());
+        model.addAttribute("paintings", paintingRepository.findAll());
         return "privatePage";
     }
 

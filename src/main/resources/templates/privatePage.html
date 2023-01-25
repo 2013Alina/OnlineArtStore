@@ -61,6 +61,35 @@
         <td><button>Participate!</button></td>
     </tbody>
 </table>
+<h1>Paintings:</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>ImagePath</th>
+        <th>Size</th>
+        <th>Material</th>
+        <th>Price</th>
+        <th>Sold</th>
+        <th>Category</th>
+        <th>Author</th>
+        <th>Auction</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${painting.auction!=null && painting.sold==false}" th:each="painting:${paintings}">
+        <td th:text="${painting.title}"></td>
+        <td th:text="${painting.imagePath}"></td>
+        <td th:text="${painting.size}"></td>
+        <td th:text="${painting.material}"></td>
+        <td th:text="${painting.price}"></td>
+        <td th:text="${painting.sold}"></td>
+        <td th:text="${painting.category.name}"></td>
+        <td th:text="${painting.author.pseudonym}"></td>
+        <td th:text="${painting.auction.titleAuction}"></td>
+    </tbody>
+</table>
+
 
 <!--<script>-->
 <!--    const baseURI = 'http://localhost:8080/privatePage/api/v1';-->

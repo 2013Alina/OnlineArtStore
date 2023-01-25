@@ -56,4 +56,5 @@ public class PaintingDTO {
         painting.setAuction(auction);
         return painting;
     }
+
 }

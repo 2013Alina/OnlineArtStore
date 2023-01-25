@@ -44,20 +44,14 @@
     <thead>
     <tr>
         <th>Title</th>
-        <th>Published</th>
         <th>ImagePath</th>
-        <th>Size</th>
-        <th>Material</th>
         <th>Description</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="painting: ${paintings}">
         <td th:text="${painting.title}"></td>
-        <td th:text="${painting.published}"></td>
         <td th:text="${painting.imagePath}"></td>
-        <td th:text="${painting.size}"></td>
-        <td th:text="${painting.material}"></td>
         <td th:text="${painting.description}"></td>
     </tbody>
 </table>

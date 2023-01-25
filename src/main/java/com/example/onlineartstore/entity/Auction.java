@@ -12,9 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor //@AllArgsConstructor генерирует конструктор с одним параметром для каждого поля в классе.
+@NoArgsConstructor //конструктор без параметров
 @Data
 @Table(name = "Auctions")
 @EqualsAndHashCode(exclude = "auctionParticipants")
@@ -32,6 +31,15 @@ public class Auction {
     private BigDecimal startingPrice;
     @NonNull
     private Boolean active;
+
+    public Auction(String titleAuction, LocalDateTime startDate, LocalDateTime endDate, BigDecimal startingPrice, Boolean active) {
+        this.titleAuction = titleAuction;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startingPrice = startingPrice;
+        this.active = active;
+    }
+
 
     @JsonIgnore
     @OneToMany(mappedBy = "auction", cascade = {CascadeType.ALL})

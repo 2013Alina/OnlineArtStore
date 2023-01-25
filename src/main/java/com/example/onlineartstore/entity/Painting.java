@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Data
 @Table(name = "Paintings")
-@ToString(exclude = {"comments", "auctions"})
+@ToString(exclude = "comments")   //@NonNull : нулевое значение не является допустимым
 @EqualsAndHashCode(exclude = "comments")
 public class Painting {
     @Id
@@ -47,8 +47,10 @@ public class Painting {
     @ManyToOne
     private Auction auction;
 
+
     @JsonIgnore
-    @OneToMany(mappedBy = "painting", cascade = {CascadeType.ALL}) // cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    @OneToMany(mappedBy = "painting", cascade = {CascadeType.ALL})
+    // cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     private List<Comment> comments = new ArrayList<>();
 
     public void addComment(Comment... comments) {

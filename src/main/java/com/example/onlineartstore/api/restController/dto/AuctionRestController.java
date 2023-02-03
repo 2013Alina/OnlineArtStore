@@ -1,7 +1,6 @@
 package com.example.onlineartstore.api.restController.dto;
 
 import com.example.onlineartstore.entity.Auction;
-import com.example.onlineartstore.entity.Painting;
 import com.example.onlineartstore.repository.AuctionRepository;
 import com.example.onlineartstore.repository.PaintingRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-//@RequestMapping("/adminPageAuction/api/v2/auctions")
 @RequestMapping("/adminPage/api/v1/auctions")
 @RestController
 public class AuctionRestController {
@@ -44,6 +42,7 @@ public class AuctionRestController {
             a.setStartDate(auction.getStartDate());
             a.setEndDate(auction.getEndDate());
             a.setStartingPrice(auction.getStartingPrice());
+            a.setCurrentBet(auction.getCurrentBet());
             a.setActive(auction.getActive());
             return ResponseEntity.of(Optional.of(auctionRepository.save(a)));
         }

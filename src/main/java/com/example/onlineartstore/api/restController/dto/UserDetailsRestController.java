@@ -54,11 +54,8 @@ public class UserDetailsRestController {
     @PostMapping
     ResponseEntity<?> create(@RequestBody @Validated UserDetailDTO userDetailDTO) { // UserDetailDTO для таблицы UserDetail
         try {
-            Optional<User> optionalUser = userRepository.findById(userDetailDTO.getUserId()); //Integer
-            if (optionalUser.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            UserDetail saved = userDetailRepository.save(userDetailDTO.toEntity(optionalUser.get()));
+            User user = userRepository.getReferenceById(userDetailDTO.getUserId()); //Integer
+            UserDetail saved = userDetailRepository.save(userDetailDTO.toEntity(user));
             return ResponseEntity
                     .created(URI.create("/adminPageUsers/api/v3/userDetails/" + saved.getId()))
                     .build();

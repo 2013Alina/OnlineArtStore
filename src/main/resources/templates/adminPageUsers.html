@@ -30,7 +30,7 @@
                 <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
                 <ol type="1">
                     <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
-                    <li><a th:href="@{/adminPageAuction}">Auction Participants, Auction bets</a></li>
+                    <li><a th:href="@{/adminPageBets}">Auction Participants, Auction`s BETS</a></li>
                     <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
                 </ol>
             </li>
@@ -140,6 +140,9 @@
     const userDetailsTable = document.getElementById('UserDetails-table');
     const saveUserDetailButton = document.getElementById('saveUserDetail');
 
+    const csrfToken = document.getElementById('csrf-token');
+    const csrfHeader = document.getElementById('csrf-header');
+
     function addUser(user) {
         const tr = document.createElement('tr');
         for (const prop in user) {
@@ -156,7 +159,7 @@
             const td = document.createElement('td');
             if (prop === 'user') {
                 td.append(document.createTextNode(userDetail[prop].username)); // выводит логин User
-            }else {
+            } else {
                 td.append(document.createTextNode(userDetail[prop]));
             }
             tr.append(td);
@@ -188,7 +191,6 @@
         const users = await response.json();
         console.log(users);
         fillTableUsers(users);
-        fillUsers(users);
     }
 
     async function loadUserDetails() {
@@ -214,7 +216,7 @@
         const user = {
             username: usernameInput.value,
             password: passwordInput.value,
-            enabled: enabledInput.value
+            enabled: enabledInput.checked
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;
@@ -242,15 +244,13 @@
         const birthDateInput = document.getElementById('birthDate');
         const emailInput = document.getElementById('email');
         const telephoneInput = document.getElementById('telephone');
-        const userIdInput = document.getElementById('users');
 
         const userDetail = {
             firstName: firstNameInput.value,
             lastName: lastNameInput.value,
             birthDate: birthDateInput.value,
             email: emailInput.value,
-            telephone: telephoneInput.value,
-            userId: userIdInput.value
+            telephone: telephoneInput.value
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;

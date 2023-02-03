@@ -30,13 +30,16 @@ public class Auction {
     @NonNull
     private BigDecimal startingPrice;
     @NonNull
+    private BigDecimal currentBet;
+    @NonNull
     private Boolean active;
 
-    public Auction(String titleAuction, LocalDateTime startDate, LocalDateTime endDate, BigDecimal startingPrice, Boolean active) {
+    public Auction(String titleAuction, LocalDateTime startDate, LocalDateTime endDate, BigDecimal startingPrice, BigDecimal currentBet, Boolean active) {
         this.titleAuction = titleAuction;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startingPrice = startingPrice;
+        this.currentBet = currentBet;
         this.active = active;
     }
 

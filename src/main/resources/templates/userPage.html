@@ -14,8 +14,6 @@
             <a th:href="@{/privatePage}">Private page</a></li>
         <li sec:authorize="hasRole('USER')">
             <a th:href="@{/userPage}">User page</a></li>
-        <li sec:authorize="hasRole('USER')">
-            <a th:href="@{/infoPage}">Entered information about me</a></li>
         <li sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/mainAdminPage}">Admin page</a></li>
         <li sec:authorize="isAnonymous()">
@@ -67,9 +65,8 @@
     <li th:text="${error.defaultMessage}"></li>
 </ul>
 
-
-<!--<script>-->
-<!--    const baseURI = 'http://localhost:8080/adminPageAuction/api/v2';-->
+<!--<div sec:authorize="hasRole('USER')">-->
+<!--    <a th:href="@{/infoPage/{userId}(userId=${user.id})}">Entered information about me</a></div>-->
 
 
 </body>

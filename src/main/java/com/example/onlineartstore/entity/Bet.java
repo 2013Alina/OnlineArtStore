@@ -29,12 +29,12 @@ public class Bet {
     @ManyToOne
     private User user;
 
-
     @PrePersist
     // - выполнить соответствующий метод при создании Entity и при каждом ее обновлении. Теперь нет нужды отдельно устанавливать эти даты
     protected void onCreate() {
         this.createdDate = LocalDateTime.now();
     }
+
 
 
 }

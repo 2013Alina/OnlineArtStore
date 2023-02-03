@@ -64,7 +64,7 @@ public class PaintingsRestController {
 
     // CREATE Painting
     @PostMapping
-    ResponseEntity<?> create(@RequestBody PaintingDTO paintingDTO) {
+    ResponseEntity<?> createPainting(@RequestBody PaintingDTO paintingDTO) {
         try {
             Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
             Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
@@ -78,7 +78,7 @@ public class PaintingsRestController {
             if (optionalAuction.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(),optionalAuthor.get(),optionalAuction.get()));
+            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get()));
             return ResponseEntity
                     .created(URI.create("/adminPage/api/v1/paintings/" + saved.getId()))
                     .build();
@@ -89,14 +89,14 @@ public class PaintingsRestController {
         }
     }
 
-        // DELETE Painting
-        @DeleteMapping("/{id}")
-        ResponseEntity<?> delete(@PathVariable Integer id) {
-            if (paintingRepository.existsById(id)) {
-                paintingRepository.deleteById(id);
-                return ResponseEntity.ok().build();
-            }
-            return ResponseEntity.notFound().build();
+    // DELETE Painting
+    @DeleteMapping("/{id}")
+    ResponseEntity<?> delete(@PathVariable Integer id) {
+        if (paintingRepository.existsById(id)) {
+            paintingRepository.deleteById(id);
+            return ResponseEntity.ok().build();
         }
+        return ResponseEntity.notFound().build();
+    }
 
 }

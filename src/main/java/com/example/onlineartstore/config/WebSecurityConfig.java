@@ -83,9 +83,9 @@ public class WebSecurityConfig {
                         .mvcMatchers("/privatePage/**").authenticated() // mvcMatchers("/privatePage") здесь обязательная авторизация
                         .mvcMatchers("/mainAdminPage/**").hasRole("ADMIN") //только для роли ADMIN
                         .mvcMatchers("/adminPage/**").hasRole("ADMIN")
-                        .mvcMatchers("/adminPageAuction/**").hasRole("ADMIN")
+                        .mvcMatchers("/adminPageBets/**").hasRole("ADMIN")
                         .mvcMatchers("/adminPageUsers/**").hasRole("ADMIN")
-                        .mvcMatchers("/userPage/**", "/infoPage/**").hasRole("USER") //только для роли USER, но ADMIN тоже зайдет так как  UserDetails admin = User.builder()..roles("ADMIN", "USER")
+                        .mvcMatchers("/userPage/**", "/infoPage/**", "/participateAuction/**").hasRole("USER") //только для роли USER, но ADMIN тоже зайдет так как  UserDetails admin = User.builder()..roles("ADMIN", "USER")
                         .anyRequest().denyAll()) //все остальные запросы запрещены!!!
                 .formLogin()
                 .and()

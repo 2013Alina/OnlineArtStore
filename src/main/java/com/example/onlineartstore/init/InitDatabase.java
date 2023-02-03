@@ -27,6 +27,7 @@ public class InitDatabase implements CommandLineRunner {
     private final AuctionRepository auctionRepository;
     private final UserDetailService userDetailService;
     private final AuctionAddUserService auctionAddUserService;
+    private final BetRepository betRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -53,18 +54,19 @@ public class InitDatabase implements CommandLineRunner {
                 LocalDateTime.of(2023,Month.JANUARY,1,14,15),
                 LocalDateTime.of(2023,Month.JANUARY,11,14,15),
                 BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(3000),
                 true);
 
         auctionAddUserService.saveAuction(auction1, "Star");
         auctionAddUserService.saveAuction(auction1,"LionKing");
 
-        Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 1, 11, 10), LocalDateTime.of(2023, Month.FEBRUARY, 10,11,10), BigDecimal.valueOf(4000), true);
+        Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 1, 11, 10), LocalDateTime.of(2023, Month.FEBRUARY, 10,11,10), BigDecimal.valueOf(4000),BigDecimal.valueOf(4000), true);
         auctionAddUserService.saveAuction(auction2,"NiceCat");
 
-        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023,Month.MARCH,1,12,00),LocalDateTime.of(2023,Month.MARCH,3,14,00), BigDecimal.valueOf(5000),false);
+        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023,Month.MARCH,1,12,00),LocalDateTime.of(2023,Month.MARCH,3,14,00), BigDecimal.valueOf(5000),BigDecimal.valueOf(5000),false);
         auctionRepository.save(auction3);
 
-        Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023,Month.JULY,1,12,00),LocalDateTime.of(2023,Month.JULY,3,14,00), BigDecimal.valueOf(2000),false);
+        Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023,Month.JULY,1,12,00),LocalDateTime.of(2023,Month.JULY,3,14,00), BigDecimal.valueOf(2000), BigDecimal.valueOf(2000),false);
         auctionRepository.save(auction4);
 
 
@@ -104,5 +106,16 @@ public class InitDatabase implements CommandLineRunner {
         userDetailService.saveDetails(userDetail3, "Star");
         UserDetail userDetail4 = new UserDetail("Victoria", "Omelchenko", LocalDate.of(2001, Month.APRIL,2),"omelchenko@gmail.com", "067-831-81-27");
         userDetailService.saveDetails(userDetail4, "NiceCat");
+        UserDetail userDetail5 = new UserDetail("Roman", "Solovey", LocalDate.of(1986, Month.MAY,22),"solovey@gmail.com", "063-834-41-26");
+        userDetailService.saveDetails(userDetail5, "LionKing");
+
+        Bet bet1 = new Bet(LocalDateTime.of(2023,Month.MARCH,1,12,10),BigDecimal.valueOf(3000),true);
+        Bet bet2 = new Bet(LocalDateTime.of(2023,Month.MARCH,1,13,20),BigDecimal.valueOf(4000),true);
+        bet1.setUser(star);
+        bet2.setUser(star);
+        bet1.setAuction(auction1);
+        bet2.setAuction(auction2);
+        betRepository.save(bet1);
+        betRepository.save(bet2);
     }
 }

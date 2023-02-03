@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
-    <meta name="csrf-token" id="csrf-token" th:content="${_csrf.token}"/>
-    <meta name="csrf-header" id="csrf-header" th:content="${_csrf.headerName}"/>
-    <meta name="auctionId" id="auctionId" th:content="${auctionId}"/>
-    <meta name="userId" id="userId" th:content="${userId}"/>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
     <style>
         table {
             border-collapse: collapse;
@@ -67,13 +65,14 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="auction:${auctions}">
+    <tr>
         <td th:text="${auction.titleAuction}"></td>
         <td th:text="${auction.startDate}"></td>
         <td th:text="${auction.endDate}"></td>
         <td th:text="${auction.startingPrice}"></td>
         <td th:text="${auction.currentBet}"></td>
         <td th:text="${auction.active}"></td>
+    </tr>
     </tbody>
 </table>
 <h2>Place Your bet:</h2>
@@ -82,24 +81,8 @@
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     </div>
     <div>
-        <label for="createdDate">Created date:</label>
-        <input type="hidden" id="createdDate" name="createdDate"/>
-    </div>
-    <div>
         <label for="amountMoney">Amount money:</label>
         <input type="number" id="amountMoney" name="amountMoney" min="1000" step="500" required="required"/>
-    </div>
-    <div>
-        <label for="active">Active:</label>
-        <input type="checkbox" id="active" name="active"/>
-    </div>
-    <div>
-        <label for="auctions">Auction</label>
-        <select name="auctions" id="auctions"></select>
-    </div>
-    <div>
-        <label for="users">User</label>
-        <select name="users" id="users"></select>
     </div>
     <div>
         <input type="submit" id="saveBet"/>
@@ -125,16 +108,9 @@
 <div id="current_date_time_block"></div>
 <script>
     const createdDate = document.getElementById('current_date_time_block');
-    const auctionIdMeta = document.getElementById("auctionId");
-    const userIdMeta = document.getElementById("userId");
-    const auctionId = auctionIdMeta.content;
-    const userId = userIdMeta.content;
     const betsTable = document.getElementById('Bets-table');
     const saveBetButton = document.getElementById('saveBet');
-    const baseURI = 'http://localhost:8080/participateAuction/api/v2';
-    const other1URI = `http://localhost:8080/participateAuction/${auctionId}`;
-    const other2URL = `http://localhost:8080/participateAuction/${userId}`;
-
+    const baseURI = 'http://localhost:8080/api/v2';
 
     /* функция добавления ведущих нулей */
     /* (если число меньше десяти, перед числом добавляем ноль) */
@@ -196,7 +172,7 @@
     }
 
     async function loadBets() {
-        const response = await fetch(`${baseURI}/bets`, {
+        const response = await fetch(`${baseURI}${location.pathname}/bets`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'
@@ -210,23 +186,15 @@
     window.addEventListener('load', loadBets);
 
     async function saveBet() {
-        const createdDateInput = document.getElementById('createdDate');
         const amountMoneyInput = document.getElementById('amountMoney');
-        const activeInput = document.getElementById('active');
-        const auctionsSelect = document.getElementById('auctions');
-        const usersSelect = document.getElementById('users');
 
         const bet = {
-            createdDate: createdDateInput.value,
-            amountMoney: amountMoneyInput.value,
-            active: activeInput.checked,
-            auctionId: auctionsSelect.value,
-            userId: usersSelect.value
+            amountMoney: amountMoneyInput.value
         };
         const csrfToken = document.getElementById('_csrf').content;
         console.log("Token = " + csrfToken);
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}/bets`, {
+        const response = await fetch(`${baseURI}${location.pathname }`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

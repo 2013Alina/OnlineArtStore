@@ -12,11 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@RequestMapping("/participateAuction/api/v2/bets")
+@RequestMapping("/api/v2/participateAuction")
 @RestController
 public class BetRestController {
 
@@ -24,17 +27,31 @@ public class BetRestController {
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
 
-    @GetMapping
-    List<Bet> list() {
-        return betRepository.findAll();
+    @GetMapping("{id}/bets")
+    List<Bet> list(@PathVariable int id, Principal principal) {
+        return auctionRepository.findById(id)
+                .orElseThrow()
+                .getBetsAuction()
+                .stream()
+                .filter(bet -> bet.getUser().getUsername().equals(principal.getName()))
+                .sorted(Comparator.comparing(Bet::getCreatedDate).reversed())
+                .toList();
     }
 
-    @GetMapping("/{id}")
-    ResponseEntity<Bet> show(@PathVariable Integer id) {
-        if (betRepository.existsById(id)) {
-            return ResponseEntity.of(betRepository.findById(id));
+    @GetMapping("{auctionId}/bet/{id}")
+    ResponseEntity<Bet> show(@PathVariable int auctionId, @PathVariable Integer id, Principal principal) {
+        Optional<Bet> optionalBet = betRepository.findById(id);
+        if (optionalBet.isEmpty()) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.notFound().build();
+        Bet bet = optionalBet.get();
+        if (bet.getAuction().getId() != auctionId) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (bet.getUser().getUsername().equals(principal.getName())) {
+            return ResponseEntity.of(optionalBet);
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PutMapping("/{id}")
@@ -50,20 +67,25 @@ public class BetRestController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping
-    ResponseEntity<?> createBet(@RequestBody BetDTO betDTO) {
+    @PostMapping("/{id}")
+    ResponseEntity<?> createBet(@PathVariable int id, @RequestBody BetDTO betDTO, Principal principal) {
         try {
-            Optional<Auction> optionalAuction = auctionRepository.findById(betDTO.getAuctionId());
-            Optional<User> optionalUser = userRepository.findById(betDTO.getUserId());
+            Optional<Auction> optionalAuction = auctionRepository.findById(id);
             if (optionalAuction.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
+            Auction auction = optionalAuction.orElseThrow();
+            LocalDateTime now = LocalDateTime.now();
+            if(auction.getEndDate().isAfter(now)) {
+                return ResponseEntity.badRequest().build();
+            }
+            Optional<User> optionalUser = userRepository.findUserByUsername(principal.getName());
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             Bet saved = betRepository.save(betDTO.toEntity(optionalAuction.get(), optionalUser.get()));
             return ResponseEntity
-                    .created(URI.create("/participateAuction/api/v2/bets/" + saved.getId()))
+                    .created(URI.create("/api/v2/participateAuction/" + id + "/bet/" + saved.getId()))
                     .build();
         } catch (Throwable throwable) {
             return ResponseEntity

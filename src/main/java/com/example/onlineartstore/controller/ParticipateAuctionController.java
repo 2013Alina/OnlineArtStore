@@ -6,6 +6,7 @@ import com.example.onlineartstore.repository.AuctionRepository;
 import com.example.onlineartstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @RequestMapping("/participateAuction")
@@ -25,9 +27,6 @@ public class ParticipateAuctionController {
     @GetMapping("/{id}")
     String index(@PathVariable Integer id, Model model) {
         model.addAttribute("auction", auctionRepository.findById(id).orElseThrow());
-        model.addAttribute("auctionId", id);
-        model.addAttribute("user", userRepository.findById(id));
-        model.addAttribute("userId", id);
         return "participateAuction";
     }
 

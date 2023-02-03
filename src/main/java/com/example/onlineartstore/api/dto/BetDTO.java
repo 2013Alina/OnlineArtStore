@@ -11,20 +11,11 @@ import java.time.LocalDateTime;
 @Data
 public class BetDTO {
     @NotNull
-    private LocalDateTime createdDate;
-
-    @NotNull
     @NotBlank
     private BigDecimal amountMoney;
 
-    @NotNull
-    private Boolean active;
-
-    private Integer auctionId;
-    private Integer userId;
-
     public Bet toEntity(Auction auction, User user) {
-        Bet bet = new Bet(createdDate,amountMoney,active);
+        Bet bet = new Bet(LocalDateTime.now(), amountMoney, true);
         bet.setAuction(auction);
         bet.setUser(user);
         return bet;

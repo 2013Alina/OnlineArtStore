@@ -15,7 +15,7 @@ public class BetDTO {
     private BigDecimal amountMoney;
 
     public Bet toEntity(Auction auction, User user) {
-        Bet bet = new Bet(LocalDateTime.now(), amountMoney, true);
+        Bet bet = new Bet(LocalDateTime.now(), amountMoney, true); //time
         bet.setAuction(auction);
         bet.setUser(user);
         return bet;

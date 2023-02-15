@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
     <style>
         table {
             border-collapse: collapse;
@@ -23,8 +25,6 @@
         <li><a th:href="@{/}">General page</a></li>
         <li sec:authorize="isAuthenticated()">
             <a th:href="@{/privatePage}">Private page</a></li>
-        <li sec:authorize="hasRole('USER')">
-            <a th:href="@{/userPage}">User page</a></li>
         <li sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/mainAdminPage}">Admin page</a></li>
         <li sec:authorize="isAnonymous()">
@@ -39,7 +39,27 @@
     </menu>
 </nav>
 <h1 style="color: blue">Private page</h1>
-<h1>Auctions:</h1>
+<h2 sec:authorize="isAuthenticated()">Welcome <span sec:authentication="name"></span>! </h2>
+<h3>To receive your winnings, go through the full registration.</h3>
+<h1>Information about me:</h1>
+<table>
+    <thead>
+    <tr>
+        <th>My login:</th>
+        <th>My password:</th>
+        <th>You can:</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user:${users}">
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.password}"></td>
+        <td sec:authorize="hasRole('USER')"><a th:href="@{/userPage/{userId}(userId=${user.id})}">FULL REGISTRATION!</a></td>
+    </tbody>
+</table>
+
+
+<h1>Active Auctions:</h1>
 <table>
     <thead>
     <tr>
@@ -60,11 +80,11 @@
         <td th:text="${auction.startingPrice}"></td>
         <td th:text="${auction.currentBet}"></td>
         <td th:text="${auction.active}"></td>
-        <td sec:authorize="hasRole('USER')"><a th:href="@{/participateAuction/{auctionId}(auctionId=${auction.id})}">Participate!</a></td>
-
+        <td sec:authorize="hasRole('USER')"><a th:href="@{/participateAuction/{auctionId}(auctionId=${auction.id})}">Participate!</a>
+        </td>
     </tbody>
 </table>
-<h1>Paintings:</h1>
+<h1>Artworks participating in Auctions:</h1>
 <table>
     <thead>
     <tr>
@@ -92,5 +112,8 @@
         <td th:text="${painting.auction.titleAuction}"></td>
     </tbody>
 </table>
+<script type="text/javascript">
+    const userName = '@HttpContext.Current.User.Identity.Name';
+</script>
 </body>
 </html>

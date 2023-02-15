@@ -3,11 +3,13 @@ package com.example.onlineartstore.init;
 import com.example.onlineartstore.entity.*;
 import com.example.onlineartstore.repository.*;
 import com.example.onlineartstore.service.AuctionAddUserService;
+import com.example.onlineartstore.service.RolesAndUserService;
 import com.example.onlineartstore.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,12 +30,19 @@ public class InitDatabase implements CommandLineRunner {
     private final UserDetailService userDetailService;
     private final AuctionAddUserService auctionAddUserService;
     private final BetRepository betRepository;
+    private final RolesAndUserService rolesAndUserService;
+    final private RoleRepository roleRepository;
+
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
+
 
         Author author1 = new Author("artLana", "Svetlana", "Vovk", LocalDate.of(1957, Month.OCTOBER,18), "Many awards", "Food_C245-128.png");
         authorRepository.save(author1);
+        Author author2 = new Author("artMaster", "Alex", "Vovk", LocalDate.of(1958, Month.APRIL,05), "Many awards", "Food_C245-128.png");
+        authorRepository.save(author2);
 
         User star = new User("Star","$2a$10$OEKBPlQJhYFgSQ7PqKXfKulkZnj/FnozqYP8E7T2ro.3YPi8fxlGa", true); // 12345
         User niceCat = new User("NiceCat", "$2a$10$Y9HP/PX0shaO51dWyHunM.MxUkGvNLyLn0zn/uIYLu7eXNnZqCSZ6", true); //2222
@@ -41,6 +50,14 @@ public class InitDatabase implements CommandLineRunner {
         userRepository.save(star);
         userRepository.save(niceCat);
         userRepository.save(lionKing);
+        Role role1 = new Role("ADMIN");
+        Role role2 = new Role("USER");
+        roleRepository.save(role1);
+        roleRepository.save(role2);
+        rolesAndUserService.saveRole(role2, "Star");
+        rolesAndUserService.saveRole(role2, "NiceCat");
+        rolesAndUserService.saveRole(role2, "LionKing");
+
 
         Category category1 = new Category("acrylic");
         Category category2 = new Category("watercolor");
@@ -51,22 +68,22 @@ public class InitDatabase implements CommandLineRunner {
         Comment comment1 = new Comment("This is a beautiful picture");
 
         Auction auction1 = new Auction("New Year Auction!",
-                LocalDateTime.of(2023,Month.JANUARY,1,14,15),
-                LocalDateTime.of(2023,Month.JANUARY,11,14,15),
+                LocalDateTime.of(2023,Month.FEBRUARY,13,10,15),
+                LocalDateTime.of(2023,Month.APRIL,11,14,15),
                 BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(3500),
                 true);
 
         auctionAddUserService.saveAuction(auction1, "Star");
         auctionAddUserService.saveAuction(auction1,"LionKing");
 
-        Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 1, 11, 10), LocalDateTime.of(2023, Month.FEBRUARY, 10,11,10), BigDecimal.valueOf(4000),BigDecimal.valueOf(4000), true);
+        Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 13, 11, 10), LocalDateTime.of(2023, Month.APRIL, 10,11,10), BigDecimal.valueOf(1000),BigDecimal.valueOf(1500), true);
         auctionAddUserService.saveAuction(auction2,"NiceCat");
 
-        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023,Month.MARCH,1,12,00),LocalDateTime.of(2023,Month.MARCH,3,14,00), BigDecimal.valueOf(5000),BigDecimal.valueOf(5000),false);
+        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023,Month.MARCH,1,12,00),LocalDateTime.of(2023,Month.MARCH,3,14,00), BigDecimal.valueOf(1000),BigDecimal.valueOf(1500),false);
         auctionRepository.save(auction3);
 
-        Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023,Month.JULY,1,12,00),LocalDateTime.of(2023,Month.JULY,3,14,00), BigDecimal.valueOf(2000), BigDecimal.valueOf(2000),false);
+        Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023,Month.JULY,1,12,00),LocalDateTime.of(2023,Month.JULY,3,14,00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500),false);
         auctionRepository.save(auction4);
 
 
@@ -109,13 +126,5 @@ public class InitDatabase implements CommandLineRunner {
         UserDetail userDetail5 = new UserDetail("Roman", "Solovey", LocalDate.of(1986, Month.MAY,22),"solovey@gmail.com", "063-834-41-26");
         userDetailService.saveDetails(userDetail5, "LionKing");
 
-        Bet bet1 = new Bet(LocalDateTime.of(2023,Month.MARCH,1,12,10),BigDecimal.valueOf(3000),true);
-        Bet bet2 = new Bet(LocalDateTime.of(2023,Month.MARCH,1,13,20),BigDecimal.valueOf(4000),true);
-        bet1.setUser(star);
-        bet2.setUser(star);
-        bet1.setAuction(auction1);
-        bet2.setAuction(auction2);
-        betRepository.save(bet1);
-        betRepository.save(bet2);
     }
 }

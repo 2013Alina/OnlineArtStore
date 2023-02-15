@@ -21,6 +21,7 @@ import java.util.Properties;
 @Configuration
 public class WebSecurityConfig {
 
+
 //    @Bean("h2DataSource")
 //    public DataSource getH2DataSource() {
 //        return new EmbeddedDatabaseBuilder()
@@ -83,7 +84,11 @@ public class WebSecurityConfig {
                         .mvcMatchers("/privatePage/**").authenticated() // mvcMatchers("/privatePage") здесь обязательная авторизация
                         .mvcMatchers("/mainAdminPage/**").hasRole("ADMIN") //только для роли ADMIN
                         .mvcMatchers("/adminPage/**").hasRole("ADMIN")
+                        .mvcMatchers("/updateCategory/**").hasRole("ADMIN")
+                        .mvcMatchers("/updateAuthor/**").hasRole("ADMIN")
+                        .mvcMatchers("/updatePainting/**").hasRole("ADMIN")
                         .mvcMatchers("/adminPageBets/**").hasRole("ADMIN")
+                        .mvcMatchers("/allBets/**").hasRole("ADMIN")
                         .mvcMatchers("/adminPageUsers/**").hasRole("ADMIN")
                         .mvcMatchers("/userPage/**", "/infoPage/**", "/participateAuction/**").hasRole("USER") //только для роли USER, но ADMIN тоже зайдет так как  UserDetails admin = User.builder()..roles("ADMIN", "USER")
                         .anyRequest().denyAll()) //все остальные запросы запрещены!!!

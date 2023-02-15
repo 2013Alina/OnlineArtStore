@@ -1,6 +1,7 @@
 package com.example.onlineartstore.entity;
 
 import com.example.onlineartstore.api.classAnnotation.Phone;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -49,7 +50,8 @@ public class UserDetail {
     @Phone
     private String telephone;
 
-    @OneToOne(mappedBy = "userDetail")
+
+    @OneToOne(mappedBy = "userDetail") // не ставить аннотацию @JsonIgnore, а то не увижу username
     @NotNull // UserDetail не может существовать отдельно от User!!! Они жестко связаны!Важная аннотация!!!!
     User user;
 

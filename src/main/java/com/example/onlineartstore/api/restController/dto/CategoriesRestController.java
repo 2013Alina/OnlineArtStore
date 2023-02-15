@@ -4,8 +4,11 @@ import com.example.onlineartstore.entity.Category;
 import com.example.onlineartstore.error.ErrorResponse;
 import com.example.onlineartstore.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,7 +28,7 @@ public class CategoriesRestController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<Category> showGroup(@PathVariable Integer id) {
+    ResponseEntity<Category> showCategory(@PathVariable Integer id) {
         if (categoryRepository.existsById(id)) {
             return ResponseEntity.of(categoryRepository.findById(id));
         }
@@ -46,15 +49,16 @@ public class CategoriesRestController {
         }
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<Category> update(@PathVariable Integer id, @RequestBody Category category) {
-        Optional<Category> foundCategories = categoryRepository.findById(id);
-        if (foundCategories.isPresent()) {
-            Category cat = foundCategories.get();
+    @PutMapping("/{id}")   //http://localhost:8080/adminPage/api/v1/categories/5 для update
+    ResponseEntity<?> updateCategory(@PathVariable Integer id, @RequestBody Category category) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isPresent()) {
+            Category cat = optionalCategory.get();
             cat.setName(category.getName());
             return ResponseEntity.of(Optional.of(categoryRepository.save(cat)));
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse("Category not found"));
     }
 
 //    @DeleteMapping("/{id}")
@@ -67,7 +71,7 @@ public class CategoriesRestController {
 //    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteCategory(@PathVariable Integer id) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isPresent()) {
             categoryRepository.delete(optionalCategory.get());

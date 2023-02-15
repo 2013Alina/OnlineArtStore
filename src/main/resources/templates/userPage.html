@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>Online Art Store</title>
     <link th:href="@{/css/userPage.css}" rel="stylesheet"/>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
 <nav>
@@ -12,8 +14,6 @@
         <li><a th:href="@{/}">General page</a></li>
         <li sec:authorize="isAuthenticated()">
             <a th:href="@{/privatePage}">Private page</a></li>
-        <li sec:authorize="hasRole('USER')">
-            <a th:href="@{/userPage}">User page</a></li>
         <li sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/mainAdminPage}">Admin page</a></li>
         <li sec:authorize="isAnonymous()">
@@ -42,19 +42,19 @@
     </div>
     <div>
         <label for="lastName">What is Your second name? (required)</label>
-        <input type="text" id="lastName" name="lastName" placeholder="Smith" required/>
+        <input type="text" id="lastName" name="lastName" placeholder="Smith" required />
     </div>
     <div>
         <label for="birthDate">What is Your date of birth? (required)</label>
-        <input type="date" id="birthDate" name="birthDate" required/>
+        <input type="date" id="birthDate" name="birthDate" required />
     </div>
     <div>
         <label for="email">What is Your email address? (required)</label>
-        <input type="email" id="email" name="email" placeholder="annasmith@gmail.com" required/>
+        <input type="email" id="email" name="email" placeholder="annasmith@gmail.com" required />
     </div>
     <div>
         <label for="telephone">What is Your phone number? (required)</label>
-        <input type="text" id="telephone" name="telephone" placeholder="095-000-01-02" required/>
+        <input type="text" id="telephone" name="telephone" placeholder="095-000-01-02" required />
     </div>
     <div>
         <input type="submit" id="save"/>
@@ -64,10 +64,6 @@
 <ul th:each="error: ${errors}">
     <li th:text="${error.defaultMessage}"></li>
 </ul>
-
-<!--<div sec:authorize="hasRole('USER')">-->
-<!--    <a th:href="@{/infoPage/{userId}(userId=${user.id})}">Entered information about me</a></div>-->
-
 
 </body>
 </html>

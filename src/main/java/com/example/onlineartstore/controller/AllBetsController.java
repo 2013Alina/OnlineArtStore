@@ -1,9 +1,9 @@
 package com.example.onlineartstore.controller;
 
 import com.example.onlineartstore.entity.Auction;
-import com.example.onlineartstore.entity.User;
+import com.example.onlineartstore.entity.Bet;
 import com.example.onlineartstore.repository.AuctionRepository;
-import com.example.onlineartstore.repository.UserRepository;
+import com.example.onlineartstore.repository.BetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,17 +15,29 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Optional;
 
-@RequestMapping("/participateAuction")
+
+@RequestMapping("/allBets")
 @RequiredArgsConstructor
 @Controller
-public class ParticipateAuctionController {
-    private final UserRepository userRepository;
+public class AllBetsController {
+
     private final AuctionRepository auctionRepository;
+    private final BetRepository betRepository;
 
     @GetMapping("/{id}")
     String index(@PathVariable Integer id, Model model) {
         model.addAttribute("auction", auctionRepository.findById(id).orElseThrow());
-        return "participateAuction";
+        return "allBets";
+    }
+
+    @GetMapping("/bets/{id}")
+    @ResponseBody
+    public ResponseEntity<?> showBet(@PathVariable Integer id) {
+        Optional<Bet> optionalBet = betRepository.findById(id);
+        if (optionalBet.isPresent()) {
+            return ResponseEntity.ok(optionalBet.get());
+        }
+        return ResponseEntity.badRequest().body("Bet not found!");
     }
 
     @GetMapping("/auctions/{id}")
@@ -38,13 +50,4 @@ public class ParticipateAuctionController {
         return ResponseEntity.badRequest().body("Auction not found!");
     }
 
-    @GetMapping("/users/{id}")
-    @ResponseBody
-    public ResponseEntity<?> showUser(@PathVariable Integer id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            return ResponseEntity.ok(optionalUser.get());
-        }
-        return ResponseEntity.badRequest().body("User not found!");
-    }
 }

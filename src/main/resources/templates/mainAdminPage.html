@@ -24,13 +24,11 @@
             <li><a th:href="@{/}">General page</a></li>
             <li sec:authorize="isAuthenticated()">
                 <a th:href="@{/privatePage}">Private page</a></li>
-            <li sec:authorize="hasRole('USER')">
-                <a th:href="@{/userPage}">User page</a></li>
             <li sec:authorize="hasRole('ADMIN')">
                 <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
                 <ol type="1">
                     <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
-                    <li><a th:href="@{/adminPageBets}">Auction Participants, Auction`s BETS</a></li>
+                    <li><a th:href="@{/adminPageBets}">Admin page</a></li>
                     <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
                 </ol>
             </li>

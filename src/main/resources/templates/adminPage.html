@@ -26,13 +26,11 @@
             <li><a th:href="@{/}">General page</a></li>
             <li sec:authorize="isAuthenticated()">
                 <a th:href="@{/privatePage}">Private page</a></li>
-            <li sec:authorize="hasRole('USER')">
-                <a th:href="@{/userPage}">User page</a></li>
             <li sec:authorize="hasRole('ADMIN')">
                 <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
                 <ol type="1">
                     <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
-                    <li><a th:href="@{/adminPageBets}">Auction Participants, Auction`s BETS</a></li>
+                    <li><a th:href="@{/adminPageBets}">Admin page</a></li>
                     <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
                 </ol>
             </li>
@@ -252,6 +250,7 @@
         <th>Participants:</th>
         <th>DELETE</th>
         <th>UPDATE</th>
+        <th>BETS:</th>
     </tr>
     </thead>
     <tbody id="Auctions-table"></tbody>
@@ -279,7 +278,7 @@
         const tdDelete = document.createElement('td');
         tdDelete.innerHTML = '<button>DELETE</button>';
         const tdUpdate = document.createElement('td');
-        tdUpdate.innerHTML = '<button>UPDATE</button>';
+        tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
         for (const prop in painting) {
             const td = document.createElement('td');
             if (prop === 'author') {
@@ -349,9 +348,9 @@
         const td = document.createElement('td');
         const deleteButton = document.createElement("button");
         deleteButton.innerText = "DELETE";
-        deleteButton.className = "delete";
+        deleteButton.innerHTML = `<a href='http://localhost:8080/adminPage/api/v1/categories/${category.id}'>DELETE</a>`
         const updateButton = document.createElement("button");
-        updateButton.innerText = "UPDATE";
+        updateButton.innerHTML=`<a href='/updateCategory/${category.id}'>UPDATE</a>`;
         updateButton.className = "update";
         td.append(deleteButton, updateButton);
         tr.append(td);
@@ -363,7 +362,7 @@
         const tdDelete = document.createElement('td');
         tdDelete.innerHTML = '<button>DELETE</button>';
         const tdUpdate = document.createElement('td');
-        tdUpdate.innerHTML = '<button>UPDATE</button>';
+        tdUpdate.innerHTML = `<a href='/updateAuthor/${author.id}'>UPDATE</a>`;
         for (const prop in author) {
             const td = document.createElement('td');
             td.append(document.createTextNode(author[prop]));
@@ -380,6 +379,8 @@
         tdDelete.innerHTML = '<button>DELETE</button>';
         const tdUpdate = document.createElement('td');
         tdUpdate.innerHTML = '<button>UPDATE</button>';
+        const tdAllBets = document.createElement('td');
+        tdAllBets.innerHTML = `<a href='/allBets/${auction.id}'>All BETS!</a>`;
         for (const prop in auction) {
             const td = document.createElement('td');  //@ManyToMany
             if (prop === 'auctionParticipants') {
@@ -395,6 +396,7 @@
             tr.append(td);
             tr.append(tdDelete);
             tr.append(tdUpdate);
+            tr.append(tdAllBets);
         }
         auctionsTable.append(tr);
     }
@@ -641,7 +643,7 @@
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}/auctions`, {
+        const response = await fetch(`${baseURI}/auctions` , {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

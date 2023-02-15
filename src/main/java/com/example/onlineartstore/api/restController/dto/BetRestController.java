@@ -1,7 +1,6 @@
 package com.example.onlineartstore.api.restController.dto;
 
 import com.example.onlineartstore.api.dto.BetDTO;
-import com.example.onlineartstore.api.dto.PaintingDTO;
 import com.example.onlineartstore.entity.*;
 import com.example.onlineartstore.repository.AuctionRepository;
 import com.example.onlineartstore.repository.BetRepository;
@@ -67,7 +66,7 @@ public class BetRestController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{id}")  // /api/v2/participateAuction/id(аукциона)/bet/id(ставки)
     ResponseEntity<?> createBet(@PathVariable int id, @RequestBody BetDTO betDTO, Principal principal) {
         try {
             Optional<Auction> optionalAuction = auctionRepository.findById(id);
@@ -76,9 +75,10 @@ public class BetRestController {
             }
             Auction auction = optionalAuction.orElseThrow();
             LocalDateTime now = LocalDateTime.now();
-            if(auction.getEndDate().isAfter(now)) {
+            if(auction.getEndDate().isBefore(now)) { //до конечной даты аукциона
                 return ResponseEntity.badRequest().build();
             }
+
             Optional<User> optionalUser = userRepository.findUserByUsername(principal.getName());
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -93,6 +93,43 @@ public class BetRestController {
                     .body(throwable);
         }
     }
+
+//    @PostMapping("/{id}")
+//    ResponseEntity<?> createBet(@PathVariable int id, @RequestBody BetDTO betDTO, Principal principal) {
+//        try {
+//            Optional<Auction> optionalAuction = auctionRepository.findById(id);
+//            if (optionalAuction.isEmpty()) {
+//                return ResponseEntity.notFound().build();
+//            }
+//            Auction auction = optionalAuction.orElseThrow();
+//            LocalDateTime now = LocalDateTime.now();
+//
+//            if(auction.getEndDate().isBefore(now)) { //до конечной даты аукциона
+//                return ResponseEntity.badRequest().build();
+//            }
+//            Optional<User> optionalUser = userRepository.findUserByUsername(principal.getName());
+//            if (optionalUser.isEmpty()) {
+//                return ResponseEntity.notFound().build();
+//            }
+//            Bet bet = betDTO.toEntity(optionalAuction.get(),optionalUser.get());
+//            BigDecimal money1 = new BigDecimal(String.valueOf(bet.getAmountMoney()));
+//            BigDecimal money2 = new BigDecimal(String.valueOf(bet.getAmountMoney()));
+//            if (money2.compareTo(money1) <= 0) {
+//                return ResponseEntity.badRequest().build();
+//            }else{
+//                auction.setCurrentBet(money2);
+//            }
+//
+//            Bet saved = betRepository.save(bet);
+//            return ResponseEntity
+//                    .created(URI.create("/api/v2/participateAuction/" + id + "/bet/" + saved.getId()))
+//                    .build();
+//        } catch (Throwable throwable) {
+//            return ResponseEntity
+//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(throwable);
+//        }
+//    }
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> delete(@PathVariable Integer id) {

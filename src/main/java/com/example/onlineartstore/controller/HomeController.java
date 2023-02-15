@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Slf4j
@@ -37,11 +38,13 @@ public class HomeController {
 
 
     @GetMapping("/privatePage")
-    String privatePage(Model model) {
+    String privatePage(Model model, Principal principal) {
         model.addAttribute("auctions", auctionRepository.findAll());
         model.addAttribute("paintings", paintingRepository.findAll());
+        model.addAttribute("users", userRepository.findAll());
         return "privatePage";
     }
+
 
     @GetMapping("/infoPage")
     String infoPage(Model model) {

@@ -1,8 +1,8 @@
 package com.example.onlineartstore.api.restController.dto;
 
+import com.example.onlineartstore.api.dto.AuctionDTO;
 import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.repository.AuctionRepository;
-import com.example.onlineartstore.repository.PaintingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,6 @@ import java.util.Optional;
 public class AuctionRestController {
 
     private final AuctionRepository auctionRepository;
-    private final PaintingRepository paintingRepository;
 
     @GetMapping
     List<Auction> list() {
@@ -50,11 +49,11 @@ public class AuctionRestController {
     }
 
     @PostMapping
-    ResponseEntity<?> create(@RequestBody Auction auction) {
+    ResponseEntity<?> createAuction(@RequestBody AuctionDTO auctionDTO) {
         try {
-            Auction saved = auctionRepository.save(auction);
+            Auction saved = auctionRepository.save(auctionDTO.toEntity());
             return ResponseEntity
-                    .created(URI.create("/adminPage/api/v1/auctions" + saved.getId()))
+                    .created(URI.create("/adminPage/api/v1/auctions/" + saved.getId()))
                     .build();
         } catch (Throwable throwable) {
             return ResponseEntity

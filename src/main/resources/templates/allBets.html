@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Online Art Store</title>
+    <title>Title</title>
     <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
     <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
     <style>
@@ -49,7 +49,7 @@
             <a th:href="@{/logout}">Logout</a></li>
     </menu>
 </nav>
-<h1 style="color: blue">Participate in the auction!</h1>
+<h1 style="color: blue">This Auction:</h1>
 <h2>Welcome <span sec:authentication="name"></span>!</h2>
 <table>
     <thead>
@@ -60,6 +60,7 @@
         <th>Starting Price:</th>
         <th>Current Bet:</th>
         <th>Active:</th>
+        <th>Participants:</th>
     </tr>
     </thead>
     <tbody>
@@ -70,43 +71,39 @@
         <td th:text="${auction.startingPrice}"></td>
         <td th:text="${auction.currentBet}"></td>
         <td th:text="${auction.active}"></td>
+        <td>
+            <ol th:each="user: ${auction.auctionParticipants}" multiple="multiple" th:size="${auction.auctionParticipants.size()}">
+                <li th:text="${user.username + ', '}"></li>
+            </ol>
+        </td>
     </tr>
     </tbody>
 </table>
-<h2>Place Your bet:</h2>
-<div>
-    <div>
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-    </div>
-    <div>
-        <label for="amountMoney">Amount money:</label>
-        <input type="number" id="amountMoney" name="amountMoney" min="1000" step="500" required="required"/>
-    </div>
-    <div>
-        <input type="submit" id="saveBet"/>
-    </div>
-</div>
 
 <h2>BETS table:</h2>
 <table>
     <thead>
     <tr>
-        <th>Id</th>
-        <th>Created Date</th>
-        <th>Amount Money</th>
-        <th>Active</th>
-        <th>Auction</th>
-        <th>User</th>
+        <th>Created date:</th>
+        <th>Amount money:</th>
+        <th>Active:</th>
+        <th>Auction:</th>
+        <th>User:</th>
     </tr>
     </thead>
-    <tbody id="Bets-table">
+    <tbody>
+    <tr th:each="bet:${auction.betsAuction}">
+        <td th:text="${bet.createdDate}"></td>
+        <td th:text="${bet.amountMoney}"></td>
+        <td th:text="${bet.active}"></td>
+        <td th:text="${bet.auction.titleAuction}"></td>
+        <td th:text="${bet.user.username}"></td>
+    </tr>
     </tbody>
 </table>
 <div id="current_date_time_block"></div>
 <script>
     const createdDate = document.getElementById('current_date_time_block');
-    const betsTable = document.getElementById('Bets-table');
-    const saveBetButton = document.getElementById('saveBet');
     const baseURI = 'http://localhost:8080/api/v2';
 
     /* функция добавления ведущих нулей */
@@ -135,76 +132,6 @@
     setInterval(function () {
         createdDate.innerHTML = date_time();
     }, 1000);
-
-
-    function addBet(bet) {
-        const tr = document.createElement('tr');
-        const tdDelete = document.createElement('td');
-        for (const prop in bet) {
-            const td = document.createElement('td');
-            if (prop === 'auction') {
-                td.append(document.createTextNode(bet[prop].titleAuction));
-            }
-            if (prop === 'user') {
-                td.append(document.createTextNode(bet[prop].username));
-            }
-            if (prop !== 'auction' && prop !== 'user') {
-                td.append(document.createTextNode(bet[prop]));
-            }
-            tr.append(td);
-        }
-        betsTable.append(tr);
-    }
-
-    function fillTableBets(bets) {
-        betsTable.innerHTML = '';
-        bets.forEach(bet => {
-            addBet(bet);
-        });
-    }
-
-    async function loadBets() {
-        const response = await fetch(`${baseURI}${location.pathname}/bets`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-        const bets = await response.json();
-        console.log(bets);
-        fillTableBets(bets);
-    }
-
-    window.addEventListener('load', loadBets);
-
-    async function saveBet() {
-        const amountMoneyInput = document.getElementById('amountMoney');
-
-        const bet = {
-            amountMoney: amountMoneyInput.value
-        };
-        const csrfToken = document.getElementById('_csrf').content;
-        console.log("Token = " + csrfToken);
-        const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}${location.pathname }`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            },
-            body: JSON.stringify(bet)
-        });
-        console.log("**********" + response.status);
-        if (response.status === 201) {
-            const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
-            addBet(await resp.json())
-        } else {
-            alert('Error: ' + response.status);
-        }
-    }
-    saveBetButton.addEventListener('click', saveBet);
-
 </script>
 </body>
 </html>

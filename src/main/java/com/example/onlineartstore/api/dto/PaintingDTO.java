@@ -5,14 +5,17 @@ import com.example.onlineartstore.entity.Author;
 import com.example.onlineartstore.entity.Category;
 import com.example.onlineartstore.entity.Painting;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull; // нужный пакет!
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class PaintingDTO {
     @NotNull
@@ -37,7 +40,6 @@ public class PaintingDTO {
     private String description;
 
     @NotNull
-    @NotBlank
     private BigDecimal price;
 
     private Boolean sold;

@@ -12,6 +12,7 @@ import com.example.onlineartstore.repository.PaintingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -43,25 +44,6 @@ public class PaintingsRestController {
         return ResponseEntity.notFound().build();
     }
 
-    // UPDATE ONE Painting
-    @PutMapping("/{id}")
-    ResponseEntity<Painting> update(@PathVariable Integer id, @RequestBody Painting painting) {
-        Optional<Painting> foundPainting = paintingRepository.findById(id);
-        if (foundPainting.isPresent()) {
-            Painting s = foundPainting.get();
-            s.setTitle(painting.getTitle());
-            s.setPublished(painting.getPublished());
-            s.setImagePath(painting.getImagePath());
-            s.setSize(painting.getSize());
-            s.setMaterial(painting.getMaterial());
-            s.setDescription(painting.getDescription());
-            s.setPrice(painting.getPrice());
-            s.setSold(painting.getSold());
-            return ResponseEntity.of(Optional.of(paintingRepository.save(s)));
-        }
-        return ResponseEntity.notFound().build();
-    }
-
     // CREATE Painting
     @PostMapping
     ResponseEntity<?> createPainting(@RequestBody PaintingDTO paintingDTO) {
@@ -88,6 +70,44 @@ public class PaintingsRestController {
                     .body(throwable);
         }
     }
+
+    // UPDATE ONE Painting
+    @PutMapping("/{id}") //http://localhost:8080/adminPage/api/v1/paintings/3 для update
+    ResponseEntity<Painting> updatePainting(@PathVariable Integer id, @RequestBody @Validated PaintingDTO paintingDTO) {
+        Optional<Painting> foundPainting = paintingRepository.findById(id);
+        if (foundPainting.isPresent()) {
+            Painting s = foundPainting.get();
+
+            Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
+            Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
+            Optional<Auction> optionalAuction = auctionRepository.findById(paintingDTO.getAuctionId());
+            if (optionalCategory.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            if (optionalAuthor.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            if (optionalAuction.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            Painting painting = paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get());
+
+            s.setTitle(painting.getTitle());
+            s.setPublished(painting.getPublished());
+            s.setImagePath(painting.getImagePath());
+            s.setSize(painting.getSize());
+            s.setMaterial(painting.getMaterial());
+            s.setDescription(painting.getDescription());
+            s.setPrice(painting.getPrice());
+            s.setSold(painting.getSold());
+            s.setAuthor(painting.getAuthor());
+            s.setAuction(painting.getAuction());
+            s.setCategory(painting.getCategory());
+            return ResponseEntity.of(Optional.of(paintingRepository.save(s)));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 
     // DELETE Painting
     @DeleteMapping("/{id}")

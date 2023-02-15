@@ -46,8 +46,8 @@ public class AuthorsRestController {
         }
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<Author> update(@PathVariable Integer id, @RequestBody Author author) {
+    @PutMapping("/{id}") //http://localhost:8080/adminPage/api/v1/authors/2 для update
+    ResponseEntity<Author> updateAuthor(@PathVariable Integer id, @RequestBody Author author) {
         Optional<Author> foundAuthors = authorRepository.findById(id);
         if (foundAuthors.isPresent()) {
             Author au = foundAuthors.get();

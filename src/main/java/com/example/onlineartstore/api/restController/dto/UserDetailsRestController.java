@@ -1,14 +1,11 @@
 package com.example.onlineartstore.api.restController.dto;
 
-import com.example.onlineartstore.api.dto.UserDetailDTO;
-import com.example.onlineartstore.entity.User;
 import com.example.onlineartstore.entity.UserDetail;
 import com.example.onlineartstore.repository.UserDetailRepository;
 import com.example.onlineartstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -51,11 +48,11 @@ public class UserDetailsRestController {
         return ResponseEntity.notFound().build();
     }
 
+
     @PostMapping
-    ResponseEntity<?> create(@RequestBody @Validated UserDetailDTO userDetailDTO) { // UserDetailDTO для таблицы UserDetail
+    ResponseEntity<?> create(@RequestBody UserDetail userDetail) {
         try {
-            User user = userRepository.getReferenceById(userDetailDTO.getUserId()); //Integer
-            UserDetail saved = userDetailRepository.save(userDetailDTO.toEntity(user));
+            UserDetail saved = userDetailRepository.save(userDetail);
             return ResponseEntity
                     .created(URI.create("/adminPageUsers/api/v3/userDetails/" + saved.getId()))
                     .build();
@@ -65,21 +62,6 @@ public class UserDetailsRestController {
                     .body(throwable);
         }
     }
-
-
-//    @PostMapping
-//    ResponseEntity<?> create(@RequestBody UserDetail userDetail) {
-//        try {
-//            UserDetail saved = userDetailRepository.save(userDetail);
-//            return ResponseEntity
-//                    .created(URI.create("/adminPageUsers/api/v3/userDetails/" + saved.getId()))
-//                    .build();
-//        } catch (Throwable throwable) {
-//            return ResponseEntity
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(throwable);
-//        }
-//    }
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> delete(@PathVariable Integer id) {

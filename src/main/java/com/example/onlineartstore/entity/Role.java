@@ -22,8 +22,8 @@ public class Role implements GrantedAuthority {
     @NonNull
     private String name;
 
-    @ManyToMany
     @JsonIgnore
+    @ManyToMany
     private Set<User> usersRole = new HashSet<>();
 
     public void addUserRole(User user) {

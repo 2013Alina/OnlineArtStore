@@ -47,9 +47,11 @@ public class InitDatabase implements CommandLineRunner {
         User star = new User("Star","$2a$10$OEKBPlQJhYFgSQ7PqKXfKulkZnj/FnozqYP8E7T2ro.3YPi8fxlGa", true); // 12345
         User niceCat = new User("NiceCat", "$2a$10$Y9HP/PX0shaO51dWyHunM.MxUkGvNLyLn0zn/uIYLu7eXNnZqCSZ6", true); //2222
         User lionKing = new User("LionKing","$2a$10$OEKBPlQJhYFgSQ7PqKXfKulkZnj/FnozqYP8E7T2ro.3YPi8fxlGa", true); // 12345
+        User good = new User("Good","$2a$10$OEKBPlQJhYFgSQ7PqKXfKulkZnj/FnozqYP8E7T2ro.3YPi8fxlGa", true); // 12345
         userRepository.save(star);
         userRepository.save(niceCat);
         userRepository.save(lionKing);
+        userRepository.save(good);
         Role role1 = new Role("ADMIN");
         Role role2 = new Role("USER");
         roleRepository.save(role1);

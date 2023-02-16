@@ -1,28 +1,18 @@
-package com.example.onlineartstore.entity;
+package com.example.onlineartstore.api.dto;
 
 import com.example.onlineartstore.api.classAnnotation.Phone;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import com.example.onlineartstore.entity.*;
+import lombok.Data;
+import lombok.NonNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
-
-@Entity
 @Data
-@NoArgsConstructor
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Table(name = "UsersDetails")
-public class UserDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+public class UserDetailDTO {
     @NonNull
     @NotNull
     @NotBlank
@@ -50,10 +40,12 @@ public class UserDetail {
     @Phone
     private String telephone;
 
+    @NotNull
+    private Integer userId;
 
-    @OneToOne(mappedBy = "userDetail") // не ставить аннотацию @JsonIgnore, а то не увижу username
-    @NotNull // UserDetail не может существовать отдельно от User!!! Они жестко связаны!Важная аннотация!!!!
-    private User user;
-
-
+    public UserDetail toEntity(User user) {
+        UserDetail userDetail = new UserDetail(firstName,lastName,birthDate,email,telephone);
+        userDetail.setUser(user);
+        return userDetail;
+    }
 }

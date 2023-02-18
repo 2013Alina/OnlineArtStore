@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/participateAuction")
+@RequestMapping("/api/v2/participateAuction") // /api/v2/participateAuction/{id}(аукциона)/bet/id(ставки)
 @RestController
 public class BetRestController {
 

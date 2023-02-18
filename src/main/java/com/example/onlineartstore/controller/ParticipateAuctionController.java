@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Optional;
 
-@RequestMapping("/participateAuction")
+@RequestMapping("/participateAuction") // /participateAuction/{id}/
 @RequiredArgsConstructor
 @Controller
 public class ParticipateAuctionController {

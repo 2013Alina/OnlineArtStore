@@ -5,6 +5,7 @@
     <title>Online Art Store</title>
     <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
     <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="userId" id="userId" th:content="${userId}"/>
     <style>
         table {
             border-collapse: collapse;
@@ -40,24 +41,6 @@
 </nav>
 <h1 style="color: blue">Private page</h1>
 <h2 sec:authorize="isAuthenticated()">Welcome <span sec:authentication="name"></span>! </h2>
-<h3>To receive your winnings, go through the full registration.</h3>
-<h1>Information about me:</h1>
-<table>
-    <thead>
-    <tr>
-        <th>My login:</th>
-        <th>My password:</th>
-        <th>You can:</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="user:${users}">
-        <td th:text="${user.username}"></td>
-        <td th:text="${user.password}"></td>
-        <td sec:authorize="hasRole('USER')"><a th:href="@{/userPage/{userId}(userId=${user.id})}">FULL REGISTRATION!</a></td>
-    </tbody>
-</table>
-
 
 <h1>Active Auctions:</h1>
 <table>
@@ -112,8 +95,35 @@
         <td th:text="${painting.auction.titleAuction}"></td>
     </tbody>
 </table>
-<script type="text/javascript">
-    const userName = '@HttpContext.Current.User.Identity.Name';
-</script>
+
+<h1>Our talented artists:</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Pseudonym:</th>
+        <th>FirstName:</th>
+        <th>Surname:</th>
+        <th>BirthDate:</th>
+        <th>Awards:</th>
+        <th>ImagePath:</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="author:${authors}">
+        <td th:text="${author.pseudonym}"></td>
+        <td th:text="${author.firstName}"></td>
+        <td th:text="${author.surname}"></td>
+        <td th:text="${author.birthDate}"></td>
+        <td th:text="${author.awards}"></td>
+        <td th:text="${author.imagePath}"></td>
+    </tbody>
+</table>
+
+<h3>If you are the lucky winner of the auction, please fill in additional information about yourself so that our manager can contact you to send your prize.</h3>
+
+<div th:each="user:${users}">
+    <h2 th:each="user : ${user}"><a th:if="${#authentication.getName() == user.username}" th:href="@{/userPage/{userId}(userId=${user.id})}">Additional information about the <span sec:authentication="name"></span></a></h2>
+</div>
+
 </body>
 </html>

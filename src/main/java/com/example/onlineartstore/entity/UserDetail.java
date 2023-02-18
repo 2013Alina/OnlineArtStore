@@ -55,5 +55,4 @@ public class UserDetail {
     @NotNull // UserDetail не может существовать отдельно от User!!! Они жестко связаны!Важная аннотация!!!!
     private User user;
 
-
 }

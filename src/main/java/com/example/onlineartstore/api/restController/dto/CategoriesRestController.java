@@ -36,7 +36,7 @@ public class CategoriesRestController {
     }
 
     @PostMapping
-    ResponseEntity<?> create(@RequestBody Category category) {
+    ResponseEntity<?> createCategory(@RequestBody Category category) {
         try {
             Category saved = categoryRepository.save(category);
             return ResponseEntity

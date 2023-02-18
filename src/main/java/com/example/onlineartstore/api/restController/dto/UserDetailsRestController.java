@@ -55,30 +55,6 @@ public class UserDetailsRestController {
         return ResponseEntity.notFound().build();
     }
 
-
-//    @PostMapping
-//    ResponseEntity<?> createUserDetail(@RequestBody UserDetail userDetail, BindingResult bindingResult) {
-//        if (!bindingResult.hasErrors()) {
-//            String name = userDetail.getUser().getUsername();
-//            Optional<User> optionalUser = userRepository.findUserByUsername(name);
-//            if (optionalUser.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            UserDetail saved;
-//            try {
-//                saved = userDetailService.saveDetails(userDetail,name);
-//            } catch (Exception e) {
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                        .body(new ErrorResponse(e.getMessage()));
-//            }
-//            URI uri = URI.create("/adminPageUsers/api/v3/userDetails/" + saved.getId());
-//            return ResponseEntity.created(uri).build();
-//
-//        }
-//        return ResponseEntity.badRequest()
-//                .body(bindingResult.getAllErrors());
-//    }
-
     @PostMapping
     ResponseEntity<?> createUserDetail(@RequestBody @Validated UserDetailDTO userDetailDTO, BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {

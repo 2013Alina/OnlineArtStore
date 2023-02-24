@@ -86,7 +86,7 @@
     </div>
     <div>
         <label for="email">Email:</label>
-        <input type="text" id="email" name="email"/>
+        <input type="email" id="email" name="email"/>
     </div>
     <div>
         <label for="telephone">Telephone:</label>
@@ -112,6 +112,8 @@
         <th>User`s login:</th>
         <th>Password:</th>
         <th>Enabled:</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
     </tr>
     </thead>
     <tbody id="Users-table"></tbody>
@@ -128,10 +130,13 @@
         <th>Email:</th>
         <th>Telephone:</th>
         <th>User`s login:</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
     </tr>
     </thead>
     <tbody id="UserDetails-table"></tbody>
 </table>
+
 
 <script>
     const baseURI = 'http://localhost:8080/adminPageUsers/api/v3';
@@ -143,16 +148,26 @@
 
     function addUser(user) {
         const tr = document.createElement('tr');
+        const tdDelete = document.createElement('td');
+        tdDelete.innerHTML = '<button>DELETE</button>';
+        const tdUpdate = document.createElement('td');
+        tdUpdate.innerHTML = `<a href='/updateUser/${user.id}'>UPDATE</a>`;
         for (const prop in user) {
             const td = document.createElement('td');
             td.append(document.createTextNode(user[prop]));
             tr.append(td);
         }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
         usersTable.append(tr);
     }
 
     function addUserDetail(userDetail) {
         const tr = document.createElement('tr');
+        const tdDelete = document.createElement('td');
+        tdDelete.innerHTML = '<button>DELETE</button>';
+        const tdUpdate = document.createElement('td');
+        tdUpdate.innerHTML = `<a href='/updateUserDetail/${userDetail.id}'>UPDATE</a>`;
         for (const prop in userDetail) {
             const td = document.createElement('td');
             if (prop === 'user') {
@@ -162,6 +177,8 @@
             }
             tr.append(td);
         }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
         userDetailsTable.append(tr);
     }
 

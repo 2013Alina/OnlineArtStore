@@ -300,44 +300,6 @@
         paintingsTable.append(tr);
     }
 
-    // function addCategory(category) {
-    //     const tr = document.createElement('tr');
-    //     const tdDelete = document.createElement('td');
-    //     tdDelete.innerHTML = '<button>DELETE</button>';
-    //     tdDelete.className = "delete";
-    //     const tdUpdate = document.createElement('td');
-    //     tdUpdate.innerHTML = '<button>UPDATE</button>';
-    //     tdUpdate.className = "update";
-    //     for (const prop in category) {
-    //         const td = document.createElement('td');
-    //         td.append(document.createTextNode(category[prop]));
-    //         tr.append(td);
-    //         tr.append(tdDelete);
-    //         tr.append(tdUpdate);
-    //     }
-    //     categoriesTable.append(tr);
-    // }
-
-    // function addCategory(category) {
-    //     const tr = document.createElement('tr');
-    //     const td = document.createElement('td');
-    //     const tdDelete = document.createElement('td');
-    //     tdDelete.innerHTML = '<button>DELETE</button>';
-    //     tdDelete.className = "delete";
-    //     const tdUpdate = document.createElement('td');
-    //     tdUpdate.innerHTML = '<button>UPDATE</button>';
-    //     tdUpdate.className = "update";
-    //     for (const prop in category) {
-    //         const td = document.createElement('td');
-    //         td.append(document.createTextNode(category[prop]));
-    //         tr.append(td);
-    //     }
-    //     tr.append(tdDelete);
-    //     tr.append(tdUpdate);
-    //     tr.append(td);
-    //     categoriesTable.append(tr);
-    // }
-
     function addCategory(category) {
         const tr = document.createElement('tr');
         for (const prop in category) {
@@ -374,11 +336,13 @@
     }
 
     function addAuction(auction) {
+        console.log("-----");
+        console.log(auction);
         const tr = document.createElement('tr');
         const tdDelete = document.createElement('td');
         tdDelete.innerHTML = '<button>DELETE</button>';
         const tdUpdate = document.createElement('td');
-        tdUpdate.innerHTML = '<button>UPDATE</button>';
+        tdUpdate.innerHTML = `<a href='/updateAuction/${auction.id}'>UPDATE</a>`;
         const tdAllBets = document.createElement('td');
         tdAllBets.innerHTML = `<a href='/allBets/${auction.id}'>All BETS!</a>`;
         for (const prop in auction) {
@@ -394,10 +358,10 @@
                 td.append(document.createTextNode(auction[prop]));
             }
             tr.append(td);
-            tr.append(tdDelete);
-            tr.append(tdUpdate);
-            tr.append(tdAllBets);
         }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
+        tr.append(tdAllBets);
         auctionsTable.append(tr);
     }
 

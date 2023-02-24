@@ -53,9 +53,9 @@ public class CategoriesRestController {
     ResponseEntity<?> updateCategory(@PathVariable Integer id, @RequestBody Category category) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isPresent()) {
-            Category cat = optionalCategory.get();
-            cat.setName(category.getName());
-            return ResponseEntity.of(Optional.of(categoryRepository.save(cat)));
+            Category variable = optionalCategory.get();
+            variable.setName(category.getName());
+            return ResponseEntity.of(Optional.of(categoryRepository.save(variable)));
         }
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse("Category not found"));

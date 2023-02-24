@@ -74,6 +74,9 @@
         <input type="submit" id="savePainting"/>
     </div>
 </div>
+<div>
+    <a th:href="@{/adminPage}">Back to admin page</a>
+</div>
 
 <script>
     const savePaintingButton = document.getElementById('savePainting');
@@ -128,6 +131,45 @@
         }
     }
 
+    async function loadAuthors() {
+        const authorsSelect = document.getElementById('authors');
+        const response = await fetch(`${baseURI}/authors`);
+        const authors = await response.json();
+        authors.forEach(author => {
+            const option = document.createElement('option');
+            option.value = author.id;
+            option.text = author.pseudonym;
+            authorsSelect.add(option);
+        });
+    }
+
+    async function loadCategories() {
+        const categoriesSelect = document.getElementById('categories');
+        const response = await fetch(`${baseURI}/categories`);
+        const categories = await response.json();
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.text = category.name;
+            categoriesSelect.add(option);
+        });
+    }
+
+    async function loadAuctions() {
+        const auctionsSelect = document.getElementById('auctions');
+        const response = await fetch(`${baseURI}/auctions`);
+        const auctions = await response.json();
+        auctions.forEach(auction => {
+            const option = document.createElement('option');
+            option.value = auction.id;
+            option.text = auction.titleAuction;
+            auctionsSelect.add(option);
+        });
+    }
+
+    loadAuthors();
+    loadCategories();
+    loadAuctions();
     savePaintingButton.addEventListener('click', savePainting);
 </script>
 </body>

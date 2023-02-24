@@ -77,7 +77,7 @@ public class InitDatabase implements CommandLineRunner {
                 true);
 
         auctionAddUserService.saveAuction(auction1, "Star");
-        auctionAddUserService.saveAuction(auction1,"LionKing");
+        auctionAddUserService.saveAuction(auction1, "LionKing");
 
         Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 13, 11, 10), LocalDateTime.of(2023, Month.APRIL, 10,11,10), BigDecimal.valueOf(1000),BigDecimal.valueOf(1500), true);
         auctionAddUserService.saveAuction(auction2,"NiceCat");

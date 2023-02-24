@@ -4,12 +4,9 @@ import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.entity.Author;
 import com.example.onlineartstore.entity.Category;
 import com.example.onlineartstore.entity.Painting;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull; // нужный пакет!
 import java.math.BigDecimal;
@@ -48,7 +45,7 @@ public class PaintingDTO {
     private Integer categoryId;
     @NotNull
     private Integer authorId;
-
+//картина может быть еще не подвязана под аукцион null
     private Integer auctionId;
 
     public Painting toEntity(Category category, Author author, Auction auction) {

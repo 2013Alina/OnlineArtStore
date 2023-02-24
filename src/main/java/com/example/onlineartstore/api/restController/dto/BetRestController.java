@@ -94,42 +94,6 @@ public class BetRestController {
         }
     }
 
-//    @PostMapping("/{id}")
-//    ResponseEntity<?> createBet(@PathVariable int id, @RequestBody BetDTO betDTO, Principal principal) {
-//        try {
-//            Optional<Auction> optionalAuction = auctionRepository.findById(id);
-//            if (optionalAuction.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            Auction auction = optionalAuction.orElseThrow();
-//            LocalDateTime now = LocalDateTime.now();
-//
-//            if(auction.getEndDate().isBefore(now)) { //до конечной даты аукциона
-//                return ResponseEntity.badRequest().build();
-//            }
-//            Optional<User> optionalUser = userRepository.findUserByUsername(principal.getName());
-//            if (optionalUser.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            Bet bet = betDTO.toEntity(optionalAuction.get(),optionalUser.get());
-//            BigDecimal money1 = new BigDecimal(String.valueOf(bet.getAmountMoney()));
-//            BigDecimal money2 = new BigDecimal(String.valueOf(bet.getAmountMoney()));
-//            if (money2.compareTo(money1) <= 0) {
-//                return ResponseEntity.badRequest().build();
-//            }else{
-//                auction.setCurrentBet(money2);
-//            }
-//
-//            Bet saved = betRepository.save(bet);
-//            return ResponseEntity
-//                    .created(URI.create("/api/v2/participateAuction/" + id + "/bet/" + saved.getId()))
-//                    .build();
-//        } catch (Throwable throwable) {
-//            return ResponseEntity
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(throwable);
-//        }
-//    }
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> delete(@PathVariable Integer id) {

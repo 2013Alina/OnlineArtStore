@@ -37,14 +37,17 @@ public class UsersRestController {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<User> update(@PathVariable Integer id, @RequestBody User user) {
+    @PutMapping("/{id}") //http://localhost:8080/adminPageUsers/api/v3/users/2 для update
+    ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody @Validated UserDTO userDTO) {
         Optional<User> foundUser = userRepository.findById(id);
         if (foundUser.isPresent()) {
-            User u = foundUser.get();
-            u.setUsername(user.getUsername());
-            u.setPassword(user.getPassword());
-            return ResponseEntity.of(Optional.of(userRepository.save(u)));
+            User variable = foundUser.get();
+
+            User user = userDTO.toEntity();
+
+            variable.setUsername(user.getUsername());
+            variable.setPassword(user.getPassword());
+            return ResponseEntity.of(Optional.of(userRepository.save(variable)));
         }
         return ResponseEntity.notFound().build();
     }

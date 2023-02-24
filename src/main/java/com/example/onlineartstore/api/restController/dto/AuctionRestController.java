@@ -6,6 +6,7 @@ import com.example.onlineartstore.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -32,18 +33,21 @@ public class AuctionRestController {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<Auction> update(@PathVariable Integer id, @RequestBody Auction auction) {
+    @PutMapping("/{id}") //http://localhost:8080/adminPage/api/v1/auctions/3 для update
+    ResponseEntity<Auction> updateAuction(@PathVariable Integer id, @RequestBody @Validated AuctionDTO auctionDTO) {
         Optional<Auction> foundAuction = auctionRepository.findById(id);
         if (foundAuction.isPresent()) {
-            Auction a = foundAuction.get();
-            a.setTitleAuction(auction.getTitleAuction());
-            a.setStartDate(auction.getStartDate());
-            a.setEndDate(auction.getEndDate());
-            a.setStartingPrice(auction.getStartingPrice());
-            a.setCurrentBet(auction.getCurrentBet());
-            a.setActive(auction.getActive());
-            return ResponseEntity.of(Optional.of(auctionRepository.save(a)));
+            Auction variable = foundAuction.get();
+
+            Auction auction = auctionDTO.toEntity();
+
+            variable.setTitleAuction(auction.getTitleAuction());
+            variable.setStartDate(auction.getStartDate());
+            variable.setEndDate(auction.getEndDate());
+            variable.setStartingPrice(auction.getStartingPrice());
+            variable.setCurrentBet(auction.getCurrentBet());
+            variable.setActive(auction.getActive());
+            return ResponseEntity.of(Optional.of(auctionRepository.save(variable)));
         }
         return ResponseEntity.notFound().build();
     }

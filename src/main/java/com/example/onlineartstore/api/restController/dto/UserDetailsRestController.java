@@ -40,17 +40,24 @@ public class UserDetailsRestController {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<UserDetail> update(@PathVariable Integer id, @RequestBody UserDetail userDetail) {
+    @PutMapping("/{id}") //http://localhost:8080/adminPageUsers/api/v3/userDetails/6
+    ResponseEntity<UserDetail> updateUserDetail(@PathVariable Integer id, @RequestBody @Validated UserDetailDTO userDetailDTO) {
         Optional<UserDetail> foundUserDetail = userDetailRepository.findById(id);
         if (foundUserDetail.isPresent()) {
-            UserDetail u = foundUserDetail.get();
-            u.setFirstName(userDetail.getFirstName());
-            u.setLastName(userDetail.getLastName());
-            u.setBirthDate(userDetail.getBirthDate());
-            u.setEmail(userDetail.getEmail());
-            u.setTelephone(userDetail.getTelephone());
-            return ResponseEntity.of(Optional.of(userDetailRepository.save(u)));
+            UserDetail variable = foundUserDetail.get();
+
+            Optional<User> optionalUser = userRepository.findById(userDetailDTO.getUserId());
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            UserDetail userDetail = userDetailDTO.toEntity(optionalUser.get());
+
+            variable.setFirstName(userDetail.getFirstName());
+            variable.setLastName(userDetail.getLastName());
+            variable.setBirthDate(userDetail.getBirthDate());
+            variable.setEmail(userDetail.getEmail());
+            variable.setTelephone(userDetail.getTelephone());
+            return ResponseEntity.of(Optional.of(userDetailRepository.save(variable)));
         }
         return ResponseEntity.notFound().build();
     }
@@ -64,8 +71,12 @@ public class UserDetailsRestController {
                 if (optionalUser.isEmpty()) {
                     return ResponseEntity.notFound().build();
                 }
-                saved = userDetailRepository.save(userDetailDTO.toEntity(optionalUser.get()));
-                saved = userDetailService.saveDetails(saved, optionalUser.get().getUsername());
+                User user = optionalUser.get();
+                if(user.getUserDetail() != null){
+                    return ResponseEntity.notFound().build(); // проверка, есть ли у User UserDetail
+                }
+                saved = userDetailRepository.save(userDetailDTO.toEntity(user));
+                saved = userDetailService.saveDetails(saved, user.getUsername());
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(new ErrorResponse(e.getMessage()));

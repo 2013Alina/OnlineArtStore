@@ -2,7 +2,6 @@ package com.example.onlineartstore.api.dto;
 
 import com.example.onlineartstore.entity.Auction;
 import lombok.Data;
-
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -76,7 +76,7 @@ public class PaintingsRestController {
     ResponseEntity<Painting> updatePainting(@PathVariable Integer id, @RequestBody @Validated PaintingDTO paintingDTO) {
         Optional<Painting> foundPainting = paintingRepository.findById(id);
         if (foundPainting.isPresent()) {
-            Painting s = foundPainting.get();
+            Painting variable = foundPainting.get();
 
             Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
             Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
@@ -92,18 +92,18 @@ public class PaintingsRestController {
             }
             Painting painting = paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get());
 
-            s.setTitle(painting.getTitle());
-            s.setPublished(painting.getPublished());
-            s.setImagePath(painting.getImagePath());
-            s.setSize(painting.getSize());
-            s.setMaterial(painting.getMaterial());
-            s.setDescription(painting.getDescription());
-            s.setPrice(painting.getPrice());
-            s.setSold(painting.getSold());
-            s.setAuthor(painting.getAuthor());
-            s.setAuction(painting.getAuction());
-            s.setCategory(painting.getCategory());
-            return ResponseEntity.of(Optional.of(paintingRepository.save(s)));
+            variable.setTitle(painting.getTitle());
+            variable.setPublished(painting.getPublished());
+            variable.setImagePath(painting.getImagePath());
+            variable.setSize(painting.getSize());
+            variable.setMaterial(painting.getMaterial());
+            variable.setDescription(painting.getDescription());
+            variable.setPrice(painting.getPrice());
+            variable.setSold(painting.getSold());
+            variable.setAuthor(painting.getAuthor());
+            variable.setAuction(painting.getAuction());
+            variable.setCategory(painting.getCategory());
+            return ResponseEntity.of(Optional.of(paintingRepository.save(variable)));
         }
         return ResponseEntity.notFound().build();
     }

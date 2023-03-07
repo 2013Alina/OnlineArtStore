@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Online Art Store</title>
+    <title>PrivatePage</title>
     <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
     <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
     <meta name="userId" id="userId" th:content="${userId}"/>
@@ -63,7 +63,7 @@
         <td th:text="${auction.startingPrice}"></td>
         <td th:text="${auction.currentBet}"></td>
         <td th:text="${auction.active}"></td>
-        <td sec:authorize="hasRole('USER')"><a th:href="@{/participateAuction/{auctionId}(auctionId=${auction.id})}">Participate!</a>
+        <td><a class="participate-link" th:href="@{/participateAuction/{auctionId}(auctionId=${auction.id})}">Participate!</a>
         </td>
     </tbody>
 </table>
@@ -124,6 +124,44 @@
 <div th:each="user:${users}">
     <h2 th:each="user : ${user}"><a th:if="${#authentication.getName() == user.username}" th:href="@{/userPage/{userId}(userId=${user.id})}">Additional information about the <span sec:authentication="name"></span></a></h2>
 </div>
+
+<script>
+    // Get all the "Participate!" links on the page
+    const baseURI = 'http://localhost:8080/participateAuction/';
+    const participateLinks = document.querySelectorAll('.participate-link');
+
+    // Attach a click event listener to each "Participate!" link
+    participateLinks.forEach(link => {
+        link.addEventListener('click', async (event) => {
+            event.preventDefault(); // Prevent the link from navigating to a new page
+
+            // Get the auction ID from the link's href attribute
+            const auctionId = link.href.split('/').pop();
+
+            try {
+                // Make a POST request to the participateAuction endpoint with the auctionId parameter
+                const response = await fetch(`${baseURI}${auctionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                console.log(auctionId);
+                if (response.ok) {
+                    // Reload the page to see the updated auction information
+                    window.location.reload();
+                } else {
+                    console.error(`Failed to participate in auction ${auctionId}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error(`Failed to participate in auction ${auctionId}: ${error}`);
+            }
+        });
+    });
+
+</script>
+
 
 </body>
 </html>

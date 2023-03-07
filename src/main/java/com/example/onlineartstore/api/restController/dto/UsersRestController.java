@@ -72,8 +72,8 @@ public class UsersRestController {
                 .body(bindingResult.getAllErrors());
     }
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<?> delete(@PathVariable Integer id) {
+    @DeleteMapping("/{id}") //http://localhost:8080/adminPageUsers/api/v3/users/2
+    ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return ResponseEntity.ok().build();

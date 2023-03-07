@@ -90,8 +90,8 @@ public class UserDetailsRestController {
     }
 
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<?> delete(@PathVariable Integer id) {
+    @DeleteMapping("/{id}") //http://localhost:8080/adminPageUsers/api/v3/userDetails/4
+    ResponseEntity<?> deleteUserDetail(@PathVariable Integer id) {
         if (userDetailRepository.existsById(id)) {
             userDetailRepository.deleteById(id);
             return ResponseEntity.ok().build();

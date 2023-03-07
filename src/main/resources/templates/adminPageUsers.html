@@ -130,7 +130,6 @@
         <th>Email:</th>
         <th>Telephone:</th>
         <th>User`s login:</th>
-        <th>DELETE:</th>
         <th>UPDATE:</th>
     </tr>
     </thead>
@@ -148,8 +147,9 @@
 
     function addUser(user) {
         const tr = document.createElement('tr');
+        tr.dataset.userId = user.id; //идентификатор строки в таблице User
         const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = '<button>DELETE</button>';
+        tdDelete.innerHTML = `<a href="#" onclick="deleteUser(${user.id})">DELETE</a>`; //<a href="#" создаю элемент для создания «кнопки», которая выглядит как ссылка, но еще не имеет целевой страницы или реализованной функции
         const tdUpdate = document.createElement('td');
         tdUpdate.innerHTML = `<a href='/updateUser/${user.id}'>UPDATE</a>`;
         for (const prop in user) {
@@ -162,10 +162,32 @@
         usersTable.append(tr);
     }
 
+
+    async function deleteUser(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/users/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = usersTable.querySelector(`[data-user-id="${id}"]`); //tr.dataset.userId = user.id;
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+
     function addUserDetail(userDetail) {
         const tr = document.createElement('tr');
-        const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = '<button>DELETE</button>';
         const tdUpdate = document.createElement('td');
         tdUpdate.innerHTML = `<a href='/updateUserDetail/${userDetail.id}'>UPDATE</a>`;
         for (const prop in userDetail) {
@@ -177,10 +199,10 @@
             }
             tr.append(td);
         }
-        tr.append(tdDelete);
         tr.append(tdUpdate);
         userDetailsTable.append(tr);
     }
+
 
     function fillTableUsers(users) {
         usersTable.innerHTML = '';
@@ -259,11 +281,11 @@
         if (response.status === 201) {
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
-            if(resp.status === 200){
+            if (resp.status === 200) {
                 let user = await resp.json();
                 console.log(user);
                 addUser(user)
-            }else{
+            } else {
                 alert('Error: ' + (await resp.text()));
             }
         } else {
@@ -302,11 +324,11 @@
         if (response.status === 201) {
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
-            if(resp.status === 200){
+            if (resp.status === 200) {
                 let userDetail = await resp.json();
                 console.log(userDetail);
                 addUserDetail(userDetail)
-            }else{
+            } else {
                 alert('Error: ' + (await resp.text()));
             }
         } else {
@@ -314,9 +336,9 @@
             console.error(await response.json());
         }
     }
+
     saveUserButton.addEventListener('click', saveUser);
     saveUserDetailButton.addEventListener('click', saveUserDetail);
 </script>
-
 </body>
 </html>

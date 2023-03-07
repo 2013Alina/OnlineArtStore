@@ -211,7 +211,8 @@
         <tr>
             <th>Id</th>
             <th>Category name</th>
-            <th>Options:</th>
+            <th>DELETE:</th>
+            <th>UPDATE:</th>
         </tr>
         </thead>
         <tbody id="Categories-table"></tbody>
@@ -275,9 +276,10 @@
 
     function addPainting(painting) {
         const tr = document.createElement('tr');
+        tr.dataset.paintingId = painting.id; //идентификатор строки в таблице Painting
         const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = '<button>DELETE</button>';
         const tdUpdate = document.createElement('td');
+        tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
         tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
         for (const prop in painting) {
             const td = document.createElement('td');
@@ -290,7 +292,7 @@
             if (prop === 'auction') {
                 td.append(document.createTextNode(painting[prop].titleAuction));
             }
-            if(prop !== 'author' && prop !== 'category' && prop !== 'auction' ){
+            if (prop !== 'author' && prop !== 'category' && prop !== 'auction') {
                 td.append(document.createTextNode(painting[prop]));
             }
             tr.append(td);
@@ -300,29 +302,83 @@
         paintingsTable.append(tr);
     }
 
+    async function deletePainting(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/paintings/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = paintingsTable.querySelector(`[data-painting-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+
+
     function addCategory(category) {
         const tr = document.createElement('tr');
+        tr.dataset.categoryId = category.id; //идентификатор строки в таблице Category
+        const tdDelete = document.createElement('td');
+        const tdUpdate = document.createElement('td');
+        tdDelete.innerHTML = `<a href="#" onclick="deleteCategory(${category.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a href='/updateCategory/${category.id}'>UPDATE</a>`;
         for (const prop in category) {
             const td = document.createElement('td');
             td.append(document.createTextNode(category[prop]));
             tr.append(td);
         }
-        const td = document.createElement('td');
-        const deleteButton = document.createElement("button");
-        deleteButton.innerText = "DELETE";
-        deleteButton.innerHTML = `<a href='http://localhost:8080/adminPage/api/v1/categories/${category.id}'>DELETE</a>`
-        const updateButton = document.createElement("button");
-        updateButton.innerHTML=`<a href='/updateCategory/${category.id}'>UPDATE</a>`;
-        updateButton.className = "update";
-        td.append(deleteButton, updateButton);
-        tr.append(td);
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
         categoriesTable.append(tr);
     }
 
+    async function deleteCategory(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/categories/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 204) {
+            const row = categoriesTable.querySelector(`[data-category-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            try {
+                const json = await response.json();
+                console.error(json);
+            } catch (e) {
+                console.error("Invalid JSON response from server");
+            }
+        }
+    }
+
+
     function addAuthor(author) {
         const tr = document.createElement('tr');
+        tr.dataset.authorId = author.id; //идентификатор строки в таблице Author
         const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = '<button>DELETE</button>';
+        tdDelete.innerHTML = `<a href="#" onclick="deleteAuthor(${author.id})">DELETE</a>`;
         const tdUpdate = document.createElement('td');
         tdUpdate.innerHTML = `<a href='/updateAuthor/${author.id}'>UPDATE</a>`;
         for (const prop in author) {
@@ -335,12 +391,37 @@
         authorsTable.append(tr);
     }
 
+    async function deleteAuthor(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/authors/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = authorsTable.querySelector(`[data-author-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+
     function addAuction(auction) {
         console.log("-----");
         console.log(auction);
         const tr = document.createElement('tr');
+        tr.dataset.auctionId = auction.id; //идентификатор строки в таблице Auction
         const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = '<button>DELETE</button>';
+        tdDelete.innerHTML = `<a href="#" onclick="deleteAuction(${auction.id})">DELETE</a>`;
         const tdUpdate = document.createElement('td');
         tdUpdate.innerHTML = `<a href='/updateAuction/${auction.id}'>UPDATE</a>`;
         const tdAllBets = document.createElement('td');
@@ -349,12 +430,12 @@
             const td = document.createElement('td');  //@ManyToMany
             if (prop === 'auctionParticipants') {
                 let usersNames = '';
-                if(auction['auctionParticipants'] && auction['auctionParticipants'].length !== 0){
-                    usersNames = auction['auctionParticipants'].map(user=>user['username']).join(',');
+                if (auction['auctionParticipants'] && auction['auctionParticipants'].length !== 0) {
+                    usersNames = auction['auctionParticipants'].map(user => user['username']).join(',');
                 }
                 td.append(document.createTextNode(usersNames));
             }
-            if(prop !== 'auctionParticipants'){
+            if (prop !== 'auctionParticipants') {
                 td.append(document.createTextNode(auction[prop]));
             }
             tr.append(td);
@@ -363,6 +444,30 @@
         tr.append(tdUpdate);
         tr.append(tdAllBets);
         auctionsTable.append(tr);
+    }
+
+    async function deleteAuction(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/auctions/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = auctionsTable.querySelector(`[data-auction-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
     }
 
     function fillTablePaintings(paintings) {
@@ -423,7 +528,6 @@
         });
     }
 
-
     async function loadPaintings() {
         const response = await fetch(`${baseURI}/paintings`, {
             method: 'GET',
@@ -435,7 +539,6 @@
         console.log(paintings);
         fillTablePaintings(paintings);
     }
-
 
     async function loadCategories() {
         const response = await fetch(`${baseURI}/categories`, {
@@ -607,7 +710,7 @@
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}/auctions` , {
+        const response = await fetch(`${baseURI}/auctions`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -630,36 +733,6 @@
     saveAuthorButton.addEventListener('click', saveAuthor);
     saveAuctionButton.addEventListener('click', saveAuction);
 
-
-    categoriesTable.addEventListener('click', async function (e) {
-        if (e.target.nodeName === 'BUTTON' && e.target.classList.contains('delete')) {
-            console.log('delete', e.target)
-
-            if (!confirm("Are you sure You want to delete this category?")) {
-                return;
-            }
-            //const id = e.target.parentElement.parentElement.firstElementChild.innerHTML;
-            const id = e.target.parentElement.firstElementChild.firstElementChild.innerHTML;
-            console.log(id);
-
-            const csrfHeaderName = csrfHeader.content;
-            const csrfTokenValue = csrfToken.content;
-
-            const response = await fetch(`${baseURI}/categories/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    [csrfHeaderName]: csrfTokenValue
-                },
-
-            });
-            console.log(response.status)
-            if (response.status === 204) {
-                e.target.parentElement.firstElementChild.remove();
-            } else {
-                alert("Error")
-            }
-        }
-    });
 </script>
 </body>
 </html>

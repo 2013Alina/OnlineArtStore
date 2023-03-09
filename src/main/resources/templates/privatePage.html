@@ -130,38 +130,45 @@
     const baseURI = 'http://localhost:8080/participateAuction/';
     const participateLinks = document.querySelectorAll('.participate-link');
 
-    // Attach a click event listener to each "Participate!" link
     participateLinks.forEach(link => {
         link.addEventListener('click', async (event) => {
-            event.preventDefault(); // Prevent the link from navigating to a new page
+            event.preventDefault(); // Prevent the link from navigating to a new page!
 
             // Get the auction ID from the link's href attribute
             const auctionId = link.href.split('/').pop();
 
             try {
-                // Make a POST request to the participateAuction endpoint with the auctionId parameter
+                // Get the current user's ID from a cookie or local storage!
+                localStorage.setItem('userId', userId);
+
+                const csrfToken = document.getElementById('_csrf').content;
+                console.log("Token = " + csrfToken);
+                const csrfHeader = document.getElementById('_csrf_header').content;
+
+                // Make a POST request to the participateAuction endpoint with the auctionId and userId parameters
                 const response = await fetch(`${baseURI}${auctionId}`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken
                     },
-                    body: JSON.stringify({})
+                    body: JSON.stringify({ userId })
                 });
                 console.log(auctionId);
+                console.log(userId);
                 if (response.ok) {
                     // Reload the page to see the updated auction information
                     window.location.reload();
+                    // Now let's go to the link!
+                    window.location.href = link.href;
                 } else {
-                    console.error(`Failed to participate in auction ${auctionId}: ${response.statusText}`);
+                    console.error(`Failed to participate in Auction ${auctionId}: ${response.statusText}`);
                 }
             } catch (error) {
-                console.error(`Failed to participate in auction ${auctionId}: ${error}`);
+                console.error(`Failed to participate in Auction ${auctionId}: ${error}`);
             }
         });
     });
-
 </script>
-
-
 </body>
 </html>

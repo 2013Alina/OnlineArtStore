@@ -76,14 +76,14 @@ public class InitDatabase implements CommandLineRunner {
                 BigDecimal.valueOf(3500),
                 true);
         auctionRepository.save(auction1);
-        auctionAddUserService.addUserToAuction(3, 1);
+//        auctionAddUserService.addUserToAuction(3, 1);
         Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 13, 11, 10), LocalDateTime.of(2023, Month.APRIL, 10, 11, 10), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), true);
         auctionRepository.save(auction2);
-        auctionAddUserService.addUserToAuction(4, 2);
+//        auctionAddUserService.addUserToAuction(4, 2);
 
         Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023, Month.MARCH, 1, 12, 00), LocalDateTime.of(2023, Month.MARCH, 30, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false);
         auctionRepository.save(auction3);
-        auctionAddUserService.addUserToAuction(5, 3);
+//        auctionAddUserService.addUserToAuction(5, 3);
 
         Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023, Month.JULY, 1, 12, 00), LocalDateTime.of(2023, Month.JULY, 3, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false);
         auctionRepository.save(auction4);
@@ -112,10 +112,6 @@ public class InitDatabase implements CommandLineRunner {
         auction2.addPainting(painting3);
         paintingRepository.save(painting2);
         paintingRepository.save(painting3);
-        auction1.addAuctionParticipants(star);
-        auction2.addAuctionParticipants(niceCat);
-        auctionRepository.save(auction1);
-        auctionRepository.save(auction2);
 
         UserDetail userDetail1 = new UserDetail("Alina", "Muntian", LocalDate.of(1986, Month.MARCH, 5), "muntian@gmail.com", "095-797-51-67");
         userDetailService.saveDetails(userDetail1, "user");

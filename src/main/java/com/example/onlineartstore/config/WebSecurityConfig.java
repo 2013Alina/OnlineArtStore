@@ -92,7 +92,8 @@ public class WebSecurityConfig {
                         .mvcMatchers("/adminPageBets/**").hasRole("ADMIN")
                         .mvcMatchers("/allBets/**").hasRole("ADMIN")
                         .mvcMatchers("/adminPageUsers/**").hasRole("ADMIN")
-                        .mvcMatchers("/userPage/**", "/infoPage/**", "/participateAuction/**").hasRole("USER") //только для роли USER, но ADMIN тоже зайдет так как  UserDetails admin = User.builder()..roles("ADMIN", "USER")
+                        .mvcMatchers("/userPage/**", "/infoPage/**").hasRole("USER") //только для роли USER, но ADMIN тоже зайдет так как  UserDetails admin = User.builder()..roles("ADMIN", "USER")
+                        .mvcMatchers("/participateAuction/**").hasRole("USER")
                         .mvcMatchers("/updateUserDetailClient/**").hasRole("USER")
                         .anyRequest().denyAll()) //все остальные запросы запрещены!!!
                 .formLogin()

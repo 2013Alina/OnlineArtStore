@@ -415,11 +415,34 @@
         }
     }
 
+
     function addAuction(auction) {
         console.log("-----");
         console.log(auction);
+
+        const existingRow = document.querySelector(`tr[data-auction-id='${auction.id}']`);//идентификатор проверяет, существует ли уже Аукцион в таблице!
+        if (existingRow) {
+            // если Аукцион уже существует, обновляю ячейку, в которой отображается информация об участниках Aукциона
+            const existingCell = existingRow.querySelector("td.auctionParticipants");
+            const newUserName = auction.auctionParticipants[auction.auctionParticipants.length - 1].username;
+            let existingUserNames = existingCell.textContent;
+            if (existingUserNames) {
+                existingUserNames = existingUserNames.split(',').map(name => name.trim());
+                // Разделяю существующие имена пользователей запятыми и обрезаю все пробелы!
+                if (existingUserNames.includes(newUserName)) {
+                    // Пользователь уже существует, повторно обновлять ячейку не нужно!
+                    return;
+                }
+                existingCell.textContent += `, ${newUserName}`;
+                //если нет, то к новому имени пользователя добавляется запятая и пробел перед ним
+            } else {
+                existingCell.textContent = newUserName;
+                //Если существующая ячейка не содержит имен пользователей, она просто устанавливает для textContent ячейки новое имя пользователя!
+            }
+        }
+
         const tr = document.createElement('tr');
-        tr.dataset.auctionId = auction.id; //идентификатор строки в таблице Auction
+        tr.dataset.auctionId = auction.id; //идентификатор строки в таблице Auction для updateAuction
         const tdDelete = document.createElement('td');
         tdDelete.innerHTML = `<a href="#" onclick="deleteAuction(${auction.id})">DELETE</a>`;
         const tdUpdate = document.createElement('td');
@@ -429,10 +452,8 @@
         for (const prop in auction) {
             const td = document.createElement('td');  //@ManyToMany
             if (prop === 'auctionParticipants') {
-                let usersNames = '';
-                if (auction['auctionParticipants'] && auction['auctionParticipants'].length !== 0) {
-                    usersNames = auction['auctionParticipants'].map(user => user['username']).join(',');
-                }
+                const usersNames = auction['auctionParticipants'].map(user => user['username']).join(',');
+                td.classList.add('auctionParticipants');
                 td.append(document.createTextNode(usersNames));
             }
             if (prop !== 'auctionParticipants') {
@@ -445,6 +466,7 @@
         tr.append(tdAllBets);
         auctionsTable.append(tr);
     }
+
 
     async function deleteAuction(id) {
         const csrfToken = document.getElementById('_csrf').content;
@@ -732,7 +754,6 @@
     saveCategoryButton.addEventListener('click', saveCategory);
     saveAuthorButton.addEventListener('click', saveAuthor);
     saveAuctionButton.addEventListener('click', saveAuction);
-
 </script>
 </body>
 </html>

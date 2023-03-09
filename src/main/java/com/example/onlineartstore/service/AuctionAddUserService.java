@@ -20,15 +20,17 @@ public class AuctionAddUserService implements UserService {
     private final AuctionRepository auctionRepository;
 
     @Override
-    @Transactional //которая гарантирует, что вся операция выполняется в рамках одной транзакции, поэтому в случае возникновения каких-либо ошибок транзакция будет отменена, а база данных останется в согласованном состоянии
+    @Transactional
+    //которая гарантирует, что вся операция выполняется в рамках одной транзакции, поэтому в случае возникновения каких-либо ошибок транзакция будет отменена, а база данных останется в согласованном состоянии
     public void addUserToAuction(Integer userId, Integer auctionId) {
         User user = userRepository.getReferenceById(userId);
-        Auction auction = auctionRepository.getReferenceById(auctionId);
-        auction.getAuctionParticipants().add(user);
-        user.getParticipationInAuctions().add(auction);
+        Auction existingAuction = auctionRepository.getReferenceById(auctionId);
+        existingAuction.getAuctionParticipants().add(user);
+        user.getParticipationInAuctions().add(existingAuction);
+        auctionRepository.save(existingAuction);
         userRepository.save(user);
-        auctionRepository.save(auction);
     }
+
 
     @Override
     @Transactional

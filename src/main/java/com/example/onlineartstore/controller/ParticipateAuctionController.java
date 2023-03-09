@@ -47,15 +47,15 @@ public class ParticipateAuctionController {
         return ResponseEntity.badRequest().body("Auction not found!");
     }
 
-    @GetMapping("/users/{id}")
-    @ResponseBody
-    public ResponseEntity<?> showUser(@PathVariable Integer id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            return ResponseEntity.ok(optionalUser.get());
-        }
-        return ResponseEntity.badRequest().body("User not found!");
-    }
+//    @GetMapping("/users/{id}")
+//    @ResponseBody
+//    public ResponseEntity<?> showUser(@PathVariable Integer id) {
+//        Optional<User> optionalUser = userRepository.findById(id);
+//        if (optionalUser.isPresent()) {
+//            return ResponseEntity.ok(optionalUser.get());
+//        }
+//        return ResponseEntity.badRequest().body("User not found!");
+//    }
 
     @PostMapping("/{id}")
     @ResponseBody
@@ -76,19 +76,5 @@ public class ParticipateAuctionController {
         return ResponseEntity.ok("User added as a participant");
     }
 
-
-//    @PostMapping("/participateAuction")
-//    @ResponseBody
-//    public String participateAuction(@RequestParam Integer auctionId) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        Optional<User> userOptional = userRepository.findUserByUsername(auth.getName());
-//        if(userOptional.isEmpty()){
-//            return "Not find USER!";
-//        }
-//        User user = userOptional.get();
-//        Integer userId = user.getId();
-//        auctionAddUserService.addUserToAuction(userId, auctionId);
-//        return "Successfully participated in the auction.";
-//    }
 
 }

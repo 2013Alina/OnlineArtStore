@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -47,16 +48,6 @@ public class ParticipateAuctionController {
         return ResponseEntity.badRequest().body("Auction not found!");
     }
 
-//    @GetMapping("/users/{id}")
-//    @ResponseBody
-//    public ResponseEntity<?> showUser(@PathVariable Integer id) {
-//        Optional<User> optionalUser = userRepository.findById(id);
-//        if (optionalUser.isPresent()) {
-//            return ResponseEntity.ok(optionalUser.get());
-//        }
-//        return ResponseEntity.badRequest().body("User not found!");
-//    }
-
     @PostMapping("/{id}")
     @ResponseBody
     public ResponseEntity<String> participateAuction(@PathVariable Integer id, Principal principal) {
@@ -75,6 +66,5 @@ public class ParticipateAuctionController {
         }
         return ResponseEntity.ok("User added as a participant");
     }
-
 
 }

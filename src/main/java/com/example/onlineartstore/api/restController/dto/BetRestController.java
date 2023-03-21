@@ -5,17 +5,14 @@ import com.example.onlineartstore.entity.*;
 import com.example.onlineartstore.repository.AuctionRepository;
 import com.example.onlineartstore.repository.BetRepository;
 import com.example.onlineartstore.repository.UserRepository;
+import com.example.onlineartstore.service.BetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/participateAuction") // /api/v2/participateAuction/{id}(аукциона)/bet/id(ставки)
@@ -25,6 +22,7 @@ public class BetRestController {
     private final BetRepository betRepository;
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
+    private final BetService betService;
 
     @GetMapping("{id}/bets")
     List<Bet> list(@PathVariable int id, Principal principal) {
@@ -66,24 +64,32 @@ public class BetRestController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/{id}")  // /api/v2/participateAuction/id(аукциона)/bet/id(ставки)
+    @PostMapping("/{id}")
+        // /api/v2/participateAuction/id(аукциона)/bet/id(ставки)
     ResponseEntity<?> createBet(@PathVariable int id, @RequestBody BetDTO betDTO, Principal principal) {
         try {
-            Optional<Auction> optionalAuction = auctionRepository.findById(id);
-            if (optionalAuction.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            Auction auction = optionalAuction.orElseThrow();
-            LocalDateTime now = LocalDateTime.now();
-            if(auction.getEndDate().isBefore(now)) { //до конечной даты аукциона
-                return ResponseEntity.badRequest().build();
-            }
-
             Optional<User> optionalUser = userRepository.findUserByUsername(principal.getName());
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            Bet saved = betRepository.save(betDTO.toEntity(optionalAuction.get(), optionalUser.get()));
+            Optional<Auction> optionalAuction = auctionRepository.findById(id);
+            if (optionalAuction.isEmpty()) {
+                return ResponseEntity.badRequest().body("Auction not found!");
+            }
+            Auction auction = optionalAuction.get();
+            if (betService.isAuctionEnded(auction.getId())) {
+                betService.closeAuction(auction); //определяю победителя!
+                return ResponseEntity.badRequest().body("Auction has ended!");
+            }
+            Bet saved = betRepository.save(betDTO.toEntity(auction, optionalUser.get()));
+            betService.invalidatePreviousBets(auction,optionalUser.get());
+
+            String errorMessage = betService.ruleBet(saved); //вернуть сообщение! Сумма ставки должна быть не менее чем на 500 грн выше текущей ставки!
+
+            if (errorMessage != null) {
+                return ResponseEntity.badRequest().body(errorMessage);
+            }
+
             return ResponseEntity
                     .created(URI.create("/api/v2/participateAuction/" + id + "/bet/" + saved.getId()))
                     .build();
@@ -93,7 +99,6 @@ public class BetRestController {
                     .body(throwable);
         }
     }
-
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> delete(@PathVariable Integer id) {

@@ -44,7 +44,8 @@
     </div>
     <div>
         <label for="telephone">What is Your phone number? (required)</label>
-        <input type="text" id="telephone" name="telephone" placeholder="095-000-01-02" th:value="${userDetail.telephone}"/>
+        <input type="text" id="telephone" name="telephone" placeholder="095-000-01-02"
+               th:value="${userDetail.telephone}"/>
     </div>
     <div>
         <input type="submit" id="saveUserDetail"/>
@@ -56,7 +57,9 @@
 </ul>
 
 <div th:each="user:${users}">
-    <h2 th:each="user : ${user}"><a th:if="${#authentication.getName() == user.username}" th:href="@{/userPage/{userId}(userId=${user.id})}">Back to page full registration <span sec:authentication="name"></span></a></h2>
+    <h2 th:each="user : ${user}"><a th:if="${#authentication.getName() == user.username}"
+                                    th:href="@{/userPage/{userId}(userId=${user.id})}">Back to page full registration
+        <span sec:authentication="name"></span></a></h2>
 </div>
 
 <script>
@@ -97,17 +100,19 @@
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
             if (resp.status === 200) {
-                let userDetail = await resp.json();
-                console.log(userDetail);
-                addUserDetail(userDetail)
+                const updatedUserDetail = await response.json();
+                addUserDetail(updatedUserDetail)
+                alert('Your information has been successfully updated!'); //не хочет выводить сообщение(
             } else {
-                alert('Error: ' + (await resp.text()));
+                alert('Error: ' + response.status);
+                console.error(await response.json());
             }
         } else {
             alert('Error: ' + response.status);
             console.error(await response.json());
         }
     }
+
     saveUserDetailButton.addEventListener('click', saveUserDetail);
 </script>
 </body>

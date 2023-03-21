@@ -51,6 +51,10 @@
         <input type="checkbox" id="active" name="active" required th:value="${auction.active}"/>
     </div>
     <div>
+        <label for="winner">Winner:</label>
+        <input type="text" id="winner" name="winner" required th:value="${auction.winner}"/>
+    </div>
+    <div>
         <input type="submit" id="saveAuction"/>
     </div>
 </div>
@@ -70,13 +74,15 @@
         const startingPriceInput = document.getElementById('startingPrice');
         const currentBetInput = document.getElementById('currentBet');
         const activeInput = document.getElementById('active');
+        const winnerInput = document.getElementById('winner');
         const auction = {
             titleAuction: titleAuctionInput.value,
             startDate: startDateInput.value,
             endDate: endDateInput.value,
             startingPrice: startingPriceInput.value,
             currentBet: currentBetInput.value,
-            active: activeInput.checked // "on" - true "off" - false
+            active: activeInput.checked, // "on" - true "off" - false
+            winner: winnerInput.value
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;

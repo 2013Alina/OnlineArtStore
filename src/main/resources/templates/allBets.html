@@ -61,6 +61,7 @@
         <th>Current Bet:</th>
         <th>Active:</th>
         <th>Participants:</th>
+        <th>Winner:</th>
     </tr>
     </thead>
     <tbody>
@@ -72,10 +73,11 @@
         <td th:text="${auction.currentBet}"></td>
         <td th:text="${auction.active}"></td>
         <td>
-            <ol th:each="user: ${auction.auctionParticipants}" multiple="multiple" th:size="${auction.auctionParticipants.size()}">
+            <ul th:each="user: ${auction.auctionParticipants}" multiple="multiple" th:size="${auction.auctionParticipants.size()}">
                 <li th:text="${user.username + ', '}"></li>
-            </ol>
+            </ul>
         </td>
+        <td th:text="${auction.winner}"></td>
     </tr>
     </tbody>
 </table>
@@ -92,7 +94,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="bet:${auction.betsAuction}">
+    <tr th:each="bet:${bets}">
         <td th:text="${bet.createdDate}"></td>
         <td th:text="${bet.amountMoney}"></td>
         <td th:text="${bet.active}"></td>

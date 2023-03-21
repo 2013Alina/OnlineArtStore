@@ -3,6 +3,7 @@ package com.example.onlineartstore.api.restController.dto;
 import com.example.onlineartstore.api.dto.AuctionDTO;
 import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.repository.AuctionRepository;
+import com.example.onlineartstore.service.BetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class AuctionRestController {
 
     private final AuctionRepository auctionRepository;
+    private final BetService betService;
 
     @GetMapping
     List<Auction> list() {
@@ -47,6 +50,12 @@ public class AuctionRestController {
             variable.setStartingPrice(auction.getStartingPrice());
             variable.setCurrentBet(auction.getCurrentBet());
             variable.setActive(auction.getActive());
+            variable.setWinner(auction.getWinner());
+
+            // если аукцион закрыт
+            if (auction.getEndDate().isBefore(LocalDateTime.now())) {
+                betService.closeAuction(variable);
+            }
             return ResponseEntity.of(Optional.of(auctionRepository.save(variable)));
         }
         return ResponseEntity.notFound().build();
@@ -76,3 +85,4 @@ public class AuctionRestController {
     }
 
 }
+

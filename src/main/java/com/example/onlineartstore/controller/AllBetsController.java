@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -26,7 +27,10 @@ public class AllBetsController {
 
     @GetMapping("/{id}")
     String index(@PathVariable Integer id, Model model) {
-        model.addAttribute("auction", auctionRepository.findById(id).orElseThrow());
+        Auction auction = auctionRepository.findById(id).orElseThrow();
+        List<Bet> bets = betRepository.findAllByAuctionOrderByAmountMoneyDesc(auction);
+        model.addAttribute("auction", auction);
+        model.addAttribute("bets", bets);
         return "allBets";
     }
 

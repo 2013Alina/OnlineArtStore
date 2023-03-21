@@ -61,6 +61,7 @@
         <th>Starting Price:</th>
         <th>Current Bet:</th>
         <th>Active:</th>
+        <th>Winner:</th>
     </tr>
     </thead>
     <tbody>
@@ -71,6 +72,7 @@
         <td th:text="${auction.startingPrice}"></td>
         <td th:text="${auction.currentBet}"></td>
         <td th:text="${auction.active}"></td>
+        <td th:text="${auction.winner}"></td>
     </tr>
     </tbody>
 </table>
@@ -178,16 +180,74 @@
 
     window.addEventListener('load', loadBets);
 
+    // async function saveBet() {
+    //     const amountMoneyInput = document.getElementById('amountMoney');
+    //     const currentBetElement = document.getElementById('currentBet');
+    //     const currentBet = currentBetElement ? parseFloat(currentBetElement.innerText) : 0;
+    //     const minimumBet = currentBet + 500; // Минимальная ставка больше текущей ставки на 500 UAH!
+    //
+    //     if (parseFloat(amountMoneyInput.value) < minimumBet) {
+    //         alert('Your bid cannot be lower than the current bid by at least 500 UAH');
+    //         return;
+    //     }
+    //
+    //     const bet = {
+    //         amountMoney: amountMoneyInput.value
+    //     };
+    //
+    //
+    //     const csrfToken = document.getElementById('_csrf').content;
+    //     console.log("Token = " + csrfToken);
+    //     const csrfHeader = document.getElementById('_csrf_header').content;
+    //     const response = await fetch(`${baseURI}${location.pathname}`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             [csrfHeader]: csrfToken
+    //         },
+    //         body: JSON.stringify(bet)
+    //     });
+    //     console.log("**********" + response.status);
+    //
+    //     if (response.status === 201) {
+    //         const loc = response.headers.get('location');
+    //         const resp = await fetch(`http://localhost:8080${loc}`)
+    //         addBet(await resp.json())
+    //         alert('Bet successfully created!');
+    //         location.reload(); // обновить страницу!!!!
+    //
+    //     } else if (response.status === 400) {
+    //         const errorMessage = await response.text();
+    //         if (errorMessage === "Auction has ended!") {
+    //             alert("Your bid cannot be accepted because Auction has ended!");
+    //             location.reload(); // обновить страницу!!!!
+    //         } else {
+    //             alert('Error: ' + errorMessage);
+    //         }
+    //     } else {
+    //         alert('Error: ' + response.status);
+    //     }
+    // }
+
     async function saveBet() {
         const amountMoneyInput = document.getElementById('amountMoney');
+        const currentBetElement = document.getElementById('currentBet');
+        const currentBet = currentBetElement ? parseFloat(currentBetElement.innerText) : 0;
+        const minimumBet = currentBet + 500; // Минимальная ставка больше текущей ставки на 500 UAH!
+
+        if (parseFloat(amountMoneyInput.value) < minimumBet) {
+            alert('Your bid cannot be lower than the current bid by at least 500 UAH');
+            return;
+        }
 
         const bet = {
             amountMoney: amountMoneyInput.value
         };
+
         const csrfToken = document.getElementById('_csrf').content;
         console.log("Token = " + csrfToken);
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}${location.pathname }`, {
+        const response = await fetch(`${baseURI}${location.pathname}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -196,16 +256,28 @@
             body: JSON.stringify(bet)
         });
         console.log("**********" + response.status);
+
         if (response.status === 201) {
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
             addBet(await resp.json())
-        } else {
-            alert('Error: ' + response.status);
+            alert('Bet successfully created!');
+            location.reload(); // обновить страницу!!!!
+
+        } else if (response.status === 400) {
+            const errorMessage = await response.text();
+            if (errorMessage === "Auction has ended!") {
+                alert("Your bid cannot be accepted because Auction has ended!");
+                location.reload(); // обновить страницу!!!!
+            } else if (errorMessage === "The amount of the bet must be at least 500 UAH higher than the current bet!") {
+                alert(errorMessage);
+            } else {
+                alert('Error: ' + errorMessage);
+            }
         }
     }
-    saveBetButton.addEventListener('click', saveBet);
 
+    saveBetButton.addEventListener('click', saveBet);
 </script>
 </body>
 </html>

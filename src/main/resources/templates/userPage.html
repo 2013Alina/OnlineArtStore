@@ -77,40 +77,11 @@
         <th>Email:</th>
         <th>Telephone:</th>
         <th>User`s login:</th>
-        <th>DELETE</th>
         <th>UPDATE</th>
     </tr>
     </thead>
     <tbody id="UserDetails-table"></tbody>
 </table>
-
-<!--<table>-->
-<!--    <thead>-->
-<!--    <tr>-->
-<!--        <th>Id:</th>-->
-<!--        <th>First name:</th>-->
-<!--        <th>Last name:</th>-->
-<!--        <th>BirthDate:</th>-->
-<!--        <th>Email:</th>-->
-<!--        <th>Telephone:</th>-->
-<!--        <th>User`s login:</th>-->
-<!--        <th>DELETE</th>-->
-<!--        <th>UPDATE</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--    <tr th:each="userDetail:${userDetails}" >-->
-<!--        <td th:each="userDetail : ${userDetail}" th:if="${#authentication.getName() == userDetail.user.username}" th:text="${userDetail.id}"></td>-->
-<!--        <td th:each="userDetail : ${userDetail}" th:if="${#authentication.getName() == userDetail.user.username}" th:text="${userDetail.firstName}"></td>-->
-<!--        <td th:each="userDetail : ${userDetail}" th:if="${#authentication.getName() == userDetail.user.username}" th:text="${userDetail.lastName}"></td>-->
-<!--        <td th:each="userDetail : ${userDetail}" th:if="${#authentication.getName() == userDetail.user.username}" th:text="${userDetail.birthDate}"></td>-->
-<!--        <td th:each="userDetail : ${userDetail}" th:if="${#authentication.getName() == userDetail.user.username}" th:text="${userDetail.email}"></td>-->
-<!--        <td th:each="userDetail : ${userDetail}" th:if="${#authentication.getName() == userDetail.user.username}" th:text="${userDetail.telephone}"></td>-->
-<!--        <td th:each="userDetail : ${userDetail}" th:if="${#authentication.getName() == userDetail.user.username}" th:text="${userDetail.user.username}"></td>-->
-<!--        <td th:each="userDetail : ${userDetail}" th:if="${#authentication.getName() == userDetail.user.username}" >DELETE</td>-->
-<!--        <td th:each="userDetail : ${userDetail}" ><a th:if="${#authentication.getName() == userDetail.user.username}" th:href="@{/updateUserDetailClient/{userDetailId}(userDetailId=${userDetail.id})/{userId}(userId=${user.id})}">UPDATE</a></td>-->
-<!--    </tbody>-->
-<!--</table>-->
 <script>
     const saveUserDetailButton = document.getElementById('saveUserDetail');
     const userDetailsTable = document.getElementById('UserDetails-table');
@@ -122,8 +93,6 @@
 
     function addUserDetail(userDetail) {
         const tr = document.createElement('tr');
-        const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = `<a href='http://localhost:8080/adminPageUsers/api/v3/userDetails/${userDetail.id}'>DELETE</a>`;
         const tdUpdate = document.createElement('td');
         tdUpdate.innerHTML = `<a href='/updateUserDetailClient/${userDetail.id}/${userId}'>UPDATE</a>`;
 
@@ -135,24 +104,16 @@
                 td.append(document.createTextNode(userDetail[prop]));
             }
             tr.append(td);
-            tr.append(tdDelete);
             tr.append(tdUpdate);
         }
         userDetailsTable.append(tr);
     }
 
-    // function fillTableUserDetails(userDetails) {
-    //     userDetailsTable.innerHTML = '';
-    //     userDetails.forEach(userDetail => {
-    //         addUserDetail(userDetail);
-    //     });
-    // }
-
     function fillTableUserDetails(userDetails) {
         userDetailsTable.innerHTML = '';
         userDetails.forEach(userDetail => {
             console.log(userDetail.user.id + " = " + userId);
-            if(userDetail.user.id == userId){
+            if (userDetail.user.id == userId) {
                 console.log("enter to if");
                 addUserDetail(userDetail);
             }
@@ -208,8 +169,11 @@
                 console.log(userDetail);
                 addUserDetail(userDetail)
             } else {
-                alert('Error: ' + (await resp.text()));
+                alert('Error: ' + resp.status);
+                console.error(await resp.json());
             }
+        } else if (response.status === 409) { //вывод сообщения для пользователя UserDetailRestController
+            alert("You cannot create additional information about yourself, as it already exists. To change your data, click on the update button.");
         } else {
             alert('Error: ' + response.status);
             console.error(await response.json());

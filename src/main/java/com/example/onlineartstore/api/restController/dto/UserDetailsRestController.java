@@ -27,6 +27,7 @@ public class UserDetailsRestController {
     private final UserRepository userRepository;
     private final UserDetailService userDetailService;
 
+
     @GetMapping
     List<UserDetail> list() {
         return userDetailRepository.findAll();
@@ -57,10 +58,13 @@ public class UserDetailsRestController {
             variable.setBirthDate(userDetail.getBirthDate());
             variable.setEmail(userDetail.getEmail());
             variable.setTelephone(userDetail.getTelephone());
-            return ResponseEntity.of(Optional.of(userDetailRepository.save(variable)));
+            userDetailRepository.save(variable);
+            return ResponseEntity.ok().body(variable);
         }
         return ResponseEntity.notFound().build();
     }
+
+
 
     @PostMapping
     ResponseEntity<?> createUserDetail(@RequestBody @Validated UserDetailDTO userDetailDTO, BindingResult bindingResult) {
@@ -72,9 +76,13 @@ public class UserDetailsRestController {
                     return ResponseEntity.notFound().build();
                 }
                 User user = optionalUser.get();
+
+                // вывод сообщения для пользователя, response.status === 409
                 if(user.getUserDetail() != null){
-                    return ResponseEntity.notFound().build(); // проверка, есть ли у User UserDetail
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body("My message in Java Script");
                 }
+
                 saved = userDetailRepository.save(userDetailDTO.toEntity(user));
                 saved = userDetailService.saveDetails(saved, user.getUsername());
             } catch (Exception e) {

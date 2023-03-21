@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -34,7 +35,5 @@ public class Bet {
     protected void onCreate() {
         this.createdDate = LocalDateTime.now();
     }
-
-
 
 }

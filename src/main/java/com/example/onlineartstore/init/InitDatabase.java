@@ -2,7 +2,6 @@ package com.example.onlineartstore.init;
 
 import com.example.onlineartstore.entity.*;
 import com.example.onlineartstore.repository.*;
-import com.example.onlineartstore.service.AuctionAddUserService;
 import com.example.onlineartstore.service.RolesAndUserService;
 import com.example.onlineartstore.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,6 @@ public class InitDatabase implements CommandLineRunner {
     private final AuthorRepository authorRepository;
     private final AuctionRepository auctionRepository;
     private final UserDetailService userDetailService;
-    private final AuctionAddUserService auctionAddUserService;
-    private final BetRepository betRepository;
     private final RolesAndUserService rolesAndUserService;
     final private RoleRepository roleRepository;
 
@@ -71,21 +68,18 @@ public class InitDatabase implements CommandLineRunner {
 
         Auction auction1 = new Auction("New Year Auction!",
                 LocalDateTime.of(2023, Month.FEBRUARY, 13, 10, 15),
-                LocalDateTime.of(2023, Month.APRIL, 11, 14, 15),
+                LocalDateTime.of(2023, Month.MARCH, 21, 18, 27),
                 BigDecimal.valueOf(3000),
                 BigDecimal.valueOf(3500),
-                true);
+                true, "Who is the winner?");
         auctionRepository.save(auction1);
-//        auctionAddUserService.addUserToAuction(3, 1);
-        Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 13, 11, 10), LocalDateTime.of(2023, Month.APRIL, 10, 11, 10), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), true);
+        Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 13, 11, 10), LocalDateTime.of(2023, Month.APRIL, 10, 11, 10), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), true, "Who is the winner?");
         auctionRepository.save(auction2);
-//        auctionAddUserService.addUserToAuction(4, 2);
 
-        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023, Month.MARCH, 1, 12, 00), LocalDateTime.of(2023, Month.MARCH, 30, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false);
+        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023, Month.MARCH, 1, 12, 00), LocalDateTime.of(2023, Month.MARCH, 30, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
         auctionRepository.save(auction3);
-//        auctionAddUserService.addUserToAuction(5, 3);
 
-        Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023, Month.JULY, 1, 12, 00), LocalDateTime.of(2023, Month.JULY, 3, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false);
+        Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023, Month.JULY, 1, 12, 00), LocalDateTime.of(2023, Month.JULY, 3, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
         auctionRepository.save(auction4);
 
 

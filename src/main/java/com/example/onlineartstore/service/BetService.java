@@ -1,6 +1,5 @@
 package com.example.onlineartstore.service;
 
-import com.example.onlineartstore.api.dto.BetDTO;
 import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.entity.Bet;
 import com.example.onlineartstore.entity.User;
@@ -8,15 +7,11 @@ import com.example.onlineartstore.repository.AuctionRepository;
 import com.example.onlineartstore.repository.BetRepository;
 import com.example.onlineartstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
-import java.net.URI;
-import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,45 +22,69 @@ public class BetService {
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
 
-//    public ResponseEntity<?> createNewBet(@PathVariable Integer id, @RequestBody BetDTO betDTO, Principal principal) {
-//        Optional<Auction> optionalAuction = auctionRepository.findById(id);
-//        if (optionalAuction.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        Auction auction = optionalAuction.orElseThrow();
-//        LocalDateTime now = LocalDateTime.now();
-//
-//        Bet bet = new Bet();
-//        BigDecimal money1 = new BigDecimal(String.valueOf(bet.getAmountMoney()));
-//        BigDecimal money2 = new BigDecimal(String.valueOf(bet.getAmountMoney()));
-//        BigDecimal currentMoney = new BigDecimal(String.valueOf(auction.getCurrentBet()));
-//        BigDecimal startingMoney = new BigDecimal(String.valueOf(auction.getStartingPrice()));
-//        if (currentMoney.compareTo(startingMoney) <= 0) {
-//            return ResponseEntity.badRequest().build();
-//        }else{
-//            bet.setActive(true);
-//            bet.setAmountMoney(currentMoney);
-//            auction.setCurrentBet(currentMoney);
-//        }
-//        if (money2.compareTo(money1)<= 0) {
-//            return ResponseEntity.badRequest().build();
-//        }else{
-//            bet.setActive(true);
-//            bet.setAmountMoney(money2);
-//            auction.setCurrentBet(money2);
-//        }
-//
-//        if (auction.getEndDate().isBefore(now)) { //до конечной даты аукциона
-//            return ResponseEntity.badRequest().build();
-//        }
-//
-//        Optional<User> optionalUser = userRepository.findUserByUsername(principal.getName());
-//        if (optionalUser.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        Bet saved = betRepository.save(betDTO.toEntity(optionalAuction.get(), optionalUser.get()));
-//        return ResponseEntity
-//                .created(URI.create("/api/v2/participateAuction/" + id + "/bet/" + saved.getId()))
-//                .build();
-//    }
+    public String ruleBet(Bet bet) {
+        Auction auction = bet.getAuction();
+        if (auction.getEndDate().isBefore(LocalDateTime.now())) {
+            return "Auction has ended!";
+        }
+        BigDecimal currentHighestBet = auction.getCurrentBet();
+        BigDecimal minimumBet = currentHighestBet.add(BigDecimal.valueOf(500));
+        if (bet.getAmountMoney().compareTo(minimumBet) < 0) {
+            return "The amount of the bet must be at least 500 UAH higher than the current bet!";
+        }
+
+        // Делаю предыдущую ставку неактивной
+        List<Bet> bets = auction.getBetsAuction();
+        for (Bet b : bets) {
+            if (b.getAmountMoney().compareTo(currentHighestBet) == 0) {   // 0 - если числа равны
+                b.setActive(false);
+                betRepository.save(b);
+                break;
+            }
+        }
+
+        // Активирую новую текущую ставку
+        bet.setActive(true);
+        betRepository.save(bet);
+
+        // Устанавливаю новую текущую ставку как самую высокую ставку и сохраняю аукцион
+        auction.setCurrentBet(bet.getAmountMoney());
+        auctionRepository.save(auction);
+
+        return null;
+    }
+
+    // все предыдущие ставки и ошибки false
+    public void invalidatePreviousBets(Auction auction, User user) {
+        List<Bet> previousBets = betRepository.findByAuctionAndUserAndActiveTrueOrderByAmountMoneyDesc(auction, user);
+        for (Bet bet : previousBets) {
+            bet.setActive(false);
+        }
+        betRepository.saveAll(previousBets);
+    }
+
+    // сортировка ставки
+    public List<Bet> getBetsByAuction(Auction auction) {
+        return betRepository.findAllByAuctionOrderByAmountMoneyDesc(auction);
+    }
+
+    public void closeAuction(Auction auction) {
+        List<Bet> bets = getBetsByAuction(auction);
+        if (!bets.isEmpty()) {
+            Bet highestBid = bets.get(0);
+            highestBid.setActive(false);
+            auction.setCurrentBet(highestBid.getAmountMoney());
+            auction.setWinner(highestBid.getUser().getUsername());
+        }
+        auction.setActive(false);
+        auctionRepository.save(auction);
+    }
+
+    public boolean isAuctionEnded(int auctionId) {
+        Optional<Auction> optionalAuction = auctionRepository.findById(auctionId);
+        if (optionalAuction.isEmpty()) {
+            throw new IllegalArgumentException("Auction not found with id " + auctionId);
+        }
+        return optionalAuction.get().getEndDate().isBefore(LocalDateTime.now());
+    }
 }

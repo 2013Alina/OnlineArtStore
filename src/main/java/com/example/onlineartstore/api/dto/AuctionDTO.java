@@ -26,7 +26,10 @@ public class AuctionDTO {
     @NotNull
     private Boolean active;
 
+    private String winner;
+
+
     public Auction toEntity() {
-        return new Auction(titleAuction, startDate, endDate, startingPrice, currentBet, active);
+        return new Auction(titleAuction, startDate, endDate, startingPrice, currentBet, active, winner);
     }
 }

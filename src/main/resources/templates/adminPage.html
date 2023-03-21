@@ -176,6 +176,10 @@
         <input type="checkbox" id="active" name="active"/>
     </div>
     <div>
+        <label for="winner">Winner:</label>
+        <input type="text" id="winner" name="winner"/>
+    </div>
+    <div>
         <input type="submit" id="auctionSave"/>
     </div>
 </div>
@@ -248,6 +252,7 @@
         <th>Starting Price:</th>
         <th>Current Bet:</th>
         <th>Active:</th>
+        <th>Winner:</th>
         <th>Participants:</th>
         <th>DELETE</th>
         <th>UPDATE</th>
@@ -722,13 +727,15 @@
         const startingPriceInput = document.getElementById('startingPrice');
         const currentBetInput = document.getElementById('currentBet');
         const activeInput = document.getElementById('active');
+        const winnerInput = document.getElementById('winner');
         const auction = {
             titleAuction: titleAuctionInput.value,
             startDate: startDateInput.value,
             endDate: endDateInput.value,
             startingPrice: startingPriceInput.value,
             currentBet: currentBetInput.value,
-            active: activeInput.checked // "on" - true "off" - false
+            active: activeInput.checked, // "on" - true "off" - false
+            winner: winnerInput.value
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;

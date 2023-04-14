@@ -1,5 +1,6 @@
 package com.example.onlineartstore.init;
 
+import com.example.onlineartstore.api.dto.PaintingDTO;
 import com.example.onlineartstore.entity.*;
 import com.example.onlineartstore.repository.*;
 import com.example.onlineartstore.service.RolesAndUserService;
@@ -7,13 +8,31 @@ import com.example.onlineartstore.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -35,10 +54,11 @@ public class InitDatabase implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
-
-        Author author1 = new Author("artLana", "Svetlana", "Vovk", LocalDate.of(1957, Month.OCTOBER, 18), "Many awards", "Food_C245-128.png");
+        String imagePath1 = "artLana";
+        String imagePath2 = "alex";
+        Author author1 = new Author("artLana", "Svetlana", "Vovk", LocalDate.of(1957, Month.OCTOBER, 18), "Many awards", imagePath1);
         authorRepository.save(author1);
-        Author author2 = new Author("artMaster", "Alex", "Vovk", LocalDate.of(1958, Month.APRIL, 05), "Many awards", "Food_C245-128.png");
+        Author author2 = new Author("artMaster", "Alex", "Vovk", LocalDate.of(1958, Month.APRIL, 05), "Many awards", imagePath2);
         authorRepository.save(author2);
 
         User star = new User("Star", "$2a$10$OEKBPlQJhYFgSQ7PqKXfKulkZnj/FnozqYP8E7T2ro.3YPi8fxlGa", true); // 12345
@@ -66,33 +86,49 @@ public class InitDatabase implements CommandLineRunner {
 
         Comment comment1 = new Comment("This is a beautiful picture");
 
-        Auction auction1 = new Auction("New Year Auction!",
-                LocalDateTime.of(2023, Month.FEBRUARY, 13, 10, 15),
-                LocalDateTime.of(2023, Month.MARCH, 21, 18, 27),
+        Auction auction1 = new Auction("Auction of connoisseurs of beauty!",
+                LocalDateTime.of(2023, Month.APRIL, 13, 10, 15),
+                LocalDateTime.of(2023, Month.APRIL, 13, 22, 31),
                 BigDecimal.valueOf(3000),
                 BigDecimal.valueOf(3500),
                 true, "Who is the winner?");
         auctionRepository.save(auction1);
-        Auction auction2 = new Auction("Merry Christmas Auction!", LocalDateTime.of(2023, Month.FEBRUARY, 13, 11, 10), LocalDateTime.of(2023, Month.APRIL, 10, 11, 10), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), true, "Who is the winner?");
+        Auction auction2 = new Auction("Easter auction!", LocalDateTime.of(2023, Month.APRIL, 13, 11, 10), LocalDateTime.of(2023, Month.APRIL, 30, 11, 10), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), true, "Who is the winner?");
         auctionRepository.save(auction2);
 
-        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023, Month.MARCH, 1, 12, 00), LocalDateTime.of(2023, Month.MARCH, 30, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
+        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023, Month.MAY, 1, 12, 00), LocalDateTime.of(2023, Month.MAY, 30, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
         auctionRepository.save(auction3);
 
         Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023, Month.JULY, 1, 12, 00), LocalDateTime.of(2023, Month.JULY, 3, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
         auctionRepository.save(auction4);
 
+        //загрузка изображения картин
+        String imagePath3 = "ukrainian";
+        String imagePath4 = "butterfly";
+        String imagePath5 = "rainbow";
+        String imagePath6 = "kaleidoscope";
+        String imagePath7 = "rooster";
+        String imagePath8 = "letter";
+        String imagePath9 = "sunflowers";
 
-        Painting painting1 = new Painting("Lime", LocalDate.of(2021, Month.APRIL, 15), "Food_C245-128.png", "60x100cm", "canvas", "The picture is made in bright colors, yellow-green color will provide you with a good mood", BigDecimal.valueOf(5000), false);
+        Painting painting1 = new Painting("Girl with a violin", LocalDate.of(2022, Month.APRIL, 15), imagePath3, "60x100cm", "canvas", "The picture is made in bright colors, yellow-green color will provide you with a good mood", BigDecimal.valueOf(5000), false);
         author1.addComment(comment1);
-        Painting painting2 = new Painting("Equilibrium", LocalDate.of(2021, Month.JANUARY, 20), "Food_C245-128.png", "100x100cm", "canvas", "This picture is like a bright comet ", BigDecimal.valueOf(8000), false);
-        Painting painting3 = new Painting("Flecks of sunlight", LocalDate.of(2022, Month.JULY, 25), "Food_C245-128.png", "40x50cm", "canvas", "This picture is beautiful ", BigDecimal.valueOf(3000), false);
-        Painting painting4 = new Painting("Christmas melody", LocalDate.of(2022, Month.DECEMBER, 16), "Food_C245-128.png", "40x60cm", "canvas", "The Ukrainian girl who plays the violin embodies the hopes of all Ukrainians for peace and a bright future ", BigDecimal.valueOf(7000), false);
-        Painting painting5 = new Painting("Let's stand like a rooster from Borodyanka", LocalDate.of(2023, Month.JANUARY, 8), "Food_C245-128.png", "50x60cm", "canvas", "About the stability and indomitability of the people of Ukraine ", BigDecimal.valueOf(4500), false);
 
-        author1.addPainting(painting1, painting2, painting3, painting4, painting5);
+        Painting painting2 = new Painting("Equilibrium", LocalDate.of(2021, Month.JANUARY, 20), imagePath4, "100x100cm", "canvas", "This picture is like a bright comet ", BigDecimal.valueOf(8000), false);
+
+        Painting painting3 = new Painting("Flecks of sunlight", LocalDate.of(2022, Month.JULY, 25), imagePath5, "40x50cm", "canvas", "This picture is beautiful ", BigDecimal.valueOf(3000), false);
+
+        Painting painting4 = new Painting("Christmas melody", LocalDate.of(2022, Month.DECEMBER, 16), imagePath6, "40x60cm", "canvas", "The Ukrainian girl who plays the violin embodies the hopes of all Ukrainians for peace and a bright future ", BigDecimal.valueOf(7000), false);
+
+        Painting painting5 = new Painting("Let's stand like a rooster from Borodyanka", LocalDate.of(2023, Month.JANUARY, 8), imagePath7, "50x60cm", "canvas", "About the stability and indomitability of the people of Ukraine ", BigDecimal.valueOf(4500), false);
+        Painting painting6 = new Painting("Love letter", LocalDate.of(2020, Month.MARCH, 17), imagePath8, "100x100cm", "canvas", "Love letter written with the brightest feelings", BigDecimal.valueOf(2000), false);
+        Painting painting7 = new Painting("Sunflowers", LocalDate.of(2021, Month.SEPTEMBER, 22), imagePath9, "100x100cm", "canvas", "Sunflowers - flowers filled with the sun", BigDecimal.valueOf(4000), false);
+
+
+        author1.addPainting(painting1, painting2, painting3, painting4, painting5, painting6,painting7);
 
         category1.addPainting(painting1, painting2, painting3, painting4);
+        category2.addPainting(painting6,painting7);
         category3.addPainting(painting5);
         categoryRepository.save(category1);
         categoryRepository.save(category2);

@@ -1,5 +1,6 @@
 package com.example.onlineartstore.service;
 
+import com.example.onlineartstore.api.dto.AuctionStatusDTO;
 import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.entity.Bet;
 import com.example.onlineartstore.entity.User;
@@ -21,6 +22,8 @@ public class BetService {
     private final BetRepository betRepository;
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
+    private final SseEmitterService emitterService;
+    //SseEmitterService — это настраиваемая служба, которая управляет списком объектов SseEmitter и отправляет события всем имитерам. Метод sendEventToAll отправляет объект AuctionStatusDTO в качестве данных события всем клиентам, прослушивающим поток.
 
     public String ruleBet(Bet bet) {
         Auction auction = bet.getAuction();
@@ -69,6 +72,8 @@ public class BetService {
     }
 
     public void closeAuction(Auction auction) {
+        System.out.println("Closing auction with ID: " + auction.getId());
+
         List<Bet> bets = getBetsByAuction(auction);
         if (!bets.isEmpty()) {
             Bet highestBid = bets.get(0);
@@ -78,6 +83,11 @@ public class BetService {
         }
         auction.setActive(false);
         auctionRepository.save(auction);
+
+        System.out.println("Updated auction information: " + auction.toString());
+
+        AuctionStatusDTO auctionStatus = new AuctionStatusDTO(true);
+        emitterService.sendEventToAll(auction.getId(), "auctionUpdate", auctionStatus);
     }
 
     public boolean isAuctionEnded(int auctionId) {
@@ -87,4 +97,11 @@ public class BetService {
         }
         return optionalAuction.get().getEndDate().isBefore(LocalDateTime.now());
     }
+
+    public boolean isBetAmountValid(Auction auction, BigDecimal betAmount) {
+        BigDecimal currentHighestBet = auction.getCurrentBet();
+        BigDecimal minimumBet = currentHighestBet.add(BigDecimal.valueOf(500));
+        return betAmount.compareTo(minimumBet) >= 0;
+    }
+
 }

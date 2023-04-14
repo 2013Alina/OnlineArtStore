@@ -67,6 +67,10 @@
         </td>
     </tbody>
 </table>
+<h1>Victories:</h1>
+<div th:each="user:${users}">
+    <h2 th:each="user : ${user}"><a th:if="${#authentication.getName() == user.username}" th:href="@{/victoryPage/{userId}(userId=${user.id})}">Auctions won <span sec:authentication="name"></span></a></h2>
+</div>
 <h1>Artworks participating in Auctions:</h1>
 <table>
     <thead>
@@ -85,7 +89,11 @@
     <tbody>
     <tr th:if="${painting.auction!=null && painting.sold==false}" th:each="painting:${paintings}">
         <td th:text="${painting.title}"></td>
-        <td th:text="${painting.imagePath}"></td>
+        <td>
+            <a th:href="@{${'/images/' + painting.imagePath + '_large.jpg'}}">
+                <img th:src="@{${'/images/' + painting.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
+            </a>
+        </td>
         <td th:text="${painting.size}"></td>
         <td th:text="${painting.material}"></td>
         <td th:text="${painting.price}"></td>
@@ -115,7 +123,11 @@
         <td th:text="${author.surname}"></td>
         <td th:text="${author.birthDate}"></td>
         <td th:text="${author.awards}"></td>
-        <td th:text="${author.imagePath}"></td>
+        <td>
+            <a th:href="@{${'/images/' + author.imagePath + '_large.jpg'}}">
+                <img th:src="@{${'/images/' + author.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
+            </a>
+        </td>
     </tbody>
 </table>
 
@@ -126,26 +138,26 @@
 </div>
 
 <script>
-    // Get all the "Participate!" links on the page
+    // беру все "Participate!" ссылки на странице
     const baseURI = 'http://localhost:8080/participateAuction/';
     const participateLinks = document.querySelectorAll('.participate-link');
 
     participateLinks.forEach(link => {
         link.addEventListener('click', async (event) => {
-            event.preventDefault(); // Prevent the link from navigating to a new page!
+            event.preventDefault(); // Запрещаю переход по ссылке на новую страницу!
 
-            // Get the auction ID from the link's href attribute
+            // Получаю auctionId из атрибута href ссылки
             const auctionId = link.href.split('/').pop();
 
             try {
-                // Get the current user's ID from a cookie or local storage!
+                // Получаю идентификатор текущего пользователя из файла cookie или локального хранилища!
                 localStorage.setItem('userId', userId);
 
                 const csrfToken = document.getElementById('_csrf').content;
                 console.log("Token = " + csrfToken);
                 const csrfHeader = document.getElementById('_csrf_header').content;
 
-                // Make a POST request to the participateAuction endpoint with the auctionId and userId parameters
+                // Отправляю POST-запрос к конечной точке participateAuction endpoint with the auctionId and userId parameters
                 const response = await fetch(`${baseURI}${auctionId}`, {
                     method: 'POST',
                     headers: {
@@ -157,9 +169,9 @@
                 console.log(auctionId);
                 console.log(userId);
                 if (response.ok) {
-                    // Reload the page to see the updated auction information
+                    // Перезагрузка страницу, чтобы увидеть обновленную информацию об аукционе
                     window.location.reload();
-                    // Now let's go to the link!
+                    // Теперь переходим по ссылке!
                     window.location.href = link.href;
                 } else {
                     console.error(`Failed to participate in Auction ${auctionId}: ${response.statusText}`);

@@ -267,6 +267,8 @@
     const paintingsTable = document.getElementById('Paintings-table');
     const savePaintingButton = document.getElementById('save');
 
+    const imagesBaseURL = 'http://localhost:8080/images/';
+
     const categoriesTable = document.getElementById('Categories-table');
     const saveCategoryButton = document.getElementById('categorySave');
 
@@ -281,7 +283,7 @@
 
     function addPainting(painting) {
         const tr = document.createElement('tr');
-        tr.dataset.paintingId = painting.id; //идентификатор строки в таблице Painting
+        tr.dataset.paintingId = painting.id;
         const tdDelete = document.createElement('td');
         const tdUpdate = document.createElement('td');
         tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
@@ -290,22 +292,33 @@
             const td = document.createElement('td');
             if (prop === 'author') {
                 td.append(document.createTextNode(painting[prop].pseudonym));
-            }
-            if (prop === 'category') {
+            } else if (prop === 'category') {
                 td.append(document.createTextNode(painting[prop].name));
-            }
-            if (prop === 'auction') {
+            } else if (prop === 'auction') {
                 td.append(document.createTextNode(painting[prop].titleAuction));
-            }
-            if (prop !== 'author' && prop !== 'category' && prop !== 'auction') {
+            } else if (prop === 'imagePath') {
+                const tdImage = document.createElement('td');
+                const imgLink = document.createElement('a');
+                imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
+                const img = document.createElement('img');
+                img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
+                img.alt = '';
+                img.onclick = function () {
+                    this.src = this.src.replace('_small.jpg', '.jpg');
+                }
+                imgLink.append(img);
+                tdImage.append(imgLink);
+                td.append(tdImage);
+            } else {
                 td.append(document.createTextNode(painting[prop]));
             }
             tr.append(td);
-            tr.append(tdDelete);
-            tr.append(tdUpdate);
         }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
         paintingsTable.append(tr);
     }
+
 
     async function deletePainting(id) {
         const csrfToken = document.getElementById('_csrf').content;
@@ -378,6 +391,43 @@
         }
     }
 
+    function addPainting(painting) {
+        const tr = document.createElement('tr');
+        tr.dataset.paintingId = painting.id;
+        const tdDelete = document.createElement('td');
+        const tdUpdate = document.createElement('td');
+        tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
+        for (const prop in painting) {
+            const td = document.createElement('td');
+            if (prop === 'author') {
+                td.append(document.createTextNode(painting[prop].pseudonym));
+            } else if (prop === 'category') {
+                td.append(document.createTextNode(painting[prop].name));
+            } else if (prop === 'auction') {
+                td.append(document.createTextNode(painting[prop].titleAuction));
+            } else if (prop === 'imagePath') {
+                const tdImage = document.createElement('td');
+                const imgLink = document.createElement('a');
+                imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
+                const img = document.createElement('img');
+                img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
+                img.alt = '';
+                img.onclick = function () {
+                    this.src = this.src.replace('_small.jpg', '.jpg');
+                }
+                imgLink.append(img);
+                tdImage.append(imgLink);
+                td.append(tdImage);
+            } else {
+                td.append(document.createTextNode(painting[prop]));
+            }
+            tr.append(td);
+        }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
+        paintingsTable.append(tr);
+    }
 
     function addAuthor(author) {
         const tr = document.createElement('tr');
@@ -388,7 +438,22 @@
         tdUpdate.innerHTML = `<a href='/updateAuthor/${author.id}'>UPDATE</a>`;
         for (const prop in author) {
             const td = document.createElement('td');
-            td.append(document.createTextNode(author[prop]));
+            if(prop === 'imagePath'){
+                const tdImage = document.createElement('td');
+                const imgLink = document.createElement('a');
+                imgLink.href = imagesBaseURL + author.imagePath + '_large.jpg';
+                const img = document.createElement('img');
+                img.src = imagesBaseURL + author.imagePath + '_small.jpg';
+                img.alt = '';
+                img.onclick = function () {
+                    this.src = this.src.replace('_small.jpg', '.jpg');
+                }
+                imgLink.append(img);
+                tdImage.append(imgLink);
+                td.append(tdImage);
+            }else{
+                td.append(document.createTextNode(author[prop]));
+            }
             tr.append(td);
             tr.append(tdDelete);
             tr.append(tdUpdate);
@@ -752,6 +817,14 @@
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
             addAuction(await resp.json())
+        } else if (response.status === 400) {
+            const errorResponse = await response.json();
+            if (errorResponse.message === 'Auction has ended!') {
+                alert('Auction has ended!');
+                location.reload();
+            } else {
+                alert('Error: ' + response.status);
+            }
         } else {
             alert('Error: ' + response.status);
         }

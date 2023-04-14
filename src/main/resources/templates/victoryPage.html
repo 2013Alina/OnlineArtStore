@@ -2,20 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Online Art Store</title>
-    <style>
-        table {
-            border-collapse: collapse;
-        }
-
-        table, td, th {
-            border: 1px solid black;
-        }
-
-        td, th {
-            margin: 8px;
-        }
-    </style>
+    <title>victoryPage</title>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="userId" id="userId" th:content="${userId}"/>
 </head>
 <body>
 <nav>
@@ -36,26 +26,28 @@
             <a th:href="@{/logout}">Logout</a></li>
     </menu>
 </nav>
-<h1>General page</h1>
-<h1>GALLERY</h1>
+<h1>My victories:</h1>
 <table>
     <thead>
     <tr>
-        <th>Title</th>
-        <th>ImagePath</th>
-        <th>Description</th>
+        <th>Title Auction:</th>
+        <th>Start Date:</th>
+        <th>End Date:</th>
+        <th>Starting Price:</th>
+        <th>Current Bet:</th>
+        <th>Active:</th>
+        <th>WINNER:</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="painting: ${paintings}">
-        <td th:text="${painting.title}"></td>
-        <td>
-            <a th:href="@{${'/images/' + painting.imagePath + '_large.jpg'}}">
-                <img th:src="@{${'/images/' + painting.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
-            </a>
-        </td>
-        <td th:text="${painting.description}"></td>
-    </tr>
+    <tr th:if="${auction.active == false && auction.winner==user.username}" th:each="auction:${auctions}">
+        <td th:text="${auction.titleAuction}"></td>
+        <td th:text="${auction.startDate}"></td>
+        <td th:text="${auction.endDate}"></td>
+        <td th:text="${auction.startingPrice}"></td>
+        <td th:text="${auction.currentBet}"></td>
+        <td th:text="${auction.active}"></td>
+        <td th:text="${auction.winner}"></td>
     </tbody>
 </table>
 </body>

@@ -195,7 +195,6 @@
     //         amountMoney: amountMoneyInput.value
     //     };
     //
-    //
     //     const csrfToken = document.getElementById('_csrf').content;
     //     console.log("Token = " + csrfToken);
     //     const csrfHeader = document.getElementById('_csrf_header').content;
@@ -221,22 +220,91 @@
     //         if (errorMessage === "Auction has ended!") {
     //             alert("Your bid cannot be accepted because Auction has ended!");
     //             location.reload(); // обновить страницу!!!!
+    //         } else if (errorMessage === "The amount of the bet must be at least 500 UAH higher than the current bet!") {
+    //             alert(errorMessage);
     //         } else {
     //             alert('Error: ' + errorMessage);
     //         }
-    //     } else {
-    //         alert('Error: ' + response.status);
     //     }
     // }
+    //
+    //
+    // const source = new EventSource(`${baseURI}${location.pathname}/sse`);
+    // const amountMoneyInput = document.getElementById('amountMoney');
+    //
+    // const auction = {
+    //     id: 1,
+    //     titleAuction: 'New Year Auction!',
+    //     startDate: new Date('2023-03-23T09:00:00Z'),
+    //     endDate: new Date('2023-03-23T20:47:00Z'),
+    //     startingPrice: 3000,
+    //     currentBid: 3500,
+    //     active: true,
+    //     winner: 'Who is the winner?'
+    // };
+    //
+    //
+    // source.addEventListener('auctionUpdate', function(event) {
+    //     const auctionStatus = JSON.parse(event.data);
+    //     console.log(auctionStatus);
+    //     if (auctionStatus.ended) {
+    //         saveBetButton.disabled = true;
+    //         amountMoneyInput.disabled = true;
+    //         auction.active = false;
+    //         console.log(auctionStatus);
+    //         alert("The auction has ended. You can no longer submit bets!!!");
+    //     }
+    // });
+    //
+    // saveBetButton.addEventListener('click', saveBet);
 
-    async function saveBet() {
-        const amountMoneyInput = document.getElementById('amountMoney');
+    const amountMoneyInput = document.getElementById('amountMoney');
+    const auction = {
+        id: 1,
+        titleAuction: 'New Year Auction!',
+        startDate: new Date('2023-03-23T09:00:00Z'),
+        endDate: new Date('2023-03-23T20:47:00Z'),
+        startingPrice: 3000,
+        currentBid: 3500,
+        active: true,
+        winner: 'Who is the winner?'
+    };
+
+    function disableBetting() { //запретить ставки!
+        saveBetButton.disabled = true;
+        amountMoneyInput.disabled = true;
+        auction.active = false;
+        alert("The auction has ended. You can no longer submit bets!!!");
+    }
+
+    function handleAuctionUpdate(event) {
+        const auctionStatus = JSON.parse(event.data);
+        console.log(auctionStatus);
+        if (auctionStatus.ended) {
+            disableBetting();
+        } else {
+            auction.currentBid = auctionStatus.currentBid;
+        }
+    }
+
+    function checkAuctionStatus() {
+        if (!auction.active) {
+            alert("The auction has ended. You can no longer submit bets!!!");
+            return false;
+        }
+
         const currentBetElement = document.getElementById('currentBet');
         const currentBet = currentBetElement ? parseFloat(currentBetElement.innerText) : 0;
         const minimumBet = currentBet + 500; // Минимальная ставка больше текущей ставки на 500 UAH!
-
         if (parseFloat(amountMoneyInput.value) < minimumBet) {
             alert('Your bid cannot be lower than the current bid by at least 500 UAH');
+            return false;
+        }
+        return true;
+    }
+
+    async function saveBet() {
+        if (!checkAuctionStatus()) {
             return;
         }
 
@@ -247,37 +315,47 @@
         const csrfToken = document.getElementById('_csrf').content;
         console.log("Token = " + csrfToken);
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}${location.pathname}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            },
-            body: JSON.stringify(bet)
-        });
-        console.log("**********" + response.status);
 
-        if (response.status === 201) {
-            const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
-            addBet(await resp.json())
-            alert('Bet successfully created!');
-            location.reload(); // обновить страницу!!!!
+        try {
+            const response = await fetch(`${baseURI}${location.pathname}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(bet)
+            });
+            console.log("**********" + response.status);
 
-        } else if (response.status === 400) {
-            const errorMessage = await response.text();
-            if (errorMessage === "Auction has ended!") {
-                alert("Your bid cannot be accepted because Auction has ended!");
+            if (response.status === 201) {
+                const loc = response.headers.get('location');
+                const resp = await fetch(`http://localhost:8080${loc}`)
+                addBet(await resp.json())
+                alert('Bet successfully created!');
                 location.reload(); // обновить страницу!!!!
-            } else if (errorMessage === "The amount of the bet must be at least 500 UAH higher than the current bet!") {
-                alert(errorMessage);
-            } else {
-                alert('Error: ' + errorMessage);
+
+            } else if (response.status === 400) {
+                const errorMessage = await response.text();
+                if (errorMessage === "Auction has ended!") {
+                    disableBetting();
+                } else if (errorMessage === "The amount of the bet must be at least 500 UAH higher than the current bet!") {
+                    alert(errorMessage);
+                } else {
+                    alert('Error: ' + errorMessage);
+                }
             }
+        } catch (err) {
+            console.error(err);
+            alert('Error: ' + err.message);
         }
     }
 
+    const source = new EventSource(`${baseURI}${location.pathname}/sse`);
+    source.addEventListener('auctionUpdate', handleAuctionUpdate);
+
+
     saveBetButton.addEventListener('click', saveBet);
+
 </script>
 </body>
 </html>

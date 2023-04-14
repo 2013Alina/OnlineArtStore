@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,11 +50,6 @@ public class AuctionRestController {
             variable.setCurrentBet(auction.getCurrentBet());
             variable.setActive(auction.getActive());
             variable.setWinner(auction.getWinner());
-
-            // если аукцион закрыт
-            if (auction.getEndDate().isBefore(LocalDateTime.now())) {
-                betService.closeAuction(variable);
-            }
             return ResponseEntity.of(Optional.of(auctionRepository.save(variable)));
         }
         return ResponseEntity.notFound().build();

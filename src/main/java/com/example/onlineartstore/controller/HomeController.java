@@ -48,7 +48,7 @@ public class HomeController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> userOptional = userRepository.findUserByUsername(auth.getName());
         if(userOptional.isEmpty()){
-            return "Not find USER!";
+            return "Not find USER!"; // чи є така вьюха "Not find USER!"?
         }
         User user = userOptional.get();
         Integer userId = user.getId();

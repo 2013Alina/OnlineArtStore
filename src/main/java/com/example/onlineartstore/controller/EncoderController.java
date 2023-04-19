@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class EncoderController {
+public class EncoderController { // Чи потрібен цей контролер?
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 

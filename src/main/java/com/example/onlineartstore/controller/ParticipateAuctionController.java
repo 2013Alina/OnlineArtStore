@@ -27,7 +27,7 @@ public class ParticipateAuctionController {
     String index(@PathVariable Integer id, Model model, Principal principal) {
         Optional<User> userOptional = userRepository.findUserByUsername(principal.getName());
         if (userOptional.isEmpty()) {
-            return "User not found!";
+            return "User not found!"; // чи є така вьюха?
         }
         User user = userOptional.get();
         Integer userId = user.getId();

@@ -1,40 +1,61 @@
 package com.example.onlineartstore.controller;
 
+import com.example.onlineartstore.entity.User;
 import com.example.onlineartstore.entity.UserDetail;
 import com.example.onlineartstore.repository.UserDetailRepository;
+import com.example.onlineartstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
 
-import java.util.Collections;
 
 @Controller
 @RequestMapping("/userPage")
 @RequiredArgsConstructor
 public class UserPageController {
 
+    private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
 
-    @GetMapping
-    String index(Model model) {
-        model.addAttribute("userDetail", new UserDetail());
+    @GetMapping("/{id}")
+    String index(@PathVariable Integer id, Model model) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            return "User not find!";
+        }
+        User user = optionalUser.get();
+        model.addAttribute("user", user);
+        model.addAttribute("userId", id);
+        if (user.getUserDetail() != null) {
+            model.addAttribute("userDetail", userDetailRepository.getReferenceById(user.getUserDetail().getId()));
+        } else {
+            model.addAttribute("userDetail", new UserDetail());
+        }
         return "userPage";
     }
 
-
-    @PostMapping
-    String registration(@Validated @ModelAttribute UserDetail userDetail, BindingResult bindingResult, Model redirectAttributes) {
-        if (!bindingResult.hasErrors()) {
-            userDetailRepository.save(userDetail);
-            return "/userPage";
+    @GetMapping("/users/{id}")
+    @ResponseBody
+    public ResponseEntity<?> showUser(@PathVariable Integer id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            return ResponseEntity.ok(optionalUser.get());
         }
-        redirectAttributes.addAttribute("errors", bindingResult.getFieldErrors());
-        redirectAttributes.addAttribute("userDetail", userDetail);
-
-        return "/userPage";
+        return ResponseEntity.badRequest().body("User not found!");
     }
+
+    @GetMapping("/userDetails/{id}")
+    @ResponseBody
+    public ResponseEntity<?> showUserDetail(@PathVariable Integer id) {
+        Optional<UserDetail> optionalUserDetail = userDetailRepository.findById(id);
+        if (optionalUserDetail.isPresent()) {
+            return ResponseEntity.ok(optionalUserDetail.get());
+        }
+        return ResponseEntity.badRequest().body("UserDetail not found!");
+    }
+
+
 }

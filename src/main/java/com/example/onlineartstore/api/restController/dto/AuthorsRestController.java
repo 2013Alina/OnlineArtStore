@@ -46,18 +46,18 @@ public class AuthorsRestController {
         }
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<Author> update(@PathVariable Integer id, @RequestBody Author author) {
+    @PutMapping("/{id}") //http://localhost:8080/adminPage/api/v1/authors/2 для update
+    ResponseEntity<Author> updateAuthor(@PathVariable Integer id, @RequestBody Author author) {
         Optional<Author> foundAuthors = authorRepository.findById(id);
         if (foundAuthors.isPresent()) {
-            Author au = foundAuthors.get();
-            au.setPseudonym(author.getPseudonym());
-            au.setFirstName(author.getFirstName());
-            au.setSurname(author.getSurname());
-            au.setBirthDate(author.getBirthDate());
-            au.setAwards(author.getAwards());
-            au.setImagePath(au.getImagePath());
-            return ResponseEntity.of(Optional.of(authorRepository.save(au)));
+            Author variable = foundAuthors.get();
+            variable.setPseudonym(author.getPseudonym());
+            variable.setFirstName(author.getFirstName());
+            variable.setSurname(author.getSurname());
+            variable.setBirthDate(author.getBirthDate());
+            variable.setAwards(author.getAwards());
+            variable.setImagePath(variable.getImagePath());
+            return ResponseEntity.of(Optional.of(authorRepository.save(variable)));
         }
         return ResponseEntity.notFound().build();
     }

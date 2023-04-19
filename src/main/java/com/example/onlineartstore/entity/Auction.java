@@ -6,15 +6,11 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor //@AllArgsConstructor генерирует конструктор с одним параметром для каждого поля в классе.
+@NoArgsConstructor //конструктор без параметров
 @Data
 @Table(name = "Auctions")
 @EqualsAndHashCode(exclude = "auctionParticipants")
@@ -31,7 +27,30 @@ public class Auction {
     @NonNull
     private BigDecimal startingPrice;
     @NonNull
+    private BigDecimal currentBet;
+    @NonNull
     private Boolean active;
+
+    private String winner;
+
+    public Auction(String titleAuction, LocalDateTime startDate, LocalDateTime endDate, BigDecimal startingPrice, BigDecimal currentBet, Boolean active, String winner) {
+        this.titleAuction = titleAuction;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startingPrice = startingPrice;
+        this.currentBet = currentBet;
+        this.active = active;
+        this.winner = winner;
+    }
+
+    public Auction(String titleAuction, LocalDateTime startDate, LocalDateTime endDate, BigDecimal startingPrice, BigDecimal currentBet, Boolean active) {
+        this.titleAuction = titleAuction;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startingPrice = startingPrice;
+        this.currentBet = currentBet;
+        this.active = active;
+    }
 
     @JsonIgnore
     @OneToMany(mappedBy = "auction", cascade = {CascadeType.ALL})
@@ -75,5 +94,4 @@ public class Auction {
         comment.setAuction(this);
         commentsAuction.add(comment);
     }
-
 }

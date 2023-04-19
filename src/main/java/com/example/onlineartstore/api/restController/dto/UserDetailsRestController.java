@@ -3,11 +3,14 @@ package com.example.onlineartstore.api.restController.dto;
 import com.example.onlineartstore.api.dto.UserDetailDTO;
 import com.example.onlineartstore.entity.User;
 import com.example.onlineartstore.entity.UserDetail;
+import com.example.onlineartstore.error.ErrorResponse;
 import com.example.onlineartstore.repository.UserDetailRepository;
 import com.example.onlineartstore.repository.UserRepository;
+import com.example.onlineartstore.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +25,8 @@ public class UserDetailsRestController {
 
     private final UserDetailRepository userDetailRepository;
     private final UserRepository userRepository;
+    private final UserDetailService userDetailService;
+
 
     @GetMapping
     List<UserDetail> list() {
@@ -29,63 +34,72 @@ public class UserDetailsRestController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserDetail> show(@PathVariable Integer id) {
+    ResponseEntity<UserDetail> showUserDetail(@PathVariable Integer id) {
         if (userDetailRepository.existsById(id)) {
             return ResponseEntity.of(userDetailRepository.findById(id));
         }
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<UserDetail> update(@PathVariable Integer id, @RequestBody UserDetail userDetail) {
+    @PutMapping("/{id}") //http://localhost:8080/adminPageUsers/api/v3/userDetails/6
+    ResponseEntity<UserDetail> updateUserDetail(@PathVariable Integer id, @RequestBody @Validated UserDetailDTO userDetailDTO) {
         Optional<UserDetail> foundUserDetail = userDetailRepository.findById(id);
         if (foundUserDetail.isPresent()) {
-            UserDetail u = foundUserDetail.get();
-            u.setFirstName(userDetail.getFirstName());
-            u.setLastName(userDetail.getLastName());
-            u.setBirthDate(userDetail.getBirthDate());
-            u.setEmail(userDetail.getEmail());
-            u.setTelephone(userDetail.getTelephone());
-            return ResponseEntity.of(Optional.of(userDetailRepository.save(u)));
+            UserDetail variable = foundUserDetail.get();
+
+            Optional<User> optionalUser = userRepository.findById(userDetailDTO.getUserId());
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            UserDetail userDetail = userDetailDTO.toEntity(optionalUser.get());
+
+            variable.setFirstName(userDetail.getFirstName());
+            variable.setLastName(userDetail.getLastName());
+            variable.setBirthDate(userDetail.getBirthDate());
+            variable.setEmail(userDetail.getEmail());
+            variable.setTelephone(userDetail.getTelephone());
+            userDetailRepository.save(variable);
+            return ResponseEntity.ok().body(variable);
         }
         return ResponseEntity.notFound().build();
     }
 
+
+
     @PostMapping
-    ResponseEntity<?> create(@RequestBody @Validated UserDetailDTO userDetailDTO) {
-        try {
-            Optional<User> optionalUser = userRepository.findById(userDetailDTO.getUserId()); //Integer
-            if (optionalUser.isEmpty()) {
-                return ResponseEntity.notFound().build();
+    ResponseEntity<?> createUserDetail(@RequestBody @Validated UserDetailDTO userDetailDTO, BindingResult bindingResult) {
+        if (!bindingResult.hasErrors()) {
+            Optional<User> optionalUser = userRepository.findById(userDetailDTO.getUserId());
+            UserDetail saved;
+            try {
+                if (optionalUser.isEmpty()) {
+                    return ResponseEntity.notFound().build();
+                }
+                User user = optionalUser.get();
+
+                // вывод сообщения для пользователя, response.status === 409
+                if(user.getUserDetail() != null){
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body("My message in Java Script");
+                }
+
+                saved = userDetailRepository.save(userDetailDTO.toEntity(user));
+                saved = userDetailService.saveDetails(saved, user.getUsername());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse(e.getMessage()));
             }
-            UserDetail saved = userDetailRepository.save(userDetailDTO.toEntity(optionalUser.get()));
-            return ResponseEntity
-                    .created(URI.create("/adminPageUsers/api/v3/userDetails/" + saved.getId()))
-                    .build();
-        } catch (Throwable throwable) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(throwable);
+            URI uri = URI.create("/adminPageUsers/api/v3/userDetails/" + saved.getId());
+            return ResponseEntity.created(uri).build();
+
         }
+        return ResponseEntity.badRequest()
+                .body(bindingResult.getAllErrors());
     }
 
 
-//    @PostMapping
-//    ResponseEntity<?> create(@RequestBody UserDetail userDetail) {
-//        try {
-//            UserDetail saved = userDetailRepository.save(userDetail);
-//            return ResponseEntity
-//                    .created(URI.create("/adminPageUsers/api/v3/userDetails/" + saved.getId()))
-//                    .build();
-//        } catch (Throwable throwable) {
-//            return ResponseEntity
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(throwable);
-//        }
-//    }
-
-    @DeleteMapping("/{id}")
-    ResponseEntity<?> delete(@PathVariable Integer id) {
+    @DeleteMapping("/{id}") //http://localhost:8080/adminPageUsers/api/v3/userDetails/4
+    ResponseEntity<?> deleteUserDetail(@PathVariable Integer id) {
         if (userDetailRepository.existsById(id)) {
             userDetailRepository.deleteById(id);
             return ResponseEntity.ok().build();

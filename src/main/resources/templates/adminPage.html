@@ -26,13 +26,11 @@
             <li><a th:href="@{/}">General page</a></li>
             <li sec:authorize="isAuthenticated()">
                 <a th:href="@{/privatePage}">Private page</a></li>
-            <li sec:authorize="hasRole('USER')">
-                <a th:href="@{/userPage}">User page</a></li>
             <li sec:authorize="hasRole('ADMIN')">
                 <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
                 <ol type="1">
                     <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
-                    <li><a th:href="@{/adminPageAuction}">Auction Participants, Auction bets</a></li>
+                    <li><a th:href="@{/adminPageBets}">Admin page</a></li>
                     <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
                 </ol>
             </li>
@@ -154,30 +152,33 @@
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     </div>
     <div>
-        <label for="titleAuction">Title</label>
+        <label for="titleAuction">Title:</label>
         <input type="text" id="titleAuction" name="titleAuction"/>
     </div>
     <div>
-        <label for="startDate">Start date</label>
+        <label for="startDate">Start date:</label>
         <input type="datetime-local" id="startDate" name="startDate"/>
     </div>
     <div>
-        <label for="endDate">End date</label>
+        <label for="endDate">End date:</label>
         <input type="datetime-local" id="endDate" name="endDate"/>
     </div>
     <div>
-        <label for="startingPrice">Starting price</label>
+        <label for="startingPrice">Starting price:</label>
         <input type="number" id="startingPrice" name="startingPrice"/>
     </div>
     <div>
-        <label for="active">Active</label>
+        <label for="currentBet">Current bet:</label>
+        <input type="number" id="currentBet" name="currentBet"/>
+    </div>
+    <div>
+        <label for="active">Active:</label>
         <input type="checkbox" id="active" name="active"/>
     </div>
-<!--    <div>-->
-<!--        <label for="auctionParticipants">Participants:</label>-->
-<!--        <input type="text" id="auctionParticipants" name="auctionParticipants"/>-->
-<!--      -->
-<!--    </div>-->
+    <div>
+        <label for="winner">Winner:</label>
+        <input type="text" id="winner" name="winner"/>
+    </div>
     <div>
         <input type="submit" id="auctionSave"/>
     </div>
@@ -209,16 +210,17 @@
 
 <h1>Categories table:</h1>
 <div>
-<table>
-    <thead>
-    <tr>
-        <th>Id</th>
-        <th>Category name</th>
-        <th>Options:</th>
-    </tr>
-    </thead>
-    <tbody id="Categories-table"></tbody>
-</table>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Category name</th>
+            <th>DELETE:</th>
+            <th>UPDATE:</th>
+        </tr>
+        </thead>
+        <tbody id="Categories-table"></tbody>
+    </table>
 </div>
 
 <h1>Authors table:</h1>
@@ -244,14 +246,17 @@
     <thead>
     <tr>
         <th>Id</th>
-        <th>Title Auction</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Starting Price</th>
-        <th>Active</th>
+        <th>Title Auction:</th>
+        <th>Start Date:</th>
+        <th>End Date:</th>
+        <th>Starting Price:</th>
+        <th>Current Bet:</th>
+        <th>Active:</th>
+        <th>Winner:</th>
         <th>Participants:</th>
         <th>DELETE</th>
         <th>UPDATE</th>
+        <th>BETS:</th>
     </tr>
     </thead>
     <tbody id="Auctions-table"></tbody>
@@ -261,6 +266,8 @@
     const baseURI = 'http://localhost:8080/adminPage/api/v1';
     const paintingsTable = document.getElementById('Paintings-table');
     const savePaintingButton = document.getElementById('save');
+
+    const imagesBaseURL = 'http://localhost:8080/images/';
 
     const categoriesTable = document.getElementById('Categories-table');
     const saveCategoryButton = document.getElementById('categorySave');
@@ -276,96 +283,177 @@
 
     function addPainting(painting) {
         const tr = document.createElement('tr');
+        tr.dataset.paintingId = painting.id;
         const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = '<button>DELETE</button>';
         const tdUpdate = document.createElement('td');
-        tdUpdate.innerHTML = '<button>UPDATE</button>';
+        tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
         for (const prop in painting) {
             const td = document.createElement('td');
             if (prop === 'author') {
                 td.append(document.createTextNode(painting[prop].pseudonym));
-            }
-            if (prop === 'category') {
+            } else if (prop === 'category') {
                 td.append(document.createTextNode(painting[prop].name));
-            }
-            if (prop === 'auction') {
+            } else if (prop === 'auction') {
                 td.append(document.createTextNode(painting[prop].titleAuction));
+            } else if (prop === 'imagePath') {
+                const tdImage = document.createElement('td');
+                const imgLink = document.createElement('a');
+                imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
+                const img = document.createElement('img');
+                img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
+                img.alt = '';
+                img.onclick = function () {
+                    this.src = this.src.replace('_small.jpg', '.jpg');
+                }
+                imgLink.append(img);
+                tdImage.append(imgLink);
+                td.append(tdImage);
             } else {
                 td.append(document.createTextNode(painting[prop]));
             }
             tr.append(td);
-            tr.append(tdDelete);
-            tr.append(tdUpdate);
         }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
         paintingsTable.append(tr);
     }
 
-    // function addCategory(category) {
-    //     const tr = document.createElement('tr');
-    //     const tdDelete = document.createElement('td');
-    //     tdDelete.innerHTML = '<button>DELETE</button>';
-    //     tdDelete.className = "delete";
-    //     const tdUpdate = document.createElement('td');
-    //     tdUpdate.innerHTML = '<button>UPDATE</button>';
-    //     tdUpdate.className = "update";
-    //     for (const prop in category) {
-    //         const td = document.createElement('td');
-    //         td.append(document.createTextNode(category[prop]));
-    //         tr.append(td);
-    //         tr.append(tdDelete);
-    //         tr.append(tdUpdate);
-    //     }
-    //     categoriesTable.append(tr);
-    // }
 
-    // function addCategory(category) {
-    //     const tr = document.createElement('tr');
-    //     const td = document.createElement('td');
-    //     const tdDelete = document.createElement('td');
-    //     tdDelete.innerHTML = '<button>DELETE</button>';
-    //     tdDelete.className = "delete";
-    //     const tdUpdate = document.createElement('td');
-    //     tdUpdate.innerHTML = '<button>UPDATE</button>';
-    //     tdUpdate.className = "update";
-    //     for (const prop in category) {
-    //         const td = document.createElement('td');
-    //         td.append(document.createTextNode(category[prop]));
-    //         tr.append(td);
-    //     }
-    //     tr.append(tdDelete);
-    //     tr.append(tdUpdate);
-    //     tr.append(td);
-    //     categoriesTable.append(tr);
-    // }
+    async function deletePainting(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/paintings/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = paintingsTable.querySelector(`[data-painting-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+
 
     function addCategory(category) {
         const tr = document.createElement('tr');
+        tr.dataset.categoryId = category.id; //идентификатор строки в таблице Category
+        const tdDelete = document.createElement('td');
+        const tdUpdate = document.createElement('td');
+        tdDelete.innerHTML = `<a href="#" onclick="deleteCategory(${category.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a href='/updateCategory/${category.id}'>UPDATE</a>`;
         for (const prop in category) {
             const td = document.createElement('td');
             td.append(document.createTextNode(category[prop]));
             tr.append(td);
         }
-        const td = document.createElement('td');
-        const deleteButton = document.createElement("button");
-        deleteButton.innerText = "DELETE";
-        deleteButton.className = "delete";
-        const updateButton = document.createElement("button");
-        updateButton.innerText = "UPDATE";
-        updateButton.className = "update";
-        td.append(deleteButton, updateButton);
-        tr.append(td);
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
         categoriesTable.append(tr);
+    }
+
+    async function deleteCategory(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/categories/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 204) {
+            const row = categoriesTable.querySelector(`[data-category-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            try {
+                const json = await response.json();
+                console.error(json);
+            } catch (e) {
+                console.error("Invalid JSON response from server");
+            }
+        }
+    }
+
+    function addPainting(painting) {
+        const tr = document.createElement('tr');
+        tr.dataset.paintingId = painting.id;
+        const tdDelete = document.createElement('td');
+        const tdUpdate = document.createElement('td');
+        tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
+        for (const prop in painting) {
+            const td = document.createElement('td');
+            if (prop === 'author') {
+                td.append(document.createTextNode(painting[prop].pseudonym));
+            } else if (prop === 'category') {
+                td.append(document.createTextNode(painting[prop].name));
+            } else if (prop === 'auction') {
+                td.append(document.createTextNode(painting[prop].titleAuction));
+            } else if (prop === 'imagePath') {
+                const tdImage = document.createElement('td');
+                const imgLink = document.createElement('a');
+                imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
+                const img = document.createElement('img');
+                img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
+                img.alt = '';
+                img.onclick = function () {
+                    this.src = this.src.replace('_small.jpg', '.jpg');
+                }
+                imgLink.append(img);
+                tdImage.append(imgLink);
+                td.append(tdImage);
+            } else {
+                td.append(document.createTextNode(painting[prop]));
+            }
+            tr.append(td);
+        }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
+        paintingsTable.append(tr);
     }
 
     function addAuthor(author) {
         const tr = document.createElement('tr');
+        tr.dataset.authorId = author.id; //идентификатор строки в таблице Author
         const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = '<button>DELETE</button>';
+        tdDelete.innerHTML = `<a href="#" onclick="deleteAuthor(${author.id})">DELETE</a>`;
         const tdUpdate = document.createElement('td');
-        tdUpdate.innerHTML = '<button>UPDATE</button>';
+        tdUpdate.innerHTML = `<a href='/updateAuthor/${author.id}'>UPDATE</a>`;
         for (const prop in author) {
             const td = document.createElement('td');
-            td.append(document.createTextNode(author[prop]));
+            if(prop === 'imagePath'){
+                const tdImage = document.createElement('td');
+                const imgLink = document.createElement('a');
+                imgLink.href = imagesBaseURL + author.imagePath + '_large.jpg';
+                const img = document.createElement('img');
+                img.src = imagesBaseURL + author.imagePath + '_small.jpg';
+                img.alt = '';
+                img.onclick = function () {
+                    this.src = this.src.replace('_small.jpg', '.jpg');
+                }
+                imgLink.append(img);
+                tdImage.append(imgLink);
+                td.append(tdImage);
+            }else{
+                td.append(document.createTextNode(author[prop]));
+            }
             tr.append(td);
             tr.append(tdDelete);
             tr.append(tdUpdate);
@@ -373,20 +461,105 @@
         authorsTable.append(tr);
     }
 
-    function addAuction(auction) {
-        const tr = document.createElement('tr');
-        const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = '<button>DELETE</button>';
-        const tdUpdate = document.createElement('td');
-        tdUpdate.innerHTML = '<button>UPDATE</button>';
-        for (const prop in auction) {
-            const td = document.createElement('td');
-            td.append(document.createTextNode(auction[prop]));
-            tr.append(td);
-            tr.append(tdDelete);
-            tr.append(tdUpdate);
+    async function deleteAuthor(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/authors/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = authorsTable.querySelector(`[data-author-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
         }
+    }
+
+
+    function addAuction(auction) {
+        console.log("-----");
+        console.log(auction);
+
+        const existingRow = document.querySelector(`tr[data-auction-id='${auction.id}']`);//идентификатор проверяет, существует ли уже Аукцион в таблице!
+        if (existingRow) {
+            // если Аукцион уже существует, обновляю ячейку, в которой отображается информация об участниках Aукциона
+            const existingCell = existingRow.querySelector("td.auctionParticipants");
+            const newUserName = auction.auctionParticipants[auction.auctionParticipants.length - 1].username;
+            let existingUserNames = existingCell.textContent;
+            if (existingUserNames) {
+                existingUserNames = existingUserNames.split(',').map(name => name.trim());
+                // Разделяю существующие имена пользователей запятыми и обрезаю все пробелы!
+                if (existingUserNames.includes(newUserName)) {
+                    // Пользователь уже существует, повторно обновлять ячейку не нужно!
+                    return;
+                }
+                existingCell.textContent += `, ${newUserName}`;
+                //если нет, то к новому имени пользователя добавляется запятая и пробел перед ним
+            } else {
+                existingCell.textContent = newUserName;
+                //Если существующая ячейка не содержит имен пользователей, она просто устанавливает для textContent ячейки новое имя пользователя!
+            }
+        }
+
+        const tr = document.createElement('tr');
+        tr.dataset.auctionId = auction.id; //идентификатор строки в таблице Auction для updateAuction
+        const tdDelete = document.createElement('td');
+        tdDelete.innerHTML = `<a href="#" onclick="deleteAuction(${auction.id})">DELETE</a>`;
+        const tdUpdate = document.createElement('td');
+        tdUpdate.innerHTML = `<a href='/updateAuction/${auction.id}'>UPDATE</a>`;
+        const tdAllBets = document.createElement('td');
+        tdAllBets.innerHTML = `<a href='/allBets/${auction.id}'>All BETS!</a>`;
+        for (const prop in auction) {
+            const td = document.createElement('td');  //@ManyToMany
+            if (prop === 'auctionParticipants') {
+                const usersNames = auction['auctionParticipants'].map(user => user['username']).join(',');
+                td.classList.add('auctionParticipants');
+                td.append(document.createTextNode(usersNames));
+            }
+            if (prop !== 'auctionParticipants') {
+                td.append(document.createTextNode(auction[prop]));
+            }
+            tr.append(td);
+        }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
+        tr.append(tdAllBets);
         auctionsTable.append(tr);
+    }
+
+
+    async function deleteAuction(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/auctions/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = auctionsTable.querySelector(`[data-auction-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
     }
 
     function fillTablePaintings(paintings) {
@@ -447,7 +620,6 @@
         });
     }
 
-
     async function loadPaintings() {
         const response = await fetch(`${baseURI}/paintings`, {
             method: 'GET',
@@ -459,7 +631,6 @@
         console.log(paintings);
         fillTablePaintings(paintings);
     }
-
 
     async function loadCategories() {
         const response = await fetch(`${baseURI}/categories`, {
@@ -527,7 +698,7 @@
             material: materialInput.value,
             description: descriptionInput.value,
             price: priceInput.value,
-            sold: soldInput.value,
+            sold: soldInput.checked, // "on" - true, "off" - false
             authorId: authorsSelect.value,
             categoryId: categoriesSelect.value,
             auctionId: auctionsSelect.value
@@ -619,13 +790,17 @@
         const startDateInput = document.getElementById('startDate');
         const endDateInput = document.getElementById('endDate');
         const startingPriceInput = document.getElementById('startingPrice');
+        const currentBetInput = document.getElementById('currentBet');
         const activeInput = document.getElementById('active');
+        const winnerInput = document.getElementById('winner');
         const auction = {
             titleAuction: titleAuctionInput.value,
             startDate: startDateInput.value,
             endDate: endDateInput.value,
             startingPrice: startingPriceInput.value,
-            active: activeInput.value
+            currentBet: currentBetInput.value,
+            active: activeInput.checked, // "on" - true "off" - false
+            winner: winnerInput.value
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;
@@ -642,6 +817,14 @@
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
             addAuction(await resp.json())
+        } else if (response.status === 400) {
+            const errorResponse = await response.json();
+            if (errorResponse.message === 'Auction has ended!') {
+                alert('Auction has ended!');
+                location.reload();
+            } else {
+                alert('Error: ' + response.status);
+            }
         } else {
             alert('Error: ' + response.status);
         }
@@ -651,37 +834,6 @@
     saveCategoryButton.addEventListener('click', saveCategory);
     saveAuthorButton.addEventListener('click', saveAuthor);
     saveAuctionButton.addEventListener('click', saveAuction);
-
-
-    categoriesTable.addEventListener('click',async function (e) {
-        if (e.target.nodeName === 'BUTTON' && e.target.classList.contains('delete')) {
-            console.log('delete', e.target)
-
-            if (!confirm("Are you sure You want to delete this category?")) {
-                return;
-            }
-            //const id = e.target.parentElement.parentElement.firstElementChild.innerHTML;
-            const id = e.target.parentElement.firstElementChild.firstElementChild.innerHTML;
-            console.log(id);
-
-            const csrfHeaderName = csrfHeader.content;
-            const csrfTokenValue = csrfToken.content;
-
-            const response = await fetch(`${baseURI}/categories/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    [csrfHeaderName]: csrfTokenValue
-                },
-
-            });
-            console.log(response.status)
-            if (response.status === 204) {
-                e.target.parentElement.firstElementChild.remove();
-            } else {
-                alert("Error")
-            }
-        }
-    });
 </script>
 </body>
 </html>

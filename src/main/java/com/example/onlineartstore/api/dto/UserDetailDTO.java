@@ -2,34 +2,41 @@ package com.example.onlineartstore.api.dto;
 
 import com.example.onlineartstore.api.classAnnotation.Phone;
 import com.example.onlineartstore.entity.*;
-import com.sun.istack.NotNull;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
+import lombok.NonNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
 @Data
 public class UserDetailDTO {
+    @NonNull
     @NotNull
     @NotBlank
-    @Length(min = 3)
     private String firstName;
 
+    @NonNull
     @NotNull
     @NotBlank
-    @Length(min = 3)
     private String lastName;
 
+    @NonNull
     @NotNull
     @Past
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
+    @NonNull
     @NotNull
+    @NotBlank
     private String email;
 
+    @NonNull
     @NotNull
+    @NotBlank
     @Phone
     private String telephone;
 
@@ -37,7 +44,7 @@ public class UserDetailDTO {
     private Integer userId;
 
     public UserDetail toEntity(User user) {
-        UserDetail userDetail = new UserDetail(firstName, lastName, birthDate, email, telephone);
+        UserDetail userDetail = new UserDetail(firstName,lastName,birthDate,email,telephone);
         userDetail.setUser(user);
         return userDetail;
     }

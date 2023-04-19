@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
     <style>
         table {
             border-collapse: collapse;
@@ -24,13 +26,11 @@
             <li><a th:href="@{/}">General page</a></li>
             <li sec:authorize="isAuthenticated()">
                 <a th:href="@{/privatePage}">Private page</a></li>
-            <li sec:authorize="hasRole('USER')">
-                <a th:href="@{/userPage}">User page</a></li>
             <li sec:authorize="hasRole('ADMIN')">
                 <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
                 <ol type="1">
                     <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
-                    <li><a th:href="@{/adminPageAuction}">Auction Participants, Auction bets</a></li>
+                    <li><a th:href="@{/adminPageBets}">Admin page</a></li>
                     <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
                 </ol>
             </li>
@@ -48,19 +48,16 @@
 </nav>
 <h1 style="color: green">Create NEW USER or view ALL USERS:</h1>
 <h1>Create new user:</h1>
+<h4>Enter a unique username and 6-digit password for the new user.</h4>
 <div>
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <div>
         <label for="username">Username</label>
-        <input type="text" id="username" name="username"/>
+        <input type="text" id="username" name="username" required/>
     </div>
     <div>
         <label for="password">Password</label>
-        <input type="text" id="password" name="password"/>
-    </div>
-    <div>
-        <label for="enabled">Enabled</label>
-        <input type="checkbox" id="enabled" name="enabled"/>
+        <input type="text" id="password" name="password" required/>
     </div>
     <div>
         <input type="submit" id="save"/>
@@ -72,6 +69,7 @@
 </ul>
 
 <h1>Create new user`s details :</h1>
+<h4>Be sure to enter the username of the user to whom the information is assigned.</h4>
 <div>
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <div>
@@ -95,7 +93,8 @@
         <input type="text" id="telephone" name="telephone"/>
     </div>
     <div>
-        <input type="hidden" name="users" id="users" />  // ?????????
+        <label for="users">User:</label>
+        <select name="users" id="users" th:value="${users}"></select>
     </div>
     <div>
         <input type="submit" id="saveUserDetail"/>
@@ -105,15 +104,16 @@
 <ul th:each="error: ${errors}">
     <li th:text="${error.defaultMessage}"></li>
 </ul>
-
 <h1>Users table:</h1>
 <table>
     <thead>
     <tr>
         <th>Id</th>
-        <th>Username</th>
-        <th>Password</th>
-        <th>Enabled</th>
+        <th>User`s login:</th>
+        <th>Password:</th>
+        <th>Enabled:</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
     </tr>
     </thead>
     <tbody id="Users-table"></tbody>
@@ -124,16 +124,18 @@
     <thead>
     <tr>
         <th>Id</th>
-        <th>FirstName</th>
-        <th>LastName</th>
-        <th>BirthDate</th>
-        <th>Email</th>
+        <th>First name:</th>
+        <th>Last name:</th>
+        <th>Birthdate:</th>
+        <th>Email:</th>
         <th>Telephone:</th>
-        <th>User Id:</th>
+        <th>User`s login:</th>
+        <th>UPDATE:</th>
     </tr>
     </thead>
     <tbody id="UserDetails-table"></tbody>
 </table>
+
 
 <script>
     const baseURI = 'http://localhost:8080/adminPageUsers/api/v3';
@@ -145,26 +147,62 @@
 
     function addUser(user) {
         const tr = document.createElement('tr');
+        tr.dataset.userId = user.id; //идентификатор строки в таблице User
+        const tdDelete = document.createElement('td');
+        tdDelete.innerHTML = `<a href="#" onclick="deleteUser(${user.id})">DELETE</a>`; //<a href="#" создаю элемент для создания «кнопки», которая выглядит как ссылка, но еще не имеет целевой страницы или реализованной функции
+        const tdUpdate = document.createElement('td');
+        tdUpdate.innerHTML = `<a href='/updateUser/${user.id}'>UPDATE</a>`;
         for (const prop in user) {
             const td = document.createElement('td');
             td.append(document.createTextNode(user[prop]));
             tr.append(td);
         }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
         usersTable.append(tr);
+    }
+
+
+    async function deleteUser(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/users/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = usersTable.querySelector(`[data-user-id="${id}"]`); //tr.dataset.userId = user.id;
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
     }
 
     function addUserDetail(userDetail) {
         const tr = document.createElement('tr');
+        const tdUpdate = document.createElement('td');
+        tdUpdate.innerHTML = `<a href='/updateUserDetail/${userDetail.id}'>UPDATE</a>`;
         for (const prop in userDetail) {
             const td = document.createElement('td');
             if (prop === 'user') {
-                td.append(document.createTextNode(userDetail[prop].id));
+                td.append(document.createTextNode(userDetail[prop].username)); // выводит логин User
+            } else {
+                td.append(document.createTextNode(userDetail[prop]));
             }
-            td.append(document.createTextNode(userDetail[prop]));
             tr.append(td);
         }
+        tr.append(tdUpdate);
         userDetailsTable.append(tr);
     }
+
 
     function fillTableUsers(users) {
         usersTable.innerHTML = '';
@@ -181,12 +219,12 @@
     }
 
     function fillUsers(users) {
-        const userElement = document.getElementById('users');
+        const userSelect = document.getElementById('users');
         users.forEach(user => {
-            const inputElement = document.createElement('input');   // или на td ??
-            inputElement.value = user.id;
-            inputElement.append(document.createTextNode(user.id));
-            userElement.append(inputElement);
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.append(document.createTextNode(user.username));
+            userSelect.append(option);
         });
     }
 
@@ -221,14 +259,15 @@
     async function saveUser() {
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
-        const enabledInput = document.getElementById('enabled');
 
         const user = {
             username: usernameInput.value,
-            password: passwordInput.value,
-            enabled: enabledInput.value
+            password: passwordInput.value
         };
         const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+        console.log("body: " + JSON.stringify(user));
+
         const csrfHeader = document.getElementById('_csrf_header').content;
         const response = await fetch(`${baseURI}/users`, {
             method: 'POST',
@@ -238,13 +277,20 @@
             },
             body: JSON.stringify(user)
         });
-        console.log(response.status);
+        console.log("**********" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
-            addUser(await resp.json())
+            if (resp.status === 200) {
+                let user = await resp.json();
+                console.log(user);
+                addUser(user)
+            } else {
+                alert('Error: ' + (await resp.text()));
+            }
         } else {
             alert('Error: ' + response.status);
+            console.error(await response.json());
         }
     }
 
@@ -254,7 +300,7 @@
         const birthDateInput = document.getElementById('birthDate');
         const emailInput = document.getElementById('email');
         const telephoneInput = document.getElementById('telephone');
-        const userIdInput = document.getElementById('users');
+        const usersInput = document.getElementById('users');
 
         const userDetail = {
             firstName: firstNameInput.value,
@@ -262,7 +308,7 @@
             birthDate: birthDateInput.value,
             email: emailInput.value,
             telephone: telephoneInput.value,
-            userId: userIdInput.value
+            userId: usersInput.value
         };
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;
@@ -278,15 +324,21 @@
         if (response.status === 201) {
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
-            addUserDetail(await resp.json())
+            if (resp.status === 200) {
+                let userDetail = await resp.json();
+                console.log(userDetail);
+                addUserDetail(userDetail)
+            } else {
+                alert('Error: ' + (await resp.text()));
+            }
         } else {
             alert('Error: ' + response.status);
+            console.error(await response.json());
         }
     }
 
     saveUserButton.addEventListener('click', saveUser);
     saveUserDetailButton.addEventListener('click', saveUserDetail);
 </script>
-
 </body>
 </html>

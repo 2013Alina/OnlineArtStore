@@ -1,22 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <style>
-        table {
-            border-collapse: collapse;
-        }
-
-        table, td, th {
-            border: 1px solid black;
-        }
-
-        td, th {
-            margin: 8px;
-        }
-    </style>
+    <title>victoryPage</title>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="userId" id="userId" th:content="${userId}"/>
 </head>
 <body>
 <nav>
@@ -24,8 +13,6 @@
         <li><a th:href="@{/}">General page</a></li>
         <li sec:authorize="isAuthenticated()">
             <a th:href="@{/privatePage}">Private page</a></li>
-        <li sec:authorize="hasRole('USER')">
-            <a th:href="@{/userPage}">User page</a></li>
         <li sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/mainAdminPage}">Admin page</a></li>
         <li sec:authorize="isAnonymous()">
@@ -39,24 +26,28 @@
             <a th:href="@{/logout}">Logout</a></li>
     </menu>
 </nav>
-<h1>Information about me:</h1>
+<h1>My victories:</h1>
 <table>
     <thead>
     <tr>
-        <th>My first name:</th>
-        <th>My last name:</th>
-        <th>My birthday:</th>
-        <th>My email:</th>
-        <th>My telephone:</th>
+        <th>Title Auction:</th>
+        <th>Start Date:</th>
+        <th>End Date:</th>
+        <th>Starting Price:</th>
+        <th>Current Bet:</th>
+        <th>Active:</th>
+        <th>WINNER:</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="userDetail:${userDetails}">
-        <td th:text="${userDetail.firstName}"></td>
-        <td th:text="${userDetail.lastName}"></td>
-        <td th:text="${userDetail.birthDate.toLocalDate()}"></td>
-        <td th:text="${userDetail.email}"></td>
-        <td th:text="${userDetail.telephone}"></td>
+    <tr th:if="${auction.active == false && auction.winner==user.username}" th:each="auction:${auctions}">
+        <td th:text="${auction.titleAuction}"></td>
+        <td th:text="${auction.startDate}"></td>
+        <td th:text="${auction.endDate}"></td>
+        <td th:text="${auction.startingPrice}"></td>
+        <td th:text="${auction.currentBet}"></td>
+        <td th:text="${auction.active}"></td>
+        <td th:text="${auction.winner}"></td>
     </tbody>
 </table>
 </body>

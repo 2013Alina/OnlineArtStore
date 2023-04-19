@@ -14,10 +14,9 @@ import java.util.*;
 @Entity
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Table(name = "Users")
-@ToString(exclude = {"betsUser","comments", "participationInAuctions", "userDetail"})
+@ToString(exclude = {"betsUsers","comments", "participationInAuctions", "userDetail"})//была рекурсия из-за поля userDetail, так как User связан с UserDetail @OneToOne
 @EqualsAndHashCode(exclude = {"participationInAuctions", "roles", "userDetail"})
 public class User {
     @Id
@@ -26,25 +25,23 @@ public class User {
 
     @NotNull
     @NotBlank
-    @NonNull
     @Column(unique = true)
     @Length(min = 3)
     private String username;
 
     @NotNull
     @NotBlank
-    @NonNull
     @Length(min = 6)
     private String password;
 
-    @NonNull
-    @NotNull
+
     private Boolean enabled;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
     //cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     private List<Comment> comments = new ArrayList<>();
+
 
     public void addComment(Comment comment) {
         comment.setUser(this);
@@ -55,15 +52,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
     //cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     //каскадное обновление данных, если author сохраняется, сохраняются м данные painting
-    private List<Bet> betsUser = new ArrayList<>();
+    private List<Bet> betsUsers = new ArrayList<>();
 
-    public void addBet(Bet bet) {
-        bet.setUser(this);
-        betsUser.add(bet);
-    }
+
     @JsonIgnore
-    @OneToOne
-    UserDetail userDetail;
+    @OneToOne   // не пишу аннотацию @NotNull так как User спокойно существует без UserDetail!!!!!
+    private  UserDetail userDetail;
 
     @JsonIgnore
     @ManyToMany
@@ -81,5 +75,11 @@ public class User {
 
     public void addAuction(Auction auction) {
         participationInAuctions.add(auction);
+    }
+
+    public User(String username, String password, Boolean enabled) {
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
     }
 }

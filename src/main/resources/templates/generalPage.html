@@ -23,8 +23,6 @@
         <li><a th:href="@{/}">General page</a></li>
         <li sec:authorize="isAuthenticated()">
             <a th:href="@{/privatePage}">Private page</a></li>
-        <li sec:authorize="hasRole('USER')">
-            <a th:href="@{/userPage}">User page</a></li>
         <li sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/mainAdminPage}">Admin page</a></li>
         <li sec:authorize="isAnonymous()">
@@ -44,21 +42,20 @@
     <thead>
     <tr>
         <th>Title</th>
-        <th>Published</th>
         <th>ImagePath</th>
-        <th>Size</th>
-        <th>Material</th>
         <th>Description</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="painting: ${paintings}">
         <td th:text="${painting.title}"></td>
-        <td th:text="${painting.published}"></td>
-        <td th:text="${painting.imagePath}"></td>
-        <td th:text="${painting.size}"></td>
-        <td th:text="${painting.material}"></td>
+        <td>
+            <a th:href="@{${'/images/' + painting.imagePath + '_large.jpg'}}">
+                <img th:src="@{${'/images/' + painting.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
+            </a>
+        </td>
         <td th:text="${painting.description}"></td>
+    </tr>
     </tbody>
 </table>
 </body>

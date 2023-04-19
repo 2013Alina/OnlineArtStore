@@ -4,16 +4,27 @@ import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.entity.Author;
 import com.example.onlineartstore.entity.Category;
 import com.example.onlineartstore.entity.Painting;
-import com.sun.istack.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-
+import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull; // нужный пакет!
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.UUID;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class PaintingDTO {
+
     @NotNull
     @NotBlank
     private String title;
@@ -21,7 +32,7 @@ public class PaintingDTO {
     @NotNull
     private LocalDate published;
 
-    private String imagePath;
+    private MultipartFile imageFile; // каталог, в котором загруженные изображения будут храниться на сервере!
 
     @NotNull
     @NotBlank
@@ -36,7 +47,6 @@ public class PaintingDTO {
     private String description;
 
     @NotNull
-    @NotBlank
     private BigDecimal price;
 
     private Boolean sold;
@@ -45,14 +55,25 @@ public class PaintingDTO {
     private Integer categoryId;
     @NotNull
     private Integer authorId;
-    @NotNull
+    //картина может быть еще не подвязана под аукцион null
     private Integer auctionId;
 
-    public Painting toEntity(Category category, Author author, Auction auction) {
+    public Painting toEntity(Category category, Author author, Auction auction, String imagePath) {
         Painting painting = new Painting(title, published, imagePath, size, material, description, price, sold);
         painting.setCategory(category);
         painting.setAuthor(author);
         painting.setAuction(auction);
+
         return painting;
+    }
+
+    public String uploadImage() throws IOException {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(imageFile.getOriginalFilename());
+            Path destinationPath = Paths.get("src/main/resources/static/images/" + fileName);
+            Files.copy(imageFile.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            return "/static/images/" + fileName;
+        }
+        return null;
     }
 }

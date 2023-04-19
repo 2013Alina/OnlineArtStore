@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Data
 @Table(name = "Paintings")
-@ToString(exclude = {"comments", "auctions"})
+@ToString(exclude = "comments")   //@NonNull : нулевое значение не является допустимым
 @EqualsAndHashCode(exclude = "comments")
 public class Painting {
     @Id
@@ -25,8 +25,9 @@ public class Painting {
     private String title;
     @NonNull
     private LocalDate published;
-    @NonNull
+
     private String imagePath;
+
     @NonNull
     private String size;
     @NonNull
@@ -47,9 +48,22 @@ public class Painting {
     @ManyToOne
     private Auction auction;
 
+
     @JsonIgnore
-    @OneToMany(mappedBy = "painting", cascade = {CascadeType.ALL}) // cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    @OneToMany(mappedBy = "painting", cascade = {CascadeType.ALL})
+    // cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     private List<Comment> comments = new ArrayList<>();
+
+    public Painting(String title, LocalDate published, String imagePath, String size, String material, String description, BigDecimal price, Boolean sold) {
+        this.title = title;
+        this.published = published;
+        this.imagePath = imagePath;
+        this.size = size;
+        this.material = material;
+        this.description = description;
+        this.price = price;
+        this.sold = sold;
+    }
 
     public void addComment(Comment... comments) {
         for (Comment comment : comments) {
@@ -57,5 +71,4 @@ public class Painting {
             this.comments.add(comment);
         }
     }
-
 }

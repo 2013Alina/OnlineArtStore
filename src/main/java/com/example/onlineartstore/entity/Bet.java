@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -29,12 +30,10 @@ public class Bet {
     @ManyToOne
     private User user;
 
-
     @PrePersist
     // - выполнить соответствующий метод при создании Entity и при каждом ее обновлении. Теперь нет нужды отдельно устанавливать эти даты
     protected void onCreate() {
         this.createdDate = LocalDateTime.now();
     }
-
 
 }

@@ -41,7 +41,8 @@ public class UpdatePaintingController {
 
     @GetMapping("/paintings/{id}")
     @ResponseBody
-    public ResponseEntity<?> showPainting(@PathVariable Integer id) {
+    public ResponseEntity<?> showPainting(@PathVariable Integer id) { // що повертає цей метод? категорію, автора, аукціон чи картину? тут порушен принцип єдиної відповідальності.
+                                                                      // крім того ендпроін називається /paintings/
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isPresent()) {
             return ResponseEntity.ok(optionalCategory.get());

@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequestMapping("/updateUserDetail")
 @RequiredArgsConstructor
 @Controller
-public class UpdateUserDetailController {
+public class UpdateUserDetailController { // може просто UserDetailController? навіщо префікс Update?
 
     private final UserDetailRepository userDetailRepository;
     private final UserRepository userRepository;

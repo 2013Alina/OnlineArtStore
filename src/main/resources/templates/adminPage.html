@@ -3,19 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
-    <style>
-        table {
-            border-collapse: collapse;
-        }
-
-        table, td, th {
-            border: 1px solid black;
-        }
-
-        td, th {
-            margin: 8px;
-        }
-    </style>
+    <link th:href="@{/css/adminPage.css}" rel="stylesheet"/>
     <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
     <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
@@ -30,12 +18,11 @@
                 <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
                 <ol type="1">
                     <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
-                    <li><a th:href="@{/adminPageBets}">Admin page</a></li>
                     <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
                 </ol>
             </li>
             <li sec:authorize="isAnonymous()">
-                <a th:href="@{/singup}">Sing Up</a></li>
+                <a th:href="@{/singup}">Sign Up</a></li>
             <li sec:authorize="isAnonymous()">
                 <a th:href="@{/login}">Login</a></li>
             <li sec:authorize="isAuthenticated()">
@@ -46,175 +33,233 @@
         </ul>
     </menu>
 </nav>
-<h1 style="color:deeppink">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</h1>
-<h1>Create new painting for Auction:</h1>
-<div>
+<h1 style="color:deeppink">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION.</h1>
+<h2 class="name">Create new Painting for auction:</h2>
+<div class="frame">
     <div>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     </div>
-    <div>
-        <label for="title">Title</label>
+    <div class="frame">
+        <label for="title">Title:</label>
         <input type="text" id="title" name="title"/>
     </div>
-    <div>
-        <label for="published">Published</label>
+    <div class="frame">
+        <label for="published">Published:</label>
         <input type="date" id="published" name="published"/>
     </div>
-    <div>
-        <label for="imagePath">ImagePath</label>
-        <input type="text" id="imagePath" name="imagePath"/>
+    <div class="frame">
+        <label for="imageFile">FILE:</label>
+        <input type="file" name="imageFile" id="imageFile">
+        <button type="button" onclick="uploadImage()">Upload Image</button>
+        <label for="imageLink">Image Link:</label>
+        <input type="text" name="imageLink" id="imageLink" readonly>
     </div>
-    <div>
-        <label for="size">Size</label>
+    <div class="frame">
+        <label for="size">Size:</label>
         <input type="text" id="size" name="size"/>
     </div>
-    <div>
-        <label for="material">Material</label>
+    <div class="frame">
+        <label for="material">Material:</label>
         <input type="text" id="material" name="material"/>
     </div>
-    <div>
-        <label for="description">Description</label>
+    <div class="frame">
+        <label for="description">Description:</label>
         <input type="text" id="description" name="description"/>
     </div>
-    <div>
-        <label for="price">Price</label>
+    <div class="frame">
+        <label for="price">Price:</label>
         <input type="number" id="price" name="price"/>
     </div>
-    <div>
-        <label for="sold">SOLD</label>
+    <div class="frame">
+        <label for="sold">SOLD:</label>
         <input type="checkbox" id="sold" name="sold"/>
     </div>
-    <div>
-        <label for="authors">Author</label>
+    <div class="frame">
+        <label for="authors">Author:</label>
         <select name="authors" id="authors"></select>
     </div>
-    <div>
-        <label for="categories">Category</label>
+    <div class="frame">
+        <label for="categories">Category:</label>
         <select name="categories" id="categories"></select>
     </div>
-    <div>
-        <label for="auctions">Auction</label>
+    <div class="frame">
+        <label for="auctions">Auction:</label>
         <select name="auctions" id="auctions"></select>
     </div>
-    <div>
-        <input type="submit" id="save"/>
+    <div class="frame">
+        <input type="submit" id="save" value="Press"/>
     </div>
 </div>
 
-<h1>Create new category:</h1>
-<div>
-    <div>
-        <label for="categoryName">Category name</label>
+<!--<h2 class="name">Create new Painting for auction:</h2>-->
+<!--<div class="frame">-->
+<!--    <div>-->
+<!--        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="title">Title:</label>-->
+<!--        <input type="text" id="title" name="title"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="published">Published:</label>-->
+<!--        <input type="date" id="published" name="published"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="imagePath">Image path:</label>-->
+<!--        <input type="text" id="imagePath" name="imagePath"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="size">Size:</label>-->
+<!--        <input type="text" id="size" name="size"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="material">Material:</label>-->
+<!--        <input type="text" id="material" name="material"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="description">Description:</label>-->
+<!--        <input type="text" id="description" name="description"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="price">Price:</label>-->
+<!--        <input type="number" id="price" name="price"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="sold">SOLD:</label>-->
+<!--        <input type="checkbox" id="sold" name="sold"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="authors">Author:</label>-->
+<!--        <select name="authors" id="authors"></select>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="categories">Category:</label>-->
+<!--        <select name="categories" id="categories"></select>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="auctions">Auction:</label>-->
+<!--        <select name="auctions" id="auctions"></select>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <input type="submit" id="save" value="Press"/>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+<h2 class="name">Create new Category:</h2>
+<div class="frame">
+    <div class="frame">
+        <label for="categoryName">Category name:</label>
         <input type="text" id="categoryName" name="categoryName">
     </div>
-    <div>
-        <input type="submit" id="categorySave"/>
+    <div class="frame">
+        <input type="submit" id="categorySave" value="Press"/>
     </div>
 </div>
 
-<h1>Create new author:</h1>
-<div>
+<h2 class="name">Create new Author:</h2>
+<div class="frame">
     <div>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     </div>
-    <div>
-        <label for="pseudonym">Pseudonym</label>
+    <div class="frame">
+        <label for="pseudonym">Pseudonym:</label>
         <input type="text" id="pseudonym" name="pseudonym">
     </div>
-    <div>
-        <label for="firstName">Author name</label>
+    <div class="frame">
+        <label for="firstName">Author name:</label>
         <input type="text" id="firstName" name="firstName">
     </div>
-    <div>
-        <label for="surname">Author surname</label>
+    <div class="frame">
+        <label for="surname">Author surname:</label>
         <input type="text" id="surname" name="surname">
     </div>
-    <div>
-        <label for="birthDate">Author birthDate</label>
+    <div class="frame">
+        <label for="birthDate">Author birthdate:</label>
         <input type="date" id="birthDate" name="birthDate">
     </div>
-    <div>
-        <label for="awards">Author awards</label>
+    <div class="frame">
+        <label for="awards">Author awards:</label>
         <input type="text" id="awards" name="awards">
     </div>
-    <div>
-        <label for="imagePathAuthor">Author photo</label>
+    <div class="frame">
+        <label for="imagePathAuthor">Author photo:</label>
         <input type="text" id="imagePathAuthor" name="imagePathAuthor">
     </div>
-    <div>
-        <input type="submit" id="authorSave"/>
+    <div class="frame">
+        <input type="submit" id="authorSave" value="Press"/>
     </div>
 </div>
 
-<h1>Create new AUCTION:</h1>
-<div>
+<h2 class="name">Create new Auction:</h2>
+<div class="frame">
     <div>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     </div>
-    <div>
+    <div class="frame">
         <label for="titleAuction">Title:</label>
         <input type="text" id="titleAuction" name="titleAuction"/>
     </div>
-    <div>
-        <label for="startDate">Start date:</label>
+    <div class="frame">
+        <label for="startDate">Start Date:</label>
         <input type="datetime-local" id="startDate" name="startDate"/>
     </div>
-    <div>
-        <label for="endDate">End date:</label>
+    <div class="frame">
+        <label for="endDate">End Date:</label>
         <input type="datetime-local" id="endDate" name="endDate"/>
     </div>
-    <div>
-        <label for="startingPrice">Starting price:</label>
+    <div class="frame">
+        <label for="startingPrice">Starting Price:</label>
         <input type="number" id="startingPrice" name="startingPrice"/>
     </div>
-    <div>
-        <label for="currentBet">Current bet:</label>
+    <div class="frame">
+        <label for="currentBet">Current Bet:</label>
         <input type="number" id="currentBet" name="currentBet"/>
     </div>
-    <div>
+    <div class="frame">
         <label for="active">Active:</label>
         <input type="checkbox" id="active" name="active"/>
     </div>
-    <div>
+    <div class="frame">
         <label for="winner">Winner:</label>
         <input type="text" id="winner" name="winner"/>
     </div>
-    <div>
-        <input type="submit" id="auctionSave"/>
+    <div class="frame">
+        <input type="submit" id="auctionSave" value="Press"/>
     </div>
 </div>
 
-<h1>Paintings table, Paintings that take part in the Auction:</h1>
+<h2>Paintings table, Paintings that take part in the Auction:</h2>
 <table>
     <thead>
     <tr>
-        <th>Id</th>
-        <th>Title</th>
-        <th>Published</th>
-        <th>ImagePath</th>
-        <th>Size</th>
-        <th>Material</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>SOLD</th>
-        <th>Author</th>
-        <th>Category</th>
-        <th>Auction</th>
-        <th>DELETE</th>
-        <th>UPDATE</th>
+        <th>Id:</th>
+        <th>Title:</th>
+        <th>Published:</th>
+        <th>Image path:</th>
+        <th>Size:</th>
+        <th>Material:</th>
+        <th>Description:</th>
+        <th>Price:</th>
+        <th>SOLD:</th>
+        <th>Author:</th>
+        <th>Category:</th>
+        <th>Auction:</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
     </tr>
     </thead>
     <tbody id="Paintings-table">
     </tbody>
 </table>
 
-<h1>Categories table:</h1>
+<h2>Categories table:</h2>
 <div>
     <table>
         <thead>
         <tr>
-            <th>Id</th>
-            <th>Category name</th>
+            <th>Id:</th>
+            <th>Category name:</th>
             <th>DELETE:</th>
             <th>UPDATE:</th>
         </tr>
@@ -223,29 +268,29 @@
     </table>
 </div>
 
-<h1>Authors table:</h1>
+<h2>Authors table:</h2>
 <table>
     <thead>
     <tr>
-        <th>Id</th>
-        <th>Pseudonym</th>
-        <th>FirstName</th>
-        <th>Surname</th>
-        <th>BirthDate</th>
-        <th>Awards</th>
-        <th>ImagePath</th>
-        <th>DELETE</th>
-        <th>UPDATE</th>
+        <th>Id:</th>
+        <th>Pseudonym:</th>
+        <th>First name</th>
+        <th>Surname:</th>
+        <th>Birthdate:</th>
+        <th>Awards:</th>
+        <th>Image path:</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
     </tr>
     </thead>
     <tbody id="Authors-table"></tbody>
 </table>
 
-<h1>Auctions table:</h1>
+<h2>Auctions table:</h2>
 <table>
     <thead>
     <tr>
-        <th>Id</th>
+        <th>Id:</th>
         <th>Title Auction:</th>
         <th>Start Date:</th>
         <th>End Date:</th>
@@ -254,8 +299,8 @@
         <th>Active:</th>
         <th>Winner:</th>
         <th>Participants:</th>
-        <th>DELETE</th>
-        <th>UPDATE</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
         <th>BETS:</th>
     </tr>
     </thead>
@@ -281,13 +326,52 @@
     const csrfToken = document.getElementById('csrf-token');
     const csrfHeader = document.getElementById('csrf-header');
 
-    function addPainting(painting) {
+    // function addPainting(painting) {
+    //     const tr = document.createElement('tr');
+    //     tr.dataset.paintingId = painting.id;
+    //     const tdDelete = document.createElement('td');
+    //     const tdUpdate = document.createElement('td');
+    //     tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
+    //     tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
+    //     for (const prop in painting) {
+    //         const td = document.createElement('td');
+    //         if (prop === 'author') {
+    //             td.append(document.createTextNode(painting[prop].pseudonym));
+    //         } else if (prop === 'category') {
+    //             td.append(document.createTextNode(painting[prop].name));
+    //         } else if (prop === 'auction') {
+    //             td.append(document.createTextNode(painting[prop].titleAuction));
+    //         } else if (prop === 'imagePath') {
+    //             const tdImage = document.createElement('td');
+    //             const imgLink = document.createElement('a');
+    //             imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
+    //             const img = document.createElement('img');
+    //             img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
+    //             img.alt = '';
+    //             img.onclick = function () {
+    //                 this.src = this.src.replace('_small.jpg', '.jpg');
+    //             }
+    //             imgLink.append(img);
+    //             tdImage.append(imgLink);
+    //             td.append(tdImage);
+    //         } else {
+    //             td.append(document.createTextNode(painting[prop]));
+    //         }
+    //         tr.append(td);
+    //     }
+    //     tr.append(tdDelete);
+    //     tr.append(tdUpdate);
+    //     paintingsTable.append(tr);
+    // }
+
+    async function addPainting(painting) {
         const tr = document.createElement('tr');
         tr.dataset.paintingId = painting.id;
         const tdDelete = document.createElement('td');
         const tdUpdate = document.createElement('td');
-        tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
-        tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
+        tdDelete.innerHTML = `<a class="delete" href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a class="update" href='/updatePainting/${painting.id}'>UPDATE</a>`;
+
         for (const prop in painting) {
             const td = document.createElement('td');
             if (prop === 'author') {
@@ -296,19 +380,48 @@
                 td.append(document.createTextNode(painting[prop].name));
             } else if (prop === 'auction') {
                 td.append(document.createTextNode(painting[prop].titleAuction));
-            } else if (prop === 'imagePath') {
-                const tdImage = document.createElement('td');
+            } else if (prop === 'imageFile') { // Змінюємо на 'imageFile'
+                // Додатковий елемент для зберігання URL зображення
+                const imgURLContainer = document.createElement('div');
+
                 const imgLink = document.createElement('a');
-                imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
+                imgLink.href = ''; // По замовчуванню URL порожній
                 const img = document.createElement('img');
-                img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
+                img.src = ''; // По замовчуванню URL порожній
                 img.alt = '';
                 img.onclick = function () {
                     this.src = this.src.replace('_small.jpg', '.jpg');
                 }
+
+                // Функція для завантаження зображення на сервер
+                async function uploadImage() {
+                    const formData = new FormData();
+                    formData.append('imageFile', painting[prop]);
+
+                    const response = await fetch(`${baseURI}/uploadImage`, {
+                        method: 'POST',
+                        headers: {
+                            [csrfHeader]: csrfToken
+                        },
+                        body: formData
+                    });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        imageURL = data.imageURL;
+                        imgLink.href = imagesBaseURL + imageURL + '_large.jpg';
+                        img.src = imagesBaseURL + imageURL + '_small.jpg';
+                    } else {
+                        alert('Error uploading image: ' + response.status);
+                    }
+                }
+
+                // Виклик функції для завантаження зображення
+                await uploadImage();
+
                 imgLink.append(img);
-                tdImage.append(imgLink);
-                td.append(tdImage);
+                imgURLContainer.append(imgLink);
+                td.append(imgURLContainer);
             } else {
                 td.append(document.createTextNode(painting[prop]));
             }
@@ -318,6 +431,7 @@
         tr.append(tdUpdate);
         paintingsTable.append(tr);
     }
+
 
 
     async function deletePainting(id) {
@@ -344,14 +458,13 @@
         }
     }
 
-
     function addCategory(category) {
         const tr = document.createElement('tr');
         tr.dataset.categoryId = category.id; //идентификатор строки в таблице Category
         const tdDelete = document.createElement('td');
         const tdUpdate = document.createElement('td');
-        tdDelete.innerHTML = `<a href="#" onclick="deleteCategory(${category.id})">DELETE</a>`;
-        tdUpdate.innerHTML = `<a href='/updateCategory/${category.id}'>UPDATE</a>`;
+        tdDelete.innerHTML = `<a class="delete"href="#" onclick="deleteCategory(${category.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a class="update" href='/updateCategory/${category.id}'>UPDATE</a>`;
         for (const prop in category) {
             const td = document.createElement('td');
             td.append(document.createTextNode(category[prop]));
@@ -391,54 +504,16 @@
         }
     }
 
-    function addPainting(painting) {
-        const tr = document.createElement('tr');
-        tr.dataset.paintingId = painting.id;
-        const tdDelete = document.createElement('td');
-        const tdUpdate = document.createElement('td');
-        tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
-        tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
-        for (const prop in painting) {
-            const td = document.createElement('td');
-            if (prop === 'author') {
-                td.append(document.createTextNode(painting[prop].pseudonym));
-            } else if (prop === 'category') {
-                td.append(document.createTextNode(painting[prop].name));
-            } else if (prop === 'auction') {
-                td.append(document.createTextNode(painting[prop].titleAuction));
-            } else if (prop === 'imagePath') {
-                const tdImage = document.createElement('td');
-                const imgLink = document.createElement('a');
-                imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
-                const img = document.createElement('img');
-                img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
-                img.alt = '';
-                img.onclick = function () {
-                    this.src = this.src.replace('_small.jpg', '.jpg');
-                }
-                imgLink.append(img);
-                tdImage.append(imgLink);
-                td.append(tdImage);
-            } else {
-                td.append(document.createTextNode(painting[prop]));
-            }
-            tr.append(td);
-        }
-        tr.append(tdDelete);
-        tr.append(tdUpdate);
-        paintingsTable.append(tr);
-    }
-
     function addAuthor(author) {
         const tr = document.createElement('tr');
         tr.dataset.authorId = author.id; //идентификатор строки в таблице Author
         const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = `<a href="#" onclick="deleteAuthor(${author.id})">DELETE</a>`;
+        tdDelete.innerHTML = `<a class="delete" href="#" onclick="deleteAuthor(${author.id})">DELETE</a>`;
         const tdUpdate = document.createElement('td');
-        tdUpdate.innerHTML = `<a href='/updateAuthor/${author.id}'>UPDATE</a>`;
+        tdUpdate.innerHTML = `<a class="update" href='/updateAuthor/${author.id}'>UPDATE</a>`;
         for (const prop in author) {
             const td = document.createElement('td');
-            if(prop === 'imagePath'){
+            if (prop === 'imagePath') {
                 const tdImage = document.createElement('td');
                 const imgLink = document.createElement('a');
                 imgLink.href = imagesBaseURL + author.imagePath + '_large.jpg';
@@ -451,7 +526,7 @@
                 imgLink.append(img);
                 tdImage.append(imgLink);
                 td.append(tdImage);
-            }else{
+            } else {
                 td.append(document.createTextNode(author[prop]));
             }
             tr.append(td);
@@ -514,11 +589,11 @@
         const tr = document.createElement('tr');
         tr.dataset.auctionId = auction.id; //идентификатор строки в таблице Auction для updateAuction
         const tdDelete = document.createElement('td');
-        tdDelete.innerHTML = `<a href="#" onclick="deleteAuction(${auction.id})">DELETE</a>`;
+        tdDelete.innerHTML = `<a class="delete" href="#" onclick="deleteAuction(${auction.id})">DELETE</a>`;
         const tdUpdate = document.createElement('td');
-        tdUpdate.innerHTML = `<a href='/updateAuction/${auction.id}'>UPDATE</a>`;
+        tdUpdate.innerHTML = `<a class="update" href='/updateAuction/${auction.id}'>UPDATE</a>`;
         const tdAllBets = document.createElement('td');
-        tdAllBets.innerHTML = `<a href='/allBets/${auction.id}'>All BETS!</a>`;
+        tdAllBets.innerHTML = `<a style="color: blue" href='/allBets/${auction.id}'>All BETS!</a>`;
         for (const prop in auction) {
             const td = document.createElement('td');  //@ManyToMany
             if (prop === 'auctionParticipants') {
@@ -677,10 +752,118 @@
     window.addEventListener('load', loadAuctions);
 
 
+    // async function savePainting() {
+    //     const titleInput = document.getElementById('title');
+    //     const publishedInput = document.getElementById('published');
+    //     const imagePathInput = document.getElementById('imagePath');
+    //     const sizeInput = document.getElementById('size');
+    //     const materialInput = document.getElementById('material');
+    //     const descriptionInput = document.getElementById('description');
+    //     const priceInput = document.getElementById('price');
+    //     const soldInput = document.getElementById('sold');
+    //     const authorsSelect = document.getElementById('authors');
+    //     const categoriesSelect = document.getElementById('categories');
+    //     const auctionsSelect = document.getElementById('auctions');
+    //
+    //     const painting = {
+    //         title: titleInput.value,
+    //         published: publishedInput.value,
+    //         imagePath: imagePathInput.value,
+    //         size: sizeInput.value,
+    //         material: materialInput.value,
+    //         description: descriptionInput.value,
+    //         price: priceInput.value,
+    //         sold: soldInput.checked, // "on" - true, "off" - false
+    //         authorId: authorsSelect.value,
+    //         categoryId: categoriesSelect.value,
+    //         auctionId: auctionsSelect.value
+    //     };
+    //     const csrfToken = document.getElementById('_csrf').content;
+    //     console.log("Token = " + csrfToken);
+    //     const csrfHeader = document.getElementById('_csrf_header').content;
+    //     const response = await fetch(`${baseURI}/paintings`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             [csrfHeader]: csrfToken
+    //         },
+    //         body: JSON.stringify(painting)
+    //     });
+    //     console.log("**********" + response.status);
+    //     if (response.status === 201) {
+    //         const loc = response.headers.get('location');
+    //         const resp = await fetch(`http://localhost:8080${loc}`)
+    //         addPainting(await resp.json())
+    //     } else {
+    //         alert('Error: ' + response.status);
+    //     }
+    // }
+
+
+    // async function uploadImage() {
+    //     const fileInput = document.getElementById('imageFile');
+    //     const file = fileInput.files[0];
+    //     const formData = new FormData();
+    //     formData.append('file', file);
+    //
+    //     const endpoint = 'https://auction6.p.rapidapi.com/';
+    //     const apiKey = 'ec624437f5msh0ed8e9128c267c3p197cdejsnb0d127b4f5df';
+    //     const host = 'auction6.p.rapidapi.com/';
+    //
+    //     const response = await fetch(endpoint, {
+    //         method: 'POST',
+    //         headers: {
+    //             'X-RapidAPI-Key': apiKey,
+    //             'X-RapidAPI-Host': host
+    //         },
+    //         body: formData
+    //     });
+    //
+    //     if (response.ok) {
+    //         const data = await response.json();
+    //         const imageUrl = data.url;
+    //         const imageInput = document.getElementById('imageFile');
+    //         imageInput.value = imageUrl;
+    //         alert('Image uploaded successfully!');
+    //     } else {
+    //         alert('Error uploading image');
+    //     }
+    // }
+
+    async function uploadImage() {
+        const fileInput = document.getElementById('imageFile');
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const endpoint = 'https://upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/api/upload-image';
+        const apiKey = '2cfeea843cmsh57136774e191574p1bdfcdjsnea2b49e851b9';
+        const host = 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/';
+
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'X-RapidAPI-Key': apiKey,
+                'X-RapidAPI-Host': host
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const imageLink = document.getElementById('imageLink');
+            imageLink.value = data.link;
+            alert('Image uploaded successfully!');
+        } else {
+            alert('Error uploading image');
+        }
+    }
+
     async function savePainting() {
         const titleInput = document.getElementById('title');
         const publishedInput = document.getElementById('published');
-        const imagePathInput = document.getElementById('imagePath');
+        // const imageFileInput = document.getElementById('imageFile');
+        const imageLink = document.getElementById('imageLink');
         const sizeInput = document.getElementById('size');
         const materialInput = document.getElementById('material');
         const descriptionInput = document.getElementById('description');
@@ -693,7 +876,8 @@
         const painting = {
             title: titleInput.value,
             published: publishedInput.value,
-            imagePath: imagePathInput.value,
+            // imageFile: imageFileInput.value,
+            imageFile: imageLink.value,
             size: sizeInput.value,
             material: materialInput.value,
             description: descriptionInput.value,
@@ -703,8 +887,10 @@
             categoryId: categoriesSelect.value,
             auctionId: auctionsSelect.value
         };
+        // const csrfToken = document.getElementById('_csrf').value;
         const csrfToken = document.getElementById('_csrf').content;
         console.log("Token = " + csrfToken);
+        // const csrfHeader = document.getElementById('_csrf_header').value;
         const csrfHeader = document.getElementById('_csrf_header').content;
         const response = await fetch(`${baseURI}/paintings`, {
             method: 'POST',
@@ -723,6 +909,7 @@
             alert('Error: ' + response.status);
         }
     }
+
 
     async function saveCategory() {
         const categoryNameInput = document.getElementById('categoryName');

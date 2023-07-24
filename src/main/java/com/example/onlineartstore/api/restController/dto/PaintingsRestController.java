@@ -81,8 +81,11 @@ public class PaintingsRestController {
 //    }
 
     @PostMapping
-    ResponseEntity<?> createPainting(@ModelAttribute PaintingDTO paintingDTO) {
+    public ResponseEntity<?> createPainting(@RequestParam("imageFile") MultipartFile imageFile,
+                                            @ModelAttribute PaintingDTO paintingDTO) {
         try {
+            String imagePath = paintingDTO.uploadImage(imageFile);
+
             Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
             Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
             Optional<Auction> optionalAuction = auctionRepository.findById(paintingDTO.getAuctionId());
@@ -95,7 +98,6 @@ public class PaintingsRestController {
             if (optionalAuction.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            String imagePath = paintingDTO.uploadImage(); //загрузка изображения
 
             Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get(), imagePath));
             return ResponseEntity
@@ -107,6 +109,7 @@ public class PaintingsRestController {
                     .body(throwable);
         }
     }
+
 
     // UPDATE ONE Painting
     //http://localhost:8080/adminPage/api/v1/paintings/3 для update

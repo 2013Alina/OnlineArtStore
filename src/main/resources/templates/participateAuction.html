@@ -3,33 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
+    <link th:href="@{/css/participateAuction.css}" rel="stylesheet"/>
     <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
     <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
     <meta name="auctionId" id="auctionId" th:content="${auctionId}"/>
-    <style>
-        table {
-            border-collapse: collapse;
-        }
-
-        table, td, th {
-            border: 1px solid black;
-        }
-
-        td, th {
-            margin: 8px;
-        }
-
-        #current_date_time_block {
-            color: deeppink;
-            font-size: 14pt;
-            border: 2px solid purple;
-            background: plum;
-            padding: 5px 20px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-    </style>
 </head>
 <body>
 <nav>
@@ -40,7 +17,7 @@
         <li sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/mainAdminPage}">Admin page</a></li>
         <li sec:authorize="isAnonymous()">
-            <a th:href="@{/singup}">Sing Up</a></li>
+            <a th:href="@{/singup}">Sign Up</a></li>
         <li sec:authorize="isAnonymous()">
             <a th:href="@{/login}">Login</a></li>
         <li sec:authorize="isAuthenticated()">
@@ -50,8 +27,8 @@
             <a th:href="@{/logout}">Logout</a></li>
     </menu>
 </nav>
-<h1 style="color: blue">Participate in the auction!</h1>
-<h2>Welcome <span sec:authentication="name"></span>!</h2>
+<h2 style="color: saddlebrown">Welcome <span sec:authentication="name"></span>!</h2>
+<h2 style="color: saddlebrown">You are participating in this Auction.</h2>
 <table>
     <thead>
     <tr>
@@ -86,7 +63,7 @@
         <input type="number" id="amountMoney" name="amountMoney" min="1000" step="500" required="required"/>
     </div>
     <div>
-        <input type="submit" id="saveBet"/>
+        <input type="submit" id="saveBet" value="Press"/>
     </div>
 </div>
 

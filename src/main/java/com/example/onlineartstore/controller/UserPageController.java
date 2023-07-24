@@ -2,13 +2,20 @@ package com.example.onlineartstore.controller;
 
 import com.example.onlineartstore.entity.User;
 import com.example.onlineartstore.entity.UserDetail;
+import com.example.onlineartstore.error.ErrorResponse;
 import com.example.onlineartstore.repository.UserDetailRepository;
 import com.example.onlineartstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -57,5 +64,22 @@ public class UserPageController {
         return ResponseEntity.badRequest().body("UserDetail not found!");
     }
 
+    @PostMapping("/{id}")
+    public String saveUserDetail(@PathVariable Integer id, @Valid UserDetail userDetail, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", userRepository.findById(id).orElse(null));
+            model.addAttribute("userId", id);
+            model.addAttribute("userDetail", userDetail);
+            return "userPage";
+        }
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            user.setUserDetail(userDetail);
+            userRepository.save(user);
+            return "redirect:/" + id;
+        }
+
+        return "redirect:/";
+    }
 
 }

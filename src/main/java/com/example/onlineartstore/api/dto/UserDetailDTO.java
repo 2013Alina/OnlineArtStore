@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NonNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -32,6 +33,7 @@ public class UserDetailDTO {
     @NonNull
     @NotNull
     @NotBlank
+    @Email
     private String email;
 
     @NonNull

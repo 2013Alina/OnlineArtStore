@@ -3,19 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
-    <style>
-        table {
-            border-collapse: collapse;
-        }
-
-        table, td, th {
-            border: 1px solid black;
-        }
-
-        td, th {
-            margin: 8px;
-        }
-    </style>
+    <link th:href="@{/css/mainAdminPage.css}" rel="stylesheet"/>
 </head>
 <body>
 <nav>
@@ -28,12 +16,11 @@
                 <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
                 <ol type="1">
                     <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
-                    <li><a th:href="@{/adminPageBets}">Admin page</a></li>
                     <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
                 </ol>
             </li>
             <li sec:authorize="isAnonymous()">
-                <a th:href="@{/singup}">Sing Up</a></li>
+                <a th:href="@{/singup}">Sign Up</a></li>
             <li sec:authorize="isAnonymous()">
                 <a th:href="@{/login}">Login</a></li>
             <li sec:authorize="isAuthenticated()">

@@ -77,12 +77,11 @@ public class UserDetailsRestController {
                 }
                 User user = optionalUser.get();
 
-                // вывод сообщения для пользователя, response.status === 409
+                // вывод сообщения для пользователя, response.status === 409 или 400
                 if(user.getUserDetail() != null){
                     return ResponseEntity.status(HttpStatus.CONFLICT)
-                            .body("My message in Java Script");
+                            .body("My message in Java Script!");
                 }
-
                 saved = userDetailRepository.save(userDetailDTO.toEntity(user));
                 saved = userDetailService.saveDetails(saved, user.getUsername());
             } catch (Exception e) {

@@ -3,43 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
-    <style>
-        table {
-            border-collapse: collapse;
-        }
-
-        table, td, th {
-            border: 1px solid black;
-        }
-
-        td, th {
-            margin: 8px;
-        }
-    </style>
+    <link th:href="@{/css/updateAuction.css}" rel="stylesheet"/>
     <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
     <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <meta name="userId" id="userId" th:content="${userId}"/>
 </head>
 <body>
-<h1>Update User information:</h1>
-<div>
+<h2 class="name">Update User information:</h2>
+<div class="frame">
     <div>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     </div>
-    <div>
+    <div class="frame">
         <label for="username">Login:</label>
         <input type="text" id="username" name="username" required th:value="${user.username}"/>
     </div>
-    <div>
+    <div class="frame">
         <label for="password">Password:</label>
         <input type="text" id="password" name="password" required th:value="${user.password}"/>
     </div>
-    <div>
-        <input type="submit" id="saveUser"/>
+    <div class="frame">
+        <input type="submit" id="saveUser" value="Press"/>
     </div>
 </div>
 <div>
-    <a th:href="@{/adminPageUsers}">Back to admin page</a>
+    <a style="color: blue;" th:href="@{/adminPageUsers}">Back to admin page</a>
 </div>
 <script>
     const saveUserButton = document.getElementById('saveUser');

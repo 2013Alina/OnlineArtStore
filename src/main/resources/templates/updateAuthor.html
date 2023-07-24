@@ -3,59 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
-    <style>
-        table {
-            border-collapse: collapse;
-        }
-
-        table, td, th {
-            border: 1px solid black;
-        }
-
-        td, th {
-            margin: 8px;
-        }
-    </style>
+    <link th:href="@{/css/updateAuction.css}" rel="stylesheet"/>
     <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
     <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <meta name="authorId" id="authorId" th:content="${authorId}"/>
 </head>
 <body>
-<h1>Update author:</h1>
-<div>
+<h2 class="name">Update Author information:</h2>
+<div class="frame">
     <div>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     </div>
-    <div>
-        <label for="pseudonym">Pseudonym</label>
+    <div class="frame">
+        <label for="pseudonym">Pseudonym:</label>
         <input type="text" id="pseudonym" name="pseudonym" required th:value="${author.pseudonym}"/>
     </div>
-    <div>
-        <label for="firstName">Author name</label>
+    <div class="frame">
+        <label for="firstName">Author name:</label>
         <input type="text" id="firstName" name="firstName" required th:value="${author.firstName}"/>
     </div>
-    <div>
-        <label for="surname">Author surname</label>
+    <div class="frame">
+        <label for="surname">Author surname:</label>
         <input type="text" id="surname" name="surname" required th:value="${author.surname}"/>
     </div>
-    <div>
-        <label for="birthDate">Author birthDate</label>
+    <div class="frame">
+        <label for="birthDate">Author birthdate:</label>
         <input type="date" id="birthDate" name="birthDate" required th:value="${author.birthDate}">
     </div>
-    <div>
-        <label for="awards">Author awards</label>
+    <div class="frame">
+        <label for="awards">Author awards:</label>
         <input type="text" id="awards" name="awards" required th:value="${author.awards}">
     </div>
-    <div>
-        <label for="imagePath">Author photo</label>
+    <div class="frame">
+        <label for="imagePath">Author photo:</label>
         <input type="text" id="imagePath" name="imagePath" required th:value="${author.imagePath}">
     </div>
-    <div>
-        <input type="submit" id="authorSave"/>
+    <div class="frame">
+        <input type="submit" id="authorSave" value="Press"/>
     </div>
 </div>
 <div>
-    <a th:href="@{/adminPage}">Back to admin page</a>
+    <a style="color: blue" th:href="@{/adminPage}">Back to admin page</a>
 </div>
 
 <script>

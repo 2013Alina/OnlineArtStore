@@ -67,13 +67,25 @@ public class PaintingDTO {
         return painting;
     }
 
-    public String uploadImage() throws IOException {
+//    public String uploadImage() throws IOException {
+//        if (imageFile != null && !imageFile.isEmpty()) {
+//            String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(imageFile.getOriginalFilename());
+//            Path destinationPath = Paths.get("src/main/resources/static/images/" + fileName);
+//            Files.copy(imageFile.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+//            return "/static/images/" + fileName;
+//        }
+//        return null;
+//    }
+
+    public String uploadImage(MultipartFile imageFile) throws IOException {
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(imageFile.getOriginalFilename());
-            Path destinationPath = Paths.get("src/main/resources/static/images/" + fileName);
+            Path destinationPath = Paths.get("uploads/images/" + fileName);
+            Files.createDirectories(destinationPath.getParent());
             Files.copy(imageFile.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            return "/static/images/" + fileName;
+            return "/images/" + fileName;
         }
         return null;
     }
+
 }

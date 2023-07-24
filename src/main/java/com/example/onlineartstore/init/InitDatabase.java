@@ -1,6 +1,5 @@
 package com.example.onlineartstore.init;
 
-import com.example.onlineartstore.api.dto.PaintingDTO;
 import com.example.onlineartstore.entity.*;
 import com.example.onlineartstore.repository.*;
 import com.example.onlineartstore.service.RolesAndUserService;
@@ -8,31 +7,13 @@ import com.example.onlineartstore.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -55,10 +36,10 @@ public class InitDatabase implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         String imagePath1 = "artLana";
-        String imagePath2 = "alex";
+        String imagePath2 = "alina";
         Author author1 = new Author("artLana", "Svetlana", "Vovk", LocalDate.of(1957, Month.OCTOBER, 18), "Many awards", imagePath1);
         authorRepository.save(author1);
-        Author author2 = new Author("artMaster", "Alex", "Vovk", LocalDate.of(1958, Month.APRIL, 05), "Many awards", imagePath2);
+        Author author2 = new Author("artMaster", "Alina", "Muntian", LocalDate.of(1986, Month.MARCH, 05), "Many awards", imagePath2);
         authorRepository.save(author2);
 
         User star = new User("Star", "$2a$10$OEKBPlQJhYFgSQ7PqKXfKulkZnj/FnozqYP8E7T2ro.3YPi8fxlGa", true); // 12345
@@ -87,19 +68,19 @@ public class InitDatabase implements CommandLineRunner {
         Comment comment1 = new Comment("This is a beautiful picture");
 
         Auction auction1 = new Auction("Auction of connoisseurs of beauty!",
-                LocalDateTime.of(2023, Month.APRIL, 13, 10, 15),
-                LocalDateTime.of(2023, Month.APRIL, 13, 22, 31),
+                LocalDateTime.of(2023, Month.JULY, 17, 10, 15),
+                LocalDateTime.of(2023, Month.JULY, 18, 21, 30),
                 BigDecimal.valueOf(3000),
                 BigDecimal.valueOf(3500),
                 true, "Who is the winner?");
         auctionRepository.save(auction1);
-        Auction auction2 = new Auction("Easter auction!", LocalDateTime.of(2023, Month.APRIL, 13, 11, 10), LocalDateTime.of(2023, Month.APRIL, 30, 11, 10), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), true, "Who is the winner?");
+        Auction auction2 = new Auction("Easter auction!", LocalDateTime.of(2023, Month.JULY, 17, 11, 10), LocalDateTime.of(2023, Month.AUGUST, 30, 11, 10), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), true, "Who is the winner?");
         auctionRepository.save(auction2);
 
-        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023, Month.MAY, 1, 12, 00), LocalDateTime.of(2023, Month.MAY, 30, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
+        Auction auction3 = new Auction("Green Spring!", LocalDateTime.of(2023, Month.JULY, 1, 12, 00), LocalDateTime.of(2023, Month.AUGUST, 30, 15, 55), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
         auctionRepository.save(auction3);
 
-        Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023, Month.JULY, 1, 12, 00), LocalDateTime.of(2023, Month.JULY, 3, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
+        Auction auction4 = new Auction("Hot Summer!", LocalDateTime.of(2023, Month.JULY, 1, 12, 00), LocalDateTime.of(2023, Month.AUGUST, 3, 14, 00), BigDecimal.valueOf(1000), BigDecimal.valueOf(1500), false, "Who is the winner?");
         auctionRepository.save(auction4);
 
         //загрузка изображения картин

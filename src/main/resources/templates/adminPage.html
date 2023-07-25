@@ -50,9 +50,6 @@
     <div class="frame">
         <label for="imageFile">FILE:</label>
         <input type="file" name="imageFile" id="imageFile">
-        <button type="button" onclick="uploadImage()">Upload Image</button>
-        <label for="imageLink">Image Link:</label>
-        <input type="text" name="imageLink" id="imageLink" readonly>
     </div>
     <div class="frame">
         <label for="size">Size:</label>
@@ -313,6 +310,7 @@
     const savePaintingButton = document.getElementById('save');
 
     const imagesBaseURL = 'http://localhost:8080/images/';
+
 
     const categoriesTable = document.getElementById('Categories-table');
     const saveCategoryButton = document.getElementById('categorySave');
@@ -806,9 +804,9 @@
     //     const formData = new FormData();
     //     formData.append('file', file);
     //
-    //     const endpoint = 'https://auction6.p.rapidapi.com/';
-    //     const apiKey = 'ec624437f5msh0ed8e9128c267c3p197cdejsnb0d127b4f5df';
-    //     const host = 'auction6.p.rapidapi.com/';
+    //     const endpoint = 'https://upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/api/upload-image';
+    //     const apiKey = '2cfeea843cmsh57136774e191574p1bdfcdjsnea2b49e851b9';
+    //     const host = 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/';
     //
     //     const response = await fetch(endpoint, {
     //         method: 'POST',
@@ -821,10 +819,7 @@
     //
     //     if (response.ok) {
     //         const data = await response.json();
-    //         const imageUrl = data.url;
-    //         const imageInput = document.getElementById('imageFile');
-    //         imageInput.value = imageUrl;
-    //         alert('Image uploaded successfully!');
+    //         return data.url; // Return the image URL
     //     } else {
     //         alert('Error uploading image');
     //     }
@@ -833,16 +828,32 @@
     async function uploadImage() {
         const fileInput = document.getElementById('imageFile');
         const file = fileInput.files[0];
+
+        if (!file) {
+            throw new Error('No image file selected');
+        }
+
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('title', document.getElementById('title').value);
+        formData.append('published', document.getElementById('published').value);
+        formData.append('size', document.getElementById('size').value);
+        formData.append('material', document.getElementById('material').value);
+        formData.append('description', document.getElementById('description').value);
+        formData.append('price', document.getElementById('price').value);
+        formData.append('sold', document.getElementById('sold').checked);
+        formData.append('authorId', document.getElementById('authors').value);
+        formData.append('categoryId', document.getElementById('categories').value);
+        formData.append('auctionId', document.getElementById('auctions').value);
 
         const endpoint = 'https://upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/api/upload-image';
-        const apiKey = '2cfeea843cmsh57136774e191574p1bdfcdjsnea2b49e851b9';
-        const host = 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/';
+        const apiKey = 'd9230bf2fdmshfb83e030f1a1747p1cb40ajsn924babb803ac';
+        const host = 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com';
 
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
+                Accept: '*/*',
                 'X-RapidAPI-Key': apiKey,
                 'X-RapidAPI-Host': host
             },
@@ -851,64 +862,76 @@
 
         if (response.ok) {
             const data = await response.json();
-            const imageLink = document.getElementById('imageLink');
-            imageLink.value = data.link;
-            alert('Image uploaded successfully!');
+            return await data.link; // Return the image URL
         } else {
-            alert('Error uploading image');
+            throw new Error('Error uploading image');
         }
     }
 
     async function savePainting() {
-        const titleInput = document.getElementById('title');
-        const publishedInput = document.getElementById('published');
-        // const imageFileInput = document.getElementById('imageFile');
-        const imageLink = document.getElementById('imageLink');
-        const sizeInput = document.getElementById('size');
-        const materialInput = document.getElementById('material');
-        const descriptionInput = document.getElementById('description');
-        const priceInput = document.getElementById('price');
-        const soldInput = document.getElementById('sold');
-        const authorsSelect = document.getElementById('authors');
-        const categoriesSelect = document.getElementById('categories');
-        const auctionsSelect = document.getElementById('auctions');
+        try {
+            const imageURL = await uploadImage();
 
-        const painting = {
-            title: titleInput.value,
-            published: publishedInput.value,
-            // imageFile: imageFileInput.value,
-            imageFile: imageLink.value,
-            size: sizeInput.value,
-            material: materialInput.value,
-            description: descriptionInput.value,
-            price: priceInput.value,
-            sold: soldInput.checked, // "on" - true, "off" - false
-            authorId: authorsSelect.value,
-            categoryId: categoriesSelect.value,
-            auctionId: auctionsSelect.value
-        };
-        // const csrfToken = document.getElementById('_csrf').value;
-        const csrfToken = document.getElementById('_csrf').content;
-        console.log("Token = " + csrfToken);
-        // const csrfHeader = document.getElementById('_csrf_header').value;
-        const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}/paintings`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            },
-            body: JSON.stringify(painting)
-        });
-        console.log("**********" + response.status);
-        if (response.status === 201) {
-            const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
-            addPainting(await resp.json())
-        } else {
-            alert('Error: ' + response.status);
+            const titleInput = document.getElementById('title');
+            const publishedInput = document.getElementById('published');
+            // const imageFileInput = document.getElementById('imageFile');
+            const sizeInput = document.getElementById('size');
+            const materialInput = document.getElementById('material');
+            const descriptionInput = document.getElementById('description');
+            const priceInput = document.getElementById('price');
+            const soldInput = document.getElementById('sold');
+            const authorsSelect = document.getElementById('authors');
+            const categoriesSelect = document.getElementById('categories');
+            const auctionsSelect = document.getElementById('auctions');
+
+            const painting = {
+                title: titleInput.value,
+                published: publishedInput.value,
+                // imageFile: imageFileInput.value,
+                imageLink: imageURL,
+                size: sizeInput.value,
+                material: materialInput.value,
+                description: descriptionInput.value,
+                price: priceInput.value,
+                sold: soldInput.checked,
+                authorId: authorsSelect.value,
+                categoryId: categoriesSelect.value,
+                auctionId: auctionsSelect.value
+            };
+
+            const csrfToken = document.getElementById('_csrf').content;
+            console.log("csrfToken = " + csrfToken);
+            const csrfHeader = document.getElementById('_csrf_header').content;
+            console.log("Header = " + csrfHeader);
+
+            // Update the Content-Type to "multipart/form-data"
+            const formData = new FormData();
+            formData.append('painting', JSON.stringify(painting)); // Convert painting object to JSON string and append it
+            // formData.append('file', document.getElementById('imageFile').files[0]); // Append the image file
+
+            const response = await fetch(`${baseURI}/paintings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(painting) // Use the FormData object instead of JSON.stringify
+            });
+
+            // console.log(await response.text());
+
+            if (response.status === 201) {
+                const loc = response.headers.get('location');
+                const resp = await fetch(`http://localhost:8080${loc}`);
+                addPainting(await resp.json());
+            } else {
+                alert('Error: ' + response.status);
+            }
+        } catch (error) {
+            alert('Error uploading image: ' + error.message);
         }
     }
+
 
 
     async function saveCategory() {

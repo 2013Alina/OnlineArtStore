@@ -32,7 +32,11 @@ public class PaintingDTO {
     @NotNull
     private LocalDate published;
 
-    private MultipartFile imageFile; // каталог, в котором загруженные изображения будут храниться на сервере!
+//    private MultipartFile imageFile; // каталог, в котором загруженные изображения будут храниться на сервере!
+
+    @NotNull
+    @NotBlank
+    private String imageLink;
 
     @NotNull
     @NotBlank
@@ -77,15 +81,15 @@ public class PaintingDTO {
 //        return null;
 //    }
 
-    public String uploadImage(MultipartFile imageFile) throws IOException {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(imageFile.getOriginalFilename());
-            Path destinationPath = Paths.get("uploads/images/" + fileName);
-            Files.createDirectories(destinationPath.getParent());
-            Files.copy(imageFile.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            return "/images/" + fileName;
-        }
-        return null;
-    }
+//    public String uploadImage(MultipartFile imageFile) throws IOException {
+//        if (imageFile != null && !imageFile.isEmpty()) {
+//            String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(imageFile.getOriginalFilename());
+//            Path destinationPath = Paths.get("uploads/images/" + fileName);
+//            Files.createDirectories(destinationPath.getParent());
+//            Files.copy(imageFile.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+//            return "/images/" + fileName;
+//        }
+//        return null;
+//    }
 
 }

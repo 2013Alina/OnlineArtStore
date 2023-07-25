@@ -81,11 +81,10 @@ public class PaintingsRestController {
 //    }
 
     @PostMapping
-    public ResponseEntity<?> createPainting(@RequestParam("imageFile") MultipartFile imageFile,
-                                            @ModelAttribute PaintingDTO paintingDTO) {
+    public ResponseEntity<?> createPainting(@RequestBody PaintingDTO paintingDTO) {
+        System.out.println("CreatePaintingController method!!!!!!!!!!!!!!!!!!!!!");
         try {
-            String imagePath = paintingDTO.uploadImage(imageFile);
-
+            String imageLink = paintingDTO.getImageLink();
             Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
             Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
             Optional<Auction> optionalAuction = auctionRepository.findById(paintingDTO.getAuctionId());
@@ -99,7 +98,12 @@ public class PaintingsRestController {
                 return ResponseEntity.notFound().build();
             }
 
-            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get(), imagePath));
+            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(),
+                                                                            optionalAuthor.get(),
+                                                                            optionalAuction.get(),
+                                                                            imageLink));
+
+            System.out.println("SavedID = " + saved.getId());
             return ResponseEntity
                     .created(URI.create("/adminPage/api/v1/paintings/" + saved.getId()))
                     .build();

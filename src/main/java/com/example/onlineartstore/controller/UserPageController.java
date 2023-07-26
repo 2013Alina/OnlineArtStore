@@ -31,7 +31,7 @@ public class UserPageController {
     String index(@PathVariable Integer id, Model model) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
-            return "User not find!";
+            return "User not find!"; // знову питання.чи існує така в'юха. я гадаю, що ні.
         }
         User user = optionalUser.get();
         model.addAttribute("user", user);
@@ -56,7 +56,7 @@ public class UserPageController {
 
     @GetMapping("/userDetails/{id}")
     @ResponseBody
-    public ResponseEntity<?> showUserDetail(@PathVariable Integer id) {
+    public ResponseEntity<?> showUserDetail(@PathVariable Integer id) { // чому метод, що повертає UserDetail знаходиться в контролері UserPage?
         Optional<UserDetail> optionalUserDetail = userDetailRepository.findById(id);
         if (optionalUserDetail.isPresent()) {
             return ResponseEntity.ok(optionalUserDetail.get());

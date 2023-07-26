@@ -83,7 +83,7 @@
 <div id="current_date_time_block"></div>
 <script>
     const createdDate = document.getElementById('current_date_time_block');
-    const baseURI = 'http://localhost:8080/api/v2';
+    const baseURI = 'http://localhost:8080/api/v2'; // коли ваш додаток буде розгортатися на сервері, то хост не буде http://localhost:8080
 
     /* функция добавления ведущих нулей */
     /* (если число меньше десяти, перед числом добавляем ноль) */
@@ -104,6 +104,7 @@
         let minutes = zero_first_format(current_datetime.getMinutes());
         let seconds = zero_first_format(current_datetime.getSeconds());
         return day + "." + month + "." + year + " " + hours + ":" + minutes + ":" + seconds;
+        // цей код можна було замінити на current_datetime.toLocaleString("UK")
     }
 
     /* каждую секунду получаем текущую дату и время */

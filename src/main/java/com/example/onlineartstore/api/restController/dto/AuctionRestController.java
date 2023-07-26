@@ -1,4 +1,4 @@
-package com.example.onlineartstore.api.restController.dto;
+package com.example.onlineartstore.api.restController.dto; // мені здається, що пакте dto тут зайвий
 
 import com.example.onlineartstore.api.dto.AuctionDTO;
 import com.example.onlineartstore.entity.Auction;

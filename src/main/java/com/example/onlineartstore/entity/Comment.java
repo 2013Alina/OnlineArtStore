@@ -30,5 +30,8 @@ public class Comment {
     @ManyToOne
     private Painting painting;
 
+    @ManyToOne
+    private Auction auction;
+
 
 }

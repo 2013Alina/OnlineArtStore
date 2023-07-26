@@ -2,17 +2,21 @@ package com.example.onlineartstore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Table(name = "Authors")
 public class Author {
     @Id
@@ -32,7 +36,8 @@ public class Author {
     private String imagePath;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "author", cascade = {CascadeType.ALL}) //cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    @OneToMany(mappedBy = "author", cascade = {CascadeType.ALL})
+    @ToString.Exclude //cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     //каскадное обновление данных, если author сохраняется, сохраняются м данные painting
     private List<Painting> paintingsAuthor = new ArrayList<>();
 
@@ -45,6 +50,7 @@ public class Author {
 
     @JsonIgnore
     @OneToMany(mappedBy = "author", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @ToString.Exclude
     private List<Comment> commentsAuthor = new ArrayList<>();
 
     public void addComment(Comment comment){
@@ -52,4 +58,16 @@ public class Author {
         commentsAuthor.add(comment);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Author author = (Author) o;
+        return id != null && Objects.equals(id, author.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

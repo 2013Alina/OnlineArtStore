@@ -1,10 +1,13 @@
 package com.example.onlineartstore.api.restController.dto;
 
+import com.example.onlineartstore.api.dto.AuctionDTO;
 import com.example.onlineartstore.entity.Auction;
 import com.example.onlineartstore.repository.AuctionRepository;
+import com.example.onlineartstore.service.BetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -12,15 +15,16 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@RequestMapping("/adminPageAuction/api/v2/auctions")
+@RequestMapping("/adminPage/api/v1/auctions")
 @RestController
 public class AuctionRestController {
 
     private final AuctionRepository auctionRepository;
+    private final BetService betService;
 
     @GetMapping
     List<Auction> list() {
-        return auctionRepository.findAll();
+        return auctionRepository.findAllWithParticipants();
     }
 
     @GetMapping("/{id}")
@@ -31,28 +35,32 @@ public class AuctionRestController {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<Auction> update(@PathVariable Integer id, @RequestBody Auction auction) {
+    @PutMapping("/{id}") //http://localhost:8080/adminPage/api/v1/auctions/3 для update
+    ResponseEntity<Auction> updateAuction(@PathVariable Integer id, @RequestBody @Validated AuctionDTO auctionDTO) {
         Optional<Auction> foundAuction = auctionRepository.findById(id);
         if (foundAuction.isPresent()) {
-            Auction a = foundAuction.get();
-            a.setTitle(auction.getTitle());
-            a.setPublished(auction.getPublished());
-            a.setStartingPrice(auction.getStartingPrice());
-            a.setCurrentPrice(auction.getCurrentPrice());
-            a.setDeadline(auction.getDeadline());
-            a.setWinner(auction.getWinner());
-            return ResponseEntity.of(Optional.of(auctionRepository.save(a)));
+            Auction variable = foundAuction.get();
+
+            Auction auction = auctionDTO.toEntity();
+
+            variable.setTitleAuction(auction.getTitleAuction());
+            variable.setStartDate(auction.getStartDate());
+            variable.setEndDate(auction.getEndDate());
+            variable.setStartingPrice(auction.getStartingPrice());
+            variable.setCurrentBet(auction.getCurrentBet());
+            variable.setActive(auction.getActive());
+            variable.setWinner(auction.getWinner());
+            return ResponseEntity.of(Optional.of(auctionRepository.save(variable)));
         }
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    ResponseEntity<?> create(@RequestBody Auction auction) {
+    ResponseEntity<?> createAuction(@RequestBody AuctionDTO auctionDTO) {
         try {
-            Auction saved = auctionRepository.save(auction);
+            Auction saved = auctionRepository.save(auctionDTO.toEntity());
             return ResponseEntity
-                    .created(URI.create("/adminPageAuction/api/v2/auctions/" + saved.getId()))
+                    .created(URI.create("/adminPage/api/v1/auctions/" + saved.getId()))
                     .build();
         } catch (Throwable throwable) {
             return ResponseEntity
@@ -71,3 +79,4 @@ public class AuctionRestController {
     }
 
 }
+

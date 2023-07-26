@@ -1,9 +1,6 @@
 package com.example.onlineartstore.controller;
 
-import com.example.onlineartstore.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +19,6 @@ public class SingUpController {
 
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsManager userDetailsManager;
-    private final UserRepository userRepository;
 
     @GetMapping
     String index() {
@@ -35,7 +31,8 @@ public class SingUpController {
         String password;
     }
 
-    @PostMapping   // <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> обязательное поле для Post запроса
+    @PostMapping
+        // <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> обязательное поле для Post запроса
     String singup(@ModelAttribute UsernamePassword usernamePassword) {
         UserDetails user = User.builder()
                 .username(usernamePassword.username)
@@ -46,16 +43,5 @@ public class SingUpController {
 
         return "redirect:/login";
     }
-
-//    @PostMapping   // <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> обязательное поле для Post запроса
-//    String singup(@ModelAttribute User user) {
-//        UserDetails userNew = User.builder()
-//                .username(user.getUsername())
-//                .password(passwordEncoder.encode(user.getPassword()))
-//                .roles("USER")
-//                .build();
-//        userDetailsManager.createUser(userNew);
-//        return "redirect:/login";
-//    }
 
 }

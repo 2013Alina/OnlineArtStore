@@ -21,7 +21,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class PaintingDTO {
 
@@ -32,7 +31,7 @@ public class PaintingDTO {
     @NotNull
     private LocalDate published;
 
-    private MultipartFile imageFile; // каталог, в котором загруженные изображения будут храниться на сервере!
+    private String imageLink; // каталог, в котором загруженные изображения будут храниться на сервере!
 
     @NotNull
     @NotBlank
@@ -58,6 +57,10 @@ public class PaintingDTO {
     //картина может быть еще не подвязана под аукцион null
     private Integer auctionId;
 
+    public void setImageLink(String imageLink){
+        this.imageLink = imageLink;
+    }
+
     public Painting toEntity(Category category, Author author, Auction auction, String imagePath) {
         Painting painting = new Painting(title, published, imagePath, size, material, description, price, sold);
         painting.setCategory(category);
@@ -76,16 +79,4 @@ public class PaintingDTO {
 //        }
 //        return null;
 //    }
-
-    public String uploadImage(MultipartFile imageFile) throws IOException {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(imageFile.getOriginalFilename());
-            Path destinationPath = Paths.get("uploads/images/" + fileName);
-            Files.createDirectories(destinationPath.getParent());
-            Files.copy(imageFile.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            return "/images/" + fileName;
-        }
-        return null;
-    }
-
 }

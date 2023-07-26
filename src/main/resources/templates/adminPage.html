@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Online Art Store</title>
@@ -50,9 +50,6 @@
     <div class="frame">
         <label for="imageFile">FILE:</label>
         <input type="file" name="imageFile" id="imageFile">
-        <button type="button" onclick="uploadImage()">Upload Image</button>
-        <label for="imageLink">Image Link:</label>
-        <input type="text" name="imageLink" id="imageLink" readonly>
     </div>
     <div class="frame">
         <label for="size">Size:</label>
@@ -323,8 +320,9 @@
     const auctionsTable = document.getElementById('Auctions-table');
     const saveAuctionButton = document.getElementById('auctionSave');
 
-    const csrfToken = document.getElementById('csrf-token');
-    const csrfHeader = document.getElementById('csrf-header');
+    const csrfToken = document.getElementById('_csrf').content;
+
+    const csrfHeader = document.getElementById('_csrf_header').content;
 
     // function addPainting(painting) {
     //     const tr = document.createElement('tr');
@@ -830,40 +828,39 @@
     //     }
     // }
 
-    async function uploadImage() {
-        const fileInput = document.getElementById('imageFile');
-        const file = fileInput.files[0];
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const endpoint = 'https://upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/api/upload-image';
-        const apiKey = '2cfeea843cmsh57136774e191574p1bdfcdjsnea2b49e851b9';
-        const host = 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/';
-
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'X-RapidAPI-Key': apiKey,
-                'X-RapidAPI-Host': host
-            },
-            body: formData
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            const imageLink = document.getElementById('imageLink');
-            imageLink.value = data.link;
-            alert('Image uploaded successfully!');
-        } else {
-            alert('Error uploading image');
-        }
-    }
+    // async function uploadImage() {
+    //     const fileInput = document.getElementById('imageFile');
+    //     const file = fileInput.files[0];
+    //     const formData = new FormData();
+    //     formData.append('file', file);
+    //
+    //     const endpoint = 'https://upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/api/upload-image';
+    //     const apiKey = '2cfeea843cmsh57136774e191574p1bdfcdjsnea2b49e851b9';
+    //     const host = 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/';
+    //
+    //     const response = await fetch(endpoint, {
+    //         method: 'POST',
+    //         headers: {
+    //             'X-RapidAPI-Key': apiKey,
+    //             'X-RapidAPI-Host': host
+    //         },
+    //         body: formData
+    //     });
+    //
+    //     if (response.ok) {
+    //         const data = await response.json();
+    //         const imageLink = document.getElementById('imageLink');
+    //         imageLink.value = data.link;
+    //         alert('Image uploaded successfully!');
+    //     } else {
+    //         alert('Error uploading image');
+    //     }
+    // }
 
     async function savePainting() {
         const titleInput = document.getElementById('title');
         const publishedInput = document.getElementById('published');
-        // const imageFileInput = document.getElementById('imageFile');
-        const imageLink = document.getElementById('imageLink');
+        const imageFileInput = document.getElementById('imageFile');
         const sizeInput = document.getElementById('size');
         const materialInput = document.getElementById('material');
         const descriptionInput = document.getElementById('description');
@@ -877,7 +874,7 @@
             title: titleInput.value,
             published: publishedInput.value,
             // imageFile: imageFileInput.value,
-            imageFile: imageLink.value,
+            imageLink: "",
             size: sizeInput.value,
             material: materialInput.value,
             description: descriptionInput.value,
@@ -887,19 +884,33 @@
             categoryId: categoriesSelect.value,
             auctionId: auctionsSelect.value
         };
-        // const csrfToken = document.getElementById('_csrf').value;
+
+        const formData = new FormData();
+        // formData.append('title', titleInput.value);
+        // formData.append('published', publishedInput.value);
+        formData.append('file', imageFileInput.files[0]);
+        formData.append('paintingDTO', painting);
+        // formData.append('size', sizeInput.value);
+        // formData.append('material', materialInput.value);
+        // formData.append('description', descriptionInput.value);
+        // formData.append('price', priceInput.value);
+        // formData.append('sold', soldInput.checked);
+        // formData.append('authorId', authorsSelect.value);
+        // formData.append('categoryId', categoriesSelect.value);
+        // formData.append('auctionId', auctionsSelect.value);
+
         const csrfToken = document.getElementById('_csrf').content;
         console.log("Token = " + csrfToken);
-        // const csrfHeader = document.getElementById('_csrf_header').value;
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}/paintings`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            },
-            body: JSON.stringify(painting)
-        });
+
+       const response = await fetch("http://localhost:8080/adminPage/api/v1/paintings", {
+           method: 'POST',
+           headers: {
+               [csrfHeader]: csrfToken
+           },
+           body: formData
+       });
+
         console.log("**********" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');

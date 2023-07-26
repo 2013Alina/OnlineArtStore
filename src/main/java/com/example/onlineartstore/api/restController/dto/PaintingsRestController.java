@@ -10,24 +10,13 @@ import com.example.onlineartstore.repository.AuthorRepository;
 import com.example.onlineartstore.repository.CategoryRepository;
 import com.example.onlineartstore.repository.PaintingRepository;
 import com.example.onlineartstore.service.ImageUploadService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -56,41 +45,15 @@ public class PaintingsRestController {
         return ResponseEntity.notFound().build();
     }
 
-    //CREATE Painting
-//    @PostMapping
-//    ResponseEntity<?> createPainting(@RequestBody PaintingDTO paintingDTO) {
-//        try {
-//            Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
-//            Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
-//            Optional<Auction> optionalAuction = auctionRepository.findById(paintingDTO.getAuctionId());
-//            if (optionalCategory.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            if (optionalAuthor.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            if (optionalAuction.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get()));
-//            return ResponseEntity
-//                    .created(URI.create("/adminPage/api/v1/paintings/" + saved.getId()))
-//                    .build();
-//        } catch (Throwable throwable) {
-//            return ResponseEntity
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(throwable);
-//        }
-//    }
-
-    @PostMapping
-    public ResponseEntity<?> createPainting(@RequestParam("file") MultipartFile imageFile,
-                                            @RequestParam("paintingDTO") PaintingDTO paintingDTO) {
-        String answer = "start";
+    @PostMapping("/create")
+    public ResponseEntity<?> createPainting(@RequestPart("file") MultipartFile imageFile,
+                                            @RequestPart PaintingDTO paintingDTO) {
         try {
             String imageLink = imageUploadService.uploadImage(imageFile);
-//            String imagePath = paintingDTO.uploadImage(imageFile);
-            paintingDTO.setImageLink(imageLink);
+            if (imageLink == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
             Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
             Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
             Optional<Auction> optionalAuction = auctionRepository.findById(paintingDTO.getAuctionId());
@@ -103,8 +66,8 @@ public class PaintingsRestController {
             if (optionalAuction.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-
             Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get(), imageLink));
+
             return ResponseEntity
                     .created(URI.create("/adminPage/api/v1/paintings/" + saved.getId()))
                     .build();

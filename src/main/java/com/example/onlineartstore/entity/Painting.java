@@ -26,7 +26,7 @@ public class Painting {
     @NonNull
     private LocalDate published;
 
-    private String imagePath;
+    private String imageLink;
 
     @NonNull
     private String size;
@@ -54,10 +54,10 @@ public class Painting {
     // cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     private List<Comment> comments = new ArrayList<>();
 
-    public Painting(String title, LocalDate published, String imagePath, String size, String material, String description, BigDecimal price, Boolean sold) {
+    public Painting(String title, LocalDate published, String imageLink, String size, String material, String description, BigDecimal price, Boolean sold) {
         this.title = title;
         this.published = published;
-        this.imagePath = imagePath;
+        this.imageLink = imageLink;
         this.size = size;
         this.material = material;
         this.description = description;

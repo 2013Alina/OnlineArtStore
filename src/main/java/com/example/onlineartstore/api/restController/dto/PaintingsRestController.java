@@ -45,6 +45,7 @@ public class PaintingsRestController {
         return ResponseEntity.notFound().build();
     }
 
+    //@RequestPart - використовується для отримання двох частин запиту: MultipartFile та MyMetadata
     @PostMapping("/create")
     public ResponseEntity<?> createPainting(@RequestPart("file") MultipartFile imageFile,
                                             @RequestPart PaintingDTO paintingDTO) {
@@ -66,7 +67,8 @@ public class PaintingsRestController {
             if (optionalAuction.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get(), imageLink));
+            Painting saved = paintingRepository.save(paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(),
+                    optionalAuction.get(), imageLink));
 
             return ResponseEntity
                     .created(URI.create("/adminPage/api/v1/paintings/" + saved.getId()))
@@ -80,42 +82,48 @@ public class PaintingsRestController {
 
 
     // UPDATE ONE Painting
-    //http://localhost:8080/adminPage/api/v1/paintings/3 для update
-//    @PutMapping("/{id}")
-//    ResponseEntity<Painting> updatePainting(@PathVariable Integer id, @RequestBody @Validated PaintingDTO paintingDTO) {
-//        Optional<Painting> foundPainting = paintingRepository.findById(id);
-//        if (foundPainting.isPresent()) {
-//            Painting variable = foundPainting.get();
-//
-//            Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
-//            Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
-//            Optional<Auction> optionalAuction = auctionRepository.findById(paintingDTO.getAuctionId());
-//            if (optionalCategory.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            if (optionalAuthor.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            if (optionalAuction.isEmpty()) {
-//                return ResponseEntity.notFound().build();
-//            }
-//            Painting painting = paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get());
-//
-//            variable.setTitle(painting.getTitle());
-//            variable.setPublished(painting.getPublished());
-//            variable.setImagePath(painting.getImagePath());
-//            variable.setSize(painting.getSize());
-//            variable.setMaterial(painting.getMaterial());
-//            variable.setDescription(painting.getDescription());
-//            variable.setPrice(painting.getPrice());
-//            variable.setSold(painting.getSold());
-//            variable.setAuthor(painting.getAuthor());
-//            variable.setAuction(painting.getAuction());
-//            variable.setCategory(painting.getCategory());
-//            return ResponseEntity.of(Optional.of(paintingRepository.save(variable)));
-//        }
-//        return ResponseEntity.notFound().build();
-//    }
+    @PutMapping("/update/{paintingId}")
+    ResponseEntity<Painting> updatePainting(@PathVariable Integer paintingId, @RequestPart(value = "file", required = false)
+            MultipartFile imageFile, @RequestPart PaintingDTO paintingDTO) {
+        Optional<Painting> foundPainting = paintingRepository.findById(paintingId);
+        if (foundPainting.isPresent()) {
+            Painting paintingToUpdate = foundPainting.get();
+
+            Optional<Category> optionalCategory = categoryRepository.findById(paintingDTO.getCategoryId());
+            Optional<Author> optionalAuthor = authorRepository.findById(paintingDTO.getAuthorId());
+            Optional<Auction> optionalAuction = auctionRepository.findById(paintingDTO.getAuctionId());
+            if (optionalCategory.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            if (optionalAuthor.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            if (optionalAuction.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            if (imageFile != null) {
+                String imageLink = imageUploadService.uploadImage(imageFile);
+                if (imageLink == null) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+                paintingToUpdate.setImageLink(imageLink);
+            }
+            Painting painting = paintingDTO.toEntity(optionalCategory.get(), optionalAuthor.get(), optionalAuction.get(), paintingDTO.getImageLink());
+
+            paintingToUpdate.setTitle(painting.getTitle());
+            paintingToUpdate.setPublished(painting.getPublished());
+            paintingToUpdate.setSize(painting.getSize());
+            paintingToUpdate.setMaterial(painting.getMaterial());
+            paintingToUpdate.setDescription(painting.getDescription());
+            paintingToUpdate.setPrice(painting.getPrice());
+            paintingToUpdate.setSold(painting.getSold());
+            paintingToUpdate.setAuthor(painting.getAuthor());
+            paintingToUpdate.setAuction(painting.getAuction());
+            paintingToUpdate.setCategory(painting.getCategory());
+            return ResponseEntity.of(Optional.of(paintingRepository.save(paintingToUpdate)));
+        }
+        return ResponseEntity.notFound().build();
+    }
 
     // DELETE Painting
     @DeleteMapping("/{id}")

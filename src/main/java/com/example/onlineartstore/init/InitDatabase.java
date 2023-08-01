@@ -35,8 +35,8 @@ public class InitDatabase implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
-        String imagePath1 = "artLana";
-        String imagePath2 = "alina";
+        String imagePath1 = "https://i.imgur.com/hIyBYsk.jpg";
+        String imagePath2 = "https://i.imgur.com/32jKibH.jpg";
         Author author1 = new Author("artLana", "Svetlana", "Vovk", LocalDate.of(1957, Month.OCTOBER, 18), "Many awards", imagePath1);
         authorRepository.save(author1);
         Author author2 = new Author("artMaster", "Alina", "Muntian", LocalDate.of(1986, Month.MARCH, 05), "Many awards", imagePath2);
@@ -84,13 +84,13 @@ public class InitDatabase implements CommandLineRunner {
         auctionRepository.save(auction4);
 
         //загрузка изображения картин
-        String imagePath3 = "ukrainian";
-        String imagePath4 = "butterfly";
-        String imagePath5 = "rainbow";
-        String imagePath6 = "kaleidoscope";
-        String imagePath7 = "rooster";
-        String imagePath8 = "letter";
-        String imagePath9 = "sunflowers";
+        String imagePath3 = "https://i.imgur.com/MYmU5xA.jpg";
+        String imagePath4 = "https://i.imgur.com/zGb7JJ8.jpg";
+        String imagePath5 = "https://i.imgur.com/HXtD8X2.jpg";
+        String imagePath6 = "https://i.imgur.com/IU8Pma4.jpg";
+        String imagePath7 = "https://i.imgur.com/wff6BGx.jpg";
+        String imagePath8 = "https://i.imgur.com/X2PrroZ.jpg";
+        String imagePath9 = "https://i.imgur.com/Dicvpab.jpg";
 
         Painting painting1 = new Painting("Girl with a violin", LocalDate.of(2022, Month.APRIL, 15), imagePath3, "60x100cm", "canvas", "The picture is made in bright colors, yellow-green color will provide you with a good mood", BigDecimal.valueOf(5000), false);
         author1.addComment(comment1);

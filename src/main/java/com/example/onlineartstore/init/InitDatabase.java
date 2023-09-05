@@ -69,8 +69,8 @@ public class InitDatabase implements CommandLineRunner {
         Comment comment1 = new Comment("This is a beautiful picture");
 
         Auction auction1 = new Auction("Auction of connoisseurs of beauty!",
-                LocalDateTime.of(2023, Month.JULY, 17, 10, 15),
-                LocalDateTime.of(2023, Month.JULY, 18, 21, 30),
+                LocalDateTime.of(2023, Month.AUGUST, 23, 10, 15),
+                LocalDateTime.of(2023, Month.AUGUST, 23, 15, 30),
                 BigDecimal.valueOf(3000),
                 BigDecimal.valueOf(3500),
                 true, "Who is the winner?");

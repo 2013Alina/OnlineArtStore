@@ -16,7 +16,8 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "Users")
-@ToString(exclude = {"betsUsers","comments", "participationInAuctions", "userDetail"})//была рекурсия из-за поля userDetail, так как User связан с UserDetail @OneToOne
+@ToString(exclude = {"betsUsers", "comments", "participationInAuctions", "userDetail"})
+//была рекурсия из-за поля userDetail, так как User связан с UserDetail @OneToOne
 @EqualsAndHashCode(exclude = {"participationInAuctions", "roles", "userDetail"})
 public class User {
     @Id
@@ -25,16 +26,18 @@ public class User {
 
     @NotNull
     @NotBlank
-    @Column(unique = true)
+    @Column(unique = true, name = "username")
     @Length(min = 3)
     private String username;
 
     @NotNull
     @NotBlank
     @Length(min = 6)
+    @Column(name = "password")
     private String password;
 
-
+    @NotNull
+    @Column(name = "enabled")
     private Boolean enabled;
 
     @JsonIgnore
@@ -50,14 +53,12 @@ public class User {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
-    //cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
-    //каскадное обновление данных, если author сохраняется, сохраняются м данные painting
     private List<Bet> betsUsers = new ArrayList<>();
 
 
     @JsonIgnore
     @OneToOne   // не пишу аннотацию @NotNull так как User спокойно существует без UserDetail!!!!!
-    private  UserDetail userDetail;
+    private UserDetail userDetail;
 
     @JsonIgnore
     @ManyToMany

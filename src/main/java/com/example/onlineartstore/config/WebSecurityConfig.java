@@ -50,8 +50,8 @@ public class WebSecurityConfig {
                 .roles("USER")
                 .build();
         var jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);//для хранения данных в базе Н2
-        jdbcUserDetailsManager.createUser(user);
-        jdbcUserDetailsManager.createUser(admin);
+//        jdbcUserDetailsManager.createUser(user);
+//        jdbcUserDetailsManager.createUser(admin);
         return jdbcUserDetailsManager;
     }
 

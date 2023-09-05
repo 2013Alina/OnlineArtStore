@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class InitDatabase implements CommandLineRunner {
 

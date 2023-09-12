@@ -16,27 +16,6 @@ import javax.sql.DataSource;
 @Configuration
 public class WebSecurityConfig {
 
-
-//    matcher - сопоставитель, соответствие правилам, путям, паттернам
-
-//    @Bean("h2DataSource")
-//    public DataSource getH2DataSource() {
-//        return new EmbeddedDatabaseBuilder()
-//                .setType(EmbeddedDatabaseType.H2)
-//                .addScripts("schema.sql") //если убрать эту строку, то схема будет сама сгенерирована
-//                .build();
-//    }
-
-//    @Bean
-//    public DataSource getDataSource() {
-//        Properties properties = new Properties();
-//        DriverDataSource sa = new DriverDataSource("jdbc:h2:file:~/testdb", "org.h2.Driver", properties, "sa", "");
-//        return sa;
-//    }
-
-
-    // РАБОТАЕТ!
-
     @Bean
     public UserDetailsManager getUserDetailsService(DataSource dataSource) {
         UserDetails admin = User.builder()
@@ -79,10 +58,16 @@ public class WebSecurityConfig {
                         .mvcMatchers("/updateUserDetailClient/**").hasRole("USER")
                         .mvcMatchers("/victoryPage/**").hasRole("USER")
                         .anyRequest().denyAll()) //все остальные запросы запрещены!!!
+//                .formLogin()
+//                .and()
+//                .build(); //mvcMatchers("/privatePage") здесь обязательная авторизация
                 .formLogin()
                 .and()
-                //.csrf().disable() //отключить систему безопасности csrf()
-                .build(); //mvcMatchers("/privatePage") здесь обязательная авторизация
+                .csrf().ignoringAntMatchers("/h2-console/**")
+                .and()//отключить систему безопасности csrf()
+                .headers().frameOptions().disable()
+                .and()
+                .build(); //mvcMatchers("/privatePage")
 
     }
 

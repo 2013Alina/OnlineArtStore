@@ -22,6 +22,7 @@ import java.util.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
     @NotNull
@@ -52,12 +53,12 @@ public class User {
     }
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Bet> betsUsers = new ArrayList<>();
 
 
     @JsonIgnore
-    @OneToOne   // не пишу аннотацию @NotNull так как User спокойно существует без UserDetail!!!!!
+    @OneToOne(cascade = CascadeType.ALL)  // не пишу аннотацию @NotNull так как User спокойно существует без UserDetail!!!!!
     private UserDetail userDetail;
 
     @JsonIgnore

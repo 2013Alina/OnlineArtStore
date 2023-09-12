@@ -31,7 +31,7 @@ create table Authorities
     username  varchar_ignorecase(50) not null,
     authority varchar_ignorecase(50) not null,
     primary key (id),
-    constraint fk_authorities_users foreign key (username) references Users (id)
+    constraint fk_authorities_users foreign key (id) references Users (id)
 );
 create unique index ix_auth_username on Authorities (username, authority);
 

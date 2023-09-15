@@ -81,6 +81,7 @@
         if (response.status === 201) {
             const loc = response.headers.get('location');
             const resp = await fetch(`http://localhost:8080${loc}`)
+            addUserDetail(userDetail)
             if(resp.status === 200){
                 let userDetail = await resp.json();
                 console.log(userDetail);

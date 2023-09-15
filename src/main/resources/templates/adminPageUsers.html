@@ -180,6 +180,7 @@
         for (const prop in userDetail) {
             const td = document.createElement('td');
             if (prop === 'user') {
+                console.log(userDetail[prop].user);
                 td.append(document.createTextNode(userDetail[prop].username)); // выводит логин User
             } else {
                 td.append(document.createTextNode(userDetail[prop]));

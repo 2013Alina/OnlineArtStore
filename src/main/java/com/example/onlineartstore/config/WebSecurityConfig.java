@@ -64,7 +64,7 @@ public class WebSecurityConfig {
                 .formLogin()
                 .and()
                 .csrf().ignoringAntMatchers("/h2-console/**")
-                .and()//отключить систему безопасности csrf()
+                .and()
                 .headers().frameOptions().disable()
                 .and()
                 .build(); //mvcMatchers("/privatePage")

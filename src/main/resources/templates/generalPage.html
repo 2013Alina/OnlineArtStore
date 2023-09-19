@@ -6,6 +6,7 @@
     <link th:href="@{/css/generalPage.css}" rel="stylesheet"/>
 </head>
 <body>
+<div class="menu-container">
 <nav>
     <menu>
         <li><a th:href="@{/}">General page</a></li>
@@ -24,10 +25,9 @@
             <a th:href="@{/logout}">Logout</a></li>
     </menu>
 </nav>
+</div>
 <div th:class="core">-WELCOME TO THE ART AUCTION-</div>
-<div class="advice">* To become a participant of the Auction, register at the link: Sign up.</div>
 <div th:class="principal">-GALLERY-</div>
-<div class="advice">* If you have already registered, please use the following link: Login.</div>
 <div class="gallery">
     <div class="gallery-item" th:each="painting:${paintings}">
         <div><img th:src="${painting.imageLink}" alt=""/></div>

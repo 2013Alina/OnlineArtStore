@@ -70,7 +70,9 @@
     const savePaintingButton = document.getElementById('savePainting');
     const paintingIdMeta = document.getElementById("paintingId");
     const paintingId = paintingIdMeta.content;
-    const baseURI = `http://localhost:8080/adminPage/api/v1`;
+    //const baseURI = `http://localhost:8080/adminPage/api/v1`;
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPage/api/v1`;
 
     async function savePainting() {
         const titleInput = document.getElementById('title');
@@ -122,7 +124,7 @@
         console.log("Painting!!!!!" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addPainting(await resp.json())
         } else {
             alert('Error: ' + response.status);

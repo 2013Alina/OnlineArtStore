@@ -1,17 +1,30 @@
+
 html {
-    background-image: url("/images/generalPage.jpg");
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
+    background:
+            url("/images/generalPage.jpg") center bottom no-repeat,
+            url("/images/home.jpg") left top repeat;
+    padding: 15px;
+    background-size: 780px 540px, 1080px auto;
     font-family: "Arial Black", sans-serif;
     color: rebeccapurple;
 }
+
+.menu-container {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 220px;
+    height: 100%;
+    padding: 10px;
+}
+
 .gallery {
-    padding: 30px;
+    padding: 10px;
+    margin: 10px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 100px;
+    gap: 90px;
 }
 
 .gallery-item {
@@ -43,17 +56,18 @@ html {
     text-overflow: ellipsis;
     padding: 5px;
 }
-.advice {
-    margin-left: 700px;
-    text-shadow: 2px 2px 0px pink;
-}
+
 .principal {
-    margin-left: 70px;
-    font-size: 32px;
+    padding: 80px;
+    margin-top: 20px;
+    margin-left: 650px;
+    font-size: 22px;
     text-shadow: 2px 2px 0px yellow;
 }
 .core {
-    margin-left: 40px;
-    font-size: 22px;
+    padding: 20px;
+    margin-top: 20px;
+    margin-left: 610px;
+    font-size: 18px;
     text-shadow: 2px 2px 0px cyan;
 }

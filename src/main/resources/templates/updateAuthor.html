@@ -50,7 +50,9 @@
     const saveAuthorButton = document.getElementById('authorSave');
     const authorIdMeta = document.getElementById("authorId");
     const authorId = authorIdMeta.content;
-    const baseURI = `http://localhost:8080/adminPage/api/v1`;
+    //const baseURI = `http://localhost:8080/adminPage/api/v1`;
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPage/api/v1`;
 
     async function authorSave() {
         const authorPseudonymInput = document.getElementById('pseudonym');
@@ -90,7 +92,7 @@
         console.log("Author!!!!!" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addAuthor(await resp.json())
         } else {
             alert('Error: ' + response.status);

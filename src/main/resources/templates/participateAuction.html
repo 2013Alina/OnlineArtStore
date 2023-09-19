@@ -87,7 +87,9 @@
     const createdDate = document.getElementById('current_date_time_block');
     const betsTable = document.getElementById('Bets-table');
     const saveBetButton = document.getElementById('saveBet');
-    const baseURI = 'http://localhost:8080/api/v2';
+    //const baseURI = 'http://localhost:8080/api/v2';
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/api/v2`;
 
     /* функция добавления ведущих нулей */
     /* (если число меньше десяти, перед числом добавляем ноль) */
@@ -156,84 +158,6 @@
     }
 
     window.addEventListener('load', loadBets);
-
-    // async function saveBet() {
-    //     const amountMoneyInput = document.getElementById('amountMoney');
-    //     const currentBetElement = document.getElementById('currentBet');
-    //     const currentBet = currentBetElement ? parseFloat(currentBetElement.innerText) : 0;
-    //     const minimumBet = currentBet + 500; // Минимальная ставка больше текущей ставки на 500 UAH!
-    //
-    //     if (parseFloat(amountMoneyInput.value) < minimumBet) {
-    //         alert('Your bid cannot be lower than the current bid by at least 500 UAH');
-    //         return;
-    //     }
-    //
-    //     const bet = {
-    //         amountMoney: amountMoneyInput.value
-    //     };
-    //
-    //     const csrfToken = document.getElementById('_csrf').content;
-    //     console.log("Token = " + csrfToken);
-    //     const csrfHeader = document.getElementById('_csrf_header').content;
-    //     const response = await fetch(`${baseURI}${location.pathname}`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             [csrfHeader]: csrfToken
-    //         },
-    //         body: JSON.stringify(bet)
-    //     });
-    //     console.log("**********" + response.status);
-    //
-    //     if (response.status === 201) {
-    //         const loc = response.headers.get('location');
-    //         const resp = await fetch(`http://localhost:8080${loc}`)
-    //         addBet(await resp.json())
-    //         alert('Bet successfully created!');
-    //         location.reload(); // обновить страницу!!!!
-    //
-    //     } else if (response.status === 400) {
-    //         const errorMessage = await response.text();
-    //         if (errorMessage === "Auction has ended!") {
-    //             alert("Your bid cannot be accepted because Auction has ended!");
-    //             location.reload(); // обновить страницу!!!!
-    //         } else if (errorMessage === "The amount of the bet must be at least 500 UAH higher than the current bet!") {
-    //             alert(errorMessage);
-    //         } else {
-    //             alert('Error: ' + errorMessage);
-    //         }
-    //     }
-    // }
-    //
-    //
-    // const source = new EventSource(`${baseURI}${location.pathname}/sse`);
-    // const amountMoneyInput = document.getElementById('amountMoney');
-    //
-    // const auction = {
-    //     id: 1,
-    //     titleAuction: 'New Year Auction!',
-    //     startDate: new Date('2023-03-23T09:00:00Z'),
-    //     endDate: new Date('2023-03-23T20:47:00Z'),
-    //     startingPrice: 3000,
-    //     currentBid: 3500,
-    //     active: true,
-    //     winner: 'Who is the winner?'
-    // };
-    //
-    //
-    // source.addEventListener('auctionUpdate', function(event) {
-    //     const auctionStatus = JSON.parse(event.data);
-    //     console.log(auctionStatus);
-    //     if (auctionStatus.ended) {
-    //         saveBetButton.disabled = true;
-    //         amountMoneyInput.disabled = true;
-    //         auction.active = false;
-    //         console.log(auctionStatus);
-    //         alert("The auction has ended. You can no longer submit bets!!!");
-    //     }
-    // });
-    //
-    // saveBetButton.addEventListener('click', saveBet);
 
     const amountMoneyInput = document.getElementById('amountMoney');
     const auction = {
@@ -306,10 +230,10 @@
 
             if (response.status === 201) {
                 const loc = response.headers.get('location');
-                const resp = await fetch(`http://localhost:8080${loc}`)
+                const resp = await fetch(`http://${currentHost}${loc}`)
                 addBet(await resp.json())
                 alert('Bet successfully created!');
-                location.reload(); // обновить страницу!!!!
+                window.location.reload();
 
             } else if (response.status === 400) {
                 const errorMessage = await response.text();

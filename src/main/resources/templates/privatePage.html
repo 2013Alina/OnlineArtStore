@@ -124,7 +124,9 @@
 </table>
 <script>
     // беру все "Participate!" посилання на сторінці
-    const baseURI = 'http://localhost:8080/participateAuction/';
+    //const baseURI = 'http://localhost:8080/participateAuction/';
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/participateAuction/`;
     const participateLinks = document.querySelectorAll('.participate-link');
 
     participateLinks.forEach(link => {

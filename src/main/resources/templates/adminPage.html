@@ -251,11 +251,14 @@
 </table>
 
 <script>
-    const baseURI = 'http://localhost:8080/adminPage/api/v1';
+    //const baseURI = 'http://localhost:8080/adminPage/api/v1';
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPage/api/v1`;
     const paintingsTable = document.getElementById('Paintings-table');
     const savePaintingButton = document.getElementById('save');
 
-    const imagesBaseURL = 'http://localhost:8080/images/';
+    //const imagesBaseURL = 'http://localhost:8080/images/';
+    const imagesBaseURL = `http://${currentHost}/images/`;
 
     const categoriesTable = document.getElementById('Categories-table');
     const saveCategoryButton = document.getElementById('categorySave');
@@ -681,8 +684,9 @@
 
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addPainting(await resp.json())
+            window.location.reload();
         } else {
             alert('Error: ' + response.status);
         }
@@ -707,8 +711,9 @@
         console.log("Category!!!!!" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addCategory(await resp.json())
+            window.location.reload();
         } else {
             alert('Error: ' + response.status);
         }
@@ -752,8 +757,9 @@
         console.log(response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addAuthor(await resp.json())
+            window.location.reload();
         } else {
             alert('Error: ' + response.status);
         }
@@ -789,13 +795,14 @@
         console.log(response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addAuction(await resp.json())
+            window.location.reload();
         } else if (response.status === 400) {
             const errorResponse = await response.json();
             if (errorResponse.message === 'Auction has ended!') {
                 alert('Auction has ended!');
-                location.reload();
+                window.location.reload();
             } else {
                 alert('Error: ' + response.status);
             }
